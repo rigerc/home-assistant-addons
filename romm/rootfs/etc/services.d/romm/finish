@@ -1,7 +1,5 @@
-#!/usr/bin/with-contenv bashio
-# ==============================================================================
-# Home Assistant Add-on: Romm
-# Handles Romm application shutdown
-# ==============================================================================
+#!/usr/bin/execlineb -S0
+if { s6-test ${1} -ne 0 }
+if { s6-test ${1} -ne 256 }
 
-bashio::log.info "Romm application stopped."
+s6-svscanctl -t /var/run/s6/services

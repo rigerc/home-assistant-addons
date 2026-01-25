@@ -1,0 +1,24 @@
+name: "Ingress Example Add-on"
+version: "1.0.0"
+slug: "ingress_example"
+description: "Example add-on demonstrating Ingress integration"
+arch:
+  - amd64
+  - aarch64
+  - armv7
+  - armhf
+  - i386
+url: "https://github.com/user/ingress-addon"
+startup: application
+boot: auto
+ingress: true
+ingress_port: 8099
+panel_icon: "mdi:web"
+panel_title: "Ingress Example"
+map:
+  - type: share
+    read_only: false
+options:
+  greeting: "Welcome to Ingress!"
+schema:
+  greeting: str

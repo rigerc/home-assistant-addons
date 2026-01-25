@@ -1,65 +1,71 @@
-name: "Romm - ROM Manager"
+---
+name: "Romm"
 version: "1.0.0"
 slug: "romm"
-description: "Beautiful, powerful, self-hosted ROM manager for retro gaming"
-url: "https://github.com/rommapp/romm"
+description: |
+  Self-hosted ROM collection manager and emulator launcher.
+  Scan, organize, and manage game collections across 400+ platforms with
+  automatic metadata fetching and in-browser gameplay.
 arch:
-  - amd64
   - aarch64
-  - armv7
-startup: application
+  - amd64
+image: "ghcr.io/bluemaex/ha-addons-romm-{arch}"
+startup: system
 boot: auto
+url: https://github.com/bluemaex/home-assistant-addons/tree/master/romm
 init: false
-webui: "http://[HOST]:[PORT:8080]"
-
-# Ingress for seamless web UI
 ingress: true
 ingress_port: 8080
-ingress_stream: true
-panel_icon: "mdi:gamepad-variant"
-panel_title: "Romm"
-
-# Port exposure (optional, Ingress is primary access)
+panel_icon: mdi:gamepad-variant
 ports:
-  8080/tcp: 8080
-
+  8080/tcp: null
 ports_description:
-  8080/tcp: "Web interface (HTTP)"
-
-# Volume mappings
+  8080/tcp: Romm Web UI (disabled - use ingress)
 map:
-  - share:rw
-
-# User configuration options
+  - share
+  - config
 options:
-  igdb_client_id: ""
-  igdb_client_secret: ""
-  screenscraper_user: ""
-  screenscraper_password: ""
-  steamgriddb_api_key: ""
-  retroachievements_api_key: ""
-  mobygames_api_key: ""
-  enable_scheduled_rescan: false
-  scheduled_rescan_cron: "0 3 * * *"
-  scan_timeout: 14400
-  log_level: "INFO"
-  # Auto-generated secure values (hidden from UI)
-  db_password: ""
+  log_level: info
+  database:
+    host: ""
+    port: 3306
+    name: "romm"
+    user: "romm-user"
+    password: ""
   auth_secret_key: ""
-
+  metadata_providers:
+    screenscraper_user: ""
+    screenscraper_password: ""
+    retroachievements_api_key: ""
+    steamgriddb_api_key: ""
+    igdb_client_id: ""
+    igdb_client_secret: ""
+    mobygames_api_key: ""
+    hasheous_enabled: true
+    playmatch_enabled: true
+    launchbox_enabled: true
+  library_path: "/share/roms"
+  env_vars: []
 schema:
-  igdb_client_id: str?
-  igdb_client_secret: password?
-  screenscraper_user: str?
-  screenscraper_password: password?
-  steamgriddb_api_key: password?
-  retroachievements_api_key: password?
-  mobygames_api_key: password?
-  enable_scheduled_rescan: bool
-  scheduled_rescan_cron: str
-  scan_timeout: int(300,86400)
-  log_level: list(DEBUG|INFO|WARNING|ERROR)
-  db_password: password?
-  auth_secret_key: password?
-
-image: "ghcr.io/{arch}-addon-romm"
+  log_level: list(trace|debug|info|notice|warning|error|fatal)
+  database:
+    host: str
+    port: "int(1,65535)"
+    name: str
+    user: str
+    password: password
+  auth_secret_key: str
+  metadata_providers:
+    screenscraper_user: str?
+    screenscraper_password: password?
+    retroachievements_api_key: password?
+    steamgriddb_api_key: password?
+    igdb_client_id: str?
+    igdb_client_secret: password?
+    mobygames_api_key: password?
+    hasheous_enabled: bool
+    playmatch_enabled: bool
+    launchbox_enabled: bool
+  library_path: str
+  env_vars:
+    - str?

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "mcp__*",
+      "Bash(bun:*)",
+      "Bash(cat:*)",
+      "Bash(find:*)",
+      "Bash(git branch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git commit:*)",
+      "Bash(git diff:*)",
+      "Bash(git fetch:*)",
+      "Bash(git log:*)",
+      "Bash(git merge:*)",
+      "Bash(git pull:*)",
+      "Bash(git push:*)",
+      "Bash(git rebase:*)",
+      "Bash(git remote:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git status:*)",
+      "Bash(git show:*)",
+      "Bash(git add:*)",
+      "Bash(go fmt:*)",
+      "Bash(go mod:*)",
+      "Bash(go run:*)",
+      "Bash(go test:*)",
+      "Bash(go vet:*)",
+      "Bash(golangci-lint:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(jq:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(sed:*)",
+      "Bash(tail:*)"
+    ],
+    "ask": [
+      "Bash(bun install:*)",
+      "Bash(bun update:*)",
+      "Bash(cmd.exe:*)",
+      "Bash(go get:*)"
+    ],
+    "deny": [
+      "Bash(git clean:*)",
+      "Bash(git reset:*)",
+      "Bash(git restore:*)",
+      "Bash(task dev:*)"
+    ],
+    "defaultMode": "default"
+  },
+  "env": {
+    "ENABLE_TOOL_SEARCH": "auto:5",
+    "DISABLE_NON_ESSENTIAL_MODEL_CALLS": "true",
+    "DISABLE_TELEMETRY": "true"
+  },
+  "enableAllProjectMcpServers": true,
+  "disabledMcpjsonServers": ["ref"],
+  "enabledPlugins": {}
+}
