@@ -1,7 +1,0 @@
-#!/usr/bin/with-contenv bashio
-# ==============================================================================
-# Home Assistant Add-on: Romm
-# Handles Romm application shutdown
-# ==============================================================================
-
-bashio::log.info "Romm application stopped."

@@ -1,7 +1,0 @@
-#!/usr/bin/with-contenv bashio
-# ==============================================================================
-# Home Assistant Add-on: Romm
-# Handles Redis shutdown
-# ==============================================================================
-
-bashio::log.info "Redis service stopped."
