@@ -18,16 +18,16 @@ ingress: true
 ingress_port: 8095
 panel_icon: mdi:gamepad-variant
 ports:
-  8095/tcp: null
+  8095/tcp: 8095
 ports_description:
-  8095/tcp: Romm Web UI (disabled - use ingress)
+  8095/tcp: Romm Web UI
 map:
   - share:rw
   - addon_config:rw
 options:
   log_level: info
   database:
-    host: ""
+    host: "core-mariadb"
     port: 3306
     name: "romm"
     user: "romm-user"

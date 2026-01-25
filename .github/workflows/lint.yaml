@@ -79,7 +79,7 @@ jobs:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v4.3.1
       - name: 🚀 Run mdl
-        uses: actionshub/markdownlint@v3.1.4
+        uses: actionshub/markdownlint@v4.0.0
         with:
           filesToIgnoreRegex: "(.*(README|CHANGELOG).md|^\\.claude/.*|^docs/.*|^scripts/.*)"
 
@@ -104,4 +104,4 @@ jobs:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v4.3.1
       - name: 🚀 Run YAMLLint
-        uses: frenck/action-yamllint@v1.5
+        uses: frenck/action-yamllint@v2.4

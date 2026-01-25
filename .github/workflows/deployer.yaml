@@ -135,7 +135,7 @@ jobs:
       - name: Untar artifacts
         run: tar -xvf addon.tar ${{ inputs.addon }} && rm addon.tar
       - name: 📝 Update README.md
-        uses: bluemaex/home-assistant-addons/.github/actions/update-readme@main
+        uses: ./.github/actions/update-readme
         with:
           addons: ${{ inputs.addon }}
       - name: 🔧 Commit new Addon Config
