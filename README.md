@@ -72,9 +72,9 @@ SOFTWARE.
 [license-shield]: https://img.shields.io/github/license/rigerc/home-assistant-addons.svg
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2025.svg
 [project-stage-shield]: https://img.shields.io/badge/project%20stage-production%20ready-brightgreen.svg
-[addon-romm]: https://github.com/rigerc/home-assistant-addons/tree/romm-0.1.1
-[addon-doc-romm]: https://github.com/rigerc/home-assistant-addons/blob/romm-0.1.1/README.md
-[romm-version-shield]: https://img.shields.io/badge/version-0.1.1-blue.svg
+[addon-romm]: https://github.com/rigerc/home-assistant-addons/tree/romm-0.1.2
+[addon-doc-romm]: https://github.com/rigerc/home-assistant-addons/blob/romm-0.1.2/README.md
+[romm-version-shield]: https://img.shields.io/badge/version-0.1.2-blue.svg
 [romm-aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [romm-amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
 [romm-armhf-shield]: https://img.shields.io/badge/armhf-no-red.svg
