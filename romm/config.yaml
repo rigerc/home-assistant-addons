@@ -11,7 +11,7 @@ arch:
   - amd64
 image: "ghcr.io/rigerc/ha-addons-romm-{arch}"
 startup: system
-boot: auto
+boot: manual
 url: https://github.com/rigerc/home-assistant-addons/tree/master/romm
 init: false
 ingress: true
