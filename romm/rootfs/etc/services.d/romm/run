@@ -1,5 +1,8 @@
 #!/usr/bin/with-contenv bashio
 
+# Change to backend directory
+cd /backend || bashio::exit.nok "Failed to change to /backend directory"
+
 # Get ingress port
 ROMM_PORT=$(bashio::addon.ingress_port)
 if [ -z "$ROMM_PORT" ]; then
@@ -55,28 +58,52 @@ if [ -f "/config/romm/config.yml" ]; then
     export ROMM_CONFIG_PATH="/config/romm/config.yml"
 fi
 
-# Handle custom environment variables
-ENV_VARS=$(bashio::config 'env_vars | join(" ")')
+# Set Python environment
+export PYTHONUNBUFFERED=1
+export PYTHONDONTWRITEBYTECODE=1
+export PYTHONPATH=/backend
 
-bashio::log.info "Starting Romm..."
+# Disable OpenTelemetry (not needed for HA add-on)
+export OTEL_SDK_DISABLED=true
+
+bashio::log.info "Starting Romm services..."
 bashio::log.info "Port: ${ROMM_PORT}"
 bashio::log.info "Database: ${DB_HOST}:${DB_PORT}/${DB_NAME}"
 bashio::log.info "Library: ${ROMM_LIBRARY_PATH}"
 
-# Change to application directory
-cd /romm || bashio::exit.nok "Failed to change to /romm directory"
+# Start valkey-server in background (internal Redis for background jobs)
+bashio::log.info "Starting internal valkey..."
+valkey-server --dir /data/redis_data --daemonize yes --loglevel warning
 
-# Start Romm using gunicorn (how official image does it)
-if [ -n "$ENV_VARS" ]; then
-    bashio::log.info "Applying custom environment variables"
-    # shellcheck disable=SC2086
-    exec env $ENV_VARS gunicorn main:app \
-        --bind "0.0.0.0:${ROMM_PORT}" \
-        --worker-class uvicorn.workers.UvicornWorker \
-        --workers 1
-else
-    exec gunicorn main:app \
-        --bind "0.0.0.0:${ROMM_PORT}" \
-        --worker-class uvicorn.workers.UvicornWorker \
-        --workers 1
+# Wait for valkey to be ready
+sleep 2
+
+# Run database migrations
+bashio::log.info "Running database migrations..."
+if ! alembic upgrade head; then
+    bashio::exit.nok "Database migrations failed"
 fi
+
+# Start RQ worker in background (handles background tasks)
+bashio::log.info "Starting RQ worker..."
+RQ_REDIS_HOST=127.0.0.1 \
+    RQ_REDIS_PORT=6379 \
+    RQ_REDIS_DB=0 \
+    PYTHONPATH="/backend:${PYTHONPATH-}" rq worker \
+    --path /backend \
+    --url "redis://127.0.0.1:6379/0" \
+    --results-ttl 86400 \
+    high default low &
+
+# Start gunicorn (main web application)
+bashio::log.info "Starting Romm web server..."
+exec gunicorn main:app \
+    --bind "0.0.0.0:${ROMM_PORT}" \
+    --worker-class uvicorn_worker.UvicornWorker \
+    --workers 1 \
+    --timeout 300 \
+    --keep-alive 2 \
+    --max-requests 1000 \
+    --max-requests-jitter 100 \
+    --worker-connections 1000 \
+    --error-logfile -
