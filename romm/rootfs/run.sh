@@ -1,7 +1,25 @@
-#!/usr/bin/with-contenv bashio
+#!/usr/bin/bashio
 
-# Get ingress port from config
+bashio::log.info "Starting Romm add-on..."
+
+# Validate required configuration
+if ! bashio::config.has_value 'database.host'; then
+    bashio::exit.nok "Database host is required!"
+fi
+
+if ! bashio::config.has_value 'database.password'; then
+    bashio::exit.nok "Database password is required!"
+fi
+
+if ! bashio::config.has_value 'auth_secret_key'; then
+    bashio::exit.nok "Auth secret key is required! Generate with: openssl rand -hex 32"
+fi
+
+# Get ingress port
 ROMM_PORT=$(bashio::addon.ingress_port)
+if [ -z "$ROMM_PORT" ]; then
+    ROMM_PORT=8095
+fi
 
 # Export database configuration
 export DB_HOST="$(bashio::config 'database.host')"
@@ -41,10 +59,23 @@ export HASHEOUS_API_ENABLED="$(bashio::config 'metadata_providers.hasheous_enabl
 export PLAYMATCH_API_ENABLED="$(bashio::config 'metadata_providers.playmatch_enabled')"
 export LAUNCHBOX_API_ENABLED="$(bashio::config 'metadata_providers.launchbox_enabled')"
 
+# Create required directories
+bashio::log.info "Creating data directories..."
+mkdir -p /data/romm_resources
+mkdir -p /data/redis_data
+mkdir -p /data/romm_assets
+
+# Get library path from config
+LIBRARY_PATH="$(bashio::config 'library_path')"
+if [ ! -d "$LIBRARY_PATH" ]; then
+    bashio::log.warning "Library path ${LIBRARY_PATH} does not exist. Creating..."
+    mkdir -p "$LIBRARY_PATH"
+fi
+
 # Export volume paths
 export ROMM_RESOURCES_PATH="/data/romm_resources"
 export REDIS_DATA_PATH="/data/redis_data"
-export ROMM_LIBRARY_PATH="$(bashio::config 'library_path')"
+export ROMM_LIBRARY_PATH="$LIBRARY_PATH"
 export ROMM_ASSETS_PATH="/data/romm_assets"
 
 # Optional: config.yml path (if user provides one)
@@ -54,19 +85,19 @@ fi
 
 # Handle custom environment variables
 ENV_VARS=$(bashio::config 'env_vars | join(" ")')
-if [ -n "$ENV_VARS" ]; then
-    bashio::log.info "Applying custom environment variables"
-fi
 
-bashio::log.info "Starting Romm..."
+bashio::log.info "Configuration complete"
 bashio::log.info "Port: ${ROMM_PORT}"
 bashio::log.info "Database: ${DB_HOST}:${DB_PORT}/${DB_NAME}"
 bashio::log.info "Library: ${ROMM_LIBRARY_PATH}"
 
-# Start Romm (adjust command based on actual Romm startup)
-cd /romm
-if [ -z "$ENV_VARS" ]; then
-    exec python3 -m uvicorn main:app --host 0.0.0.0 --port "${ROMM_PORT}"
+# Start Romm
+cd /romm || exit 1
+
+if [ -n "$ENV_VARS" ]; then
+    bashio::log.info "Applying custom environment variables"
+    # shellcheck disable=SC2086
+    exec env $ENV_VARS gunicorn main:app --bind "0.0.0.0:${ROMM_PORT}" --worker-class uvicorn.workers.UvicornWorker
 else
-    env $ENV_VARS python3 -m uvicorn main:app --host 0.0.0.0 --port "${ROMM_PORT}"
+    exec gunicorn main:app --bind "0.0.0.0:${ROMM_PORT}" --worker-class uvicorn.workers.UvicornWorker
 fi

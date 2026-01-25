@@ -1,26 +1,30 @@
 ARG BUILD_FROM
-FROM rommapp/romm:latest as romm-base
-FROM ${BUILD_FROM} AS final
+FROM rommapp/romm:latest
 
-# Install required packages
+# Install bashio for Home Assistant integration
 RUN apk add --no-cache \
-    python3 \
-    py3-pip \
-    mariadb-connector-c
+    bash \
+    jq \
+    curl \
+    && curl -J -L -o /tmp/bashio.tar.gz \
+    "https://github.com/hassio-addons/bashio/archive/v0.16.2.tar.gz" \
+    && mkdir /tmp/bashio \
+    && tar zxvf /tmp/bashio.tar.gz --strip 1 -C /tmp/bashio \
+    && mv /tmp/bashio/lib /usr/lib/bashio \
+    && ln -s /usr/lib/bashio/bashio /usr/bin/bashio \
+    && rm -rf /tmp/bashio*
 
-# Copy Romm application from official image
-COPY --from=romm-base /romm /romm
-
-# Copy rootfs (initialization scripts)
+# Copy rootfs (startup script)
 COPY rootfs /
 
-# Set permissions on scripts
-RUN chmod a+x /etc/cont-init.d/romm.sh \
-    && chmod a+x /etc/services.d/romm/run \
-    && chmod a+x /etc/services.d/romm/finish
+# Set permissions on run script
+RUN chmod a+x /run.sh
 
 # Set working directory
 WORKDIR /romm
 
 # Expose port (for ingress)
-EXPOSE 8080
+EXPOSE 8095
+
+# Use our custom entrypoint
+CMD ["/run.sh"]
