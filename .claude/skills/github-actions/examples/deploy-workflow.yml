@@ -1,0 +1,124 @@
+# Deploy Workflow
+# Deployment workflow with staging and production environments
+
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  # Deploy to staging
+  deploy-staging:
+    name: Deploy to Staging
+    if: |
+      github.ref == 'refs/heads/develop' ||
+      (github.event_name == 'workflow_dispatch' && inputs.environment == 'staging')
+    environment:
+      name: staging
+      url: https://staging.example.com
+    runs-on: ubuntu-latest
+    concurrency:
+      group: staging-deploy
+      cancel-in-progress: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy to staging
+        env:
+          DEPLOY_KEY: ${{ secrets.STAGING_DEPLOY_KEY }}
+          DEPLOY_URL: ${{ secrets.STAGING_DEPLOY_URL }}
+        run: |
+          curl -X POST "$DEPLOY_URL" \
+            -H "Authorization: Bearer $DEPLOY_KEY" \
+            -F "dist=@dist/"
+
+      - name: Verify deployment
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://staging.example.com)
+          if [ $response -eq 200 ]; then
+            echo "Deployment successful!"
+          else
+            echo "Deployment failed with status $response"
+            exit 1
+          fi
+
+  # Deploy to production
+  deploy-production:
+    name: Deploy to Production
+    if: |
+      github.ref == 'refs/heads/main' ||
+      (github.event_name == 'workflow_dispatch' && inputs.environment == 'production')
+    environment:
+      name: production
+      url: https://prod.example.com
+    runs-on: ubuntu-latest
+    concurrency:
+      group: production-deploy
+      cancel-in-progress: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy to production
+        env:
+          DEPLOY_KEY: ${{ secrets.PRODUCTION_DEPLOY_KEY }}
+          DEPLOY_URL: ${{ secrets.PRODUCTION_DEPLOY_URL }}
+        run: |
+          curl -X POST "$DEPLOY_URL" \
+            -H "Authorization: Bearer $DEPLOY_KEY" \
+            -F "dist=@dist/"
+
+      - name: Verify deployment
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://prod.example.com)
+          if [ $response -eq 200 ]; then
+            echo "Deployment successful!"
+          else
+            echo "Deployment failed with status $response"
+            exit 1
+          fi
+
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "::notice::Production deployment successful!"
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Production deployment failed!"

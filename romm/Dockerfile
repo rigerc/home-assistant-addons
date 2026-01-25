@@ -15,6 +15,15 @@ COPY --from=romm-base /usr/local/lib/python3.13 /usr/local/lib/python3.13
 # - p7zip: 7zip archive support
 # - tzdata: Timezone data
 # - valkey: Redis-compatible in-memory data store (for background jobs)
+# Python runtime dependencies:
+# - libffi: Foreign Function Interface library (needed by Python ctypes)
+# - libgcc: GCC runtime library (needed by Python)
+# - zlib: Compression library (needed by Python)
+# - readline: Command line editing (needed by Python)
+# - sqlite-libs: SQLite database (needed by Python sqlite3 module)
+# - ncurses-libs: Terminal handling (needed by Python)
+# - libbz2: bzip2 compression (needed by Python)
+# - xz-libs: LZMA compression (needed by Python)
 RUN apk add --no-cache \
     bash \
     mariadb-connector-c \
@@ -22,7 +31,15 @@ RUN apk add --no-cache \
     p7zip \
     tzdata \
     libmagic \
-    valkey
+    valkey \
+    libffi \
+    libgcc \
+    zlib \
+    readline \
+    sqlite-libs \
+    ncurses-libs \
+    libbz2 \
+    xz-libs
 
 # Copy Python virtual environment from Romm image
 COPY --from=romm-base /src/.venv /src/.venv
