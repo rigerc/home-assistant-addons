@@ -1,0 +1,13 @@
+configuration:
+  log_level:
+    name: Log Level
+    description: The log level for the application.
+  tz:
+    name: Timezone
+    description: The timezone for the application.
+  git_user_name:
+    name: Git User Name
+    description: The Git user name for commits.
+  git_user_email:
+    name: Git User Email
+    description: The Git user email for commits.

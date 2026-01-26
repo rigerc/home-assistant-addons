@@ -1,0 +1,15 @@
+---
+build_from:
+  aarch64: "ghcr.io/home-assistant/aarch64-base-python:3.23"
+  amd64: "ghcr.io/home-assistant/amd64-base-python:3.23"
+  armv7: "ghcr.io/home-assistant/armv7-base-python:3.23"
+labels:
+  maintainer: "rigerc"
+  org.opencontainers.image.authors: "rigerc"
+  org.opencontainers.image.licenses: "MIT License"
+  org.opencontainers.image.title: "Home Assistant Add-on: Profilarr"
+  org.opencontainers.image.url: https://github.com/rigerc/home-assistant-addons
+  org.opencontainers.image.source: https://github.com/rigerc/home-assistant-addons/profilarr
+  org.opencontainers.image.documentation: https://github.com/rigerc/home-assistant-addons/profilarr/README.md
+  org.opencontainers.image.created: "2026-01-26T00:00:00Z"
+  org.opencontainers.image.version: 1.0.0

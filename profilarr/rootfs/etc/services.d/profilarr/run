@@ -1,0 +1,17 @@
+#!/usr/bin/with-contenv bashio
+
+bashio::log.info "Starting Profilarr web server on port 6868..."
+
+cd /profilarr || bashio::exit.nok "Failed to change to /profilarr directory"
+
+exec gunicorn app.main:app \
+    --bind "0.0.0.0:6868" \
+    --workers 2 \
+    --threads 4 \
+    --timeout 600 \
+    --keep-alive 2 \
+    --worker-class sync \
+    --access-logfile - \
+    --error-logfile - \
+    --log-level "$LOG_LEVEL" \
+    --pid /tmp/profilarr.pid

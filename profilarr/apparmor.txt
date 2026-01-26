@@ -1,0 +1,51 @@
+#include <tunables/global>
+
+profile profilarr flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # s6-Overlay
+  /init ix,
+  /usr/bin/** ix,
+  /bin/** ix,
+
+  # Data access
+  /data/** rw,
+  /addon_configs/** rw,
+  /share/** rw,
+
+  # Network
+  network tcp,
+  network udp,
+
+  # Git operations
+  /usr/bin/git ix,
+
+  # Python runtime
+  /usr/bin/python3.* ix,
+  /usr/local/bin/python3.* ix,
+  /usr/lib/python3/** mr,
+  /usr/local/lib/python3/** mr,
+
+  # Node/NPM for frontend build
+  /usr/bin/node ix,
+  /usr/bin/npm ix,
+
+  # Gunicorn
+  /usr/local/bin/gunicorn ix,
+
+  # SQLite database
+  /**/*.db rw,
+  /**/*.db-shm rw,
+  /**/*.db-wal rw,
+
+  # Logs
+  /var/log/** rw,
+
+  # Temporary files
+  /tmp/** rw,
+  /dev/null rw,
+  /dev/full rw,
+  /dev/random r,
+  /dev/urandom r,
+  /dev/zero rw,
+}
