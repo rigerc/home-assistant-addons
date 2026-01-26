@@ -1,0 +1,14 @@
+#!/usr/bin/with-contenv bashio
+
+bashio::log.info "Starting nginx on port ${ROMM_PORT}..."
+
+# Run envsubst on nginx templates to substitute only ROMM_* variables
+# This prevents nginx variables like $http_upgrade from being substituted
+for template in /etc/nginx/templates/*.conf.template; do
+    if [ -f "$template" ]; then
+        envsubst '\$ROMM_PORT,\$ROMM_BASE_PATH' < "$template" > "/etc/nginx/conf.d/$(basename "$template" .template)"
+        bashio::log.info "Processed nginx template: $(basename "$template")"
+    fi
+done
+
+exec nginx -g 'daemon off; error_log /dev/stderr info;'
