@@ -1,6 +1,6 @@
 ---
 name: "Romm"
-version: "0.1.6"
+version: "0.1.7"
 slug: "romm"
 description: |
   Self-hosted ROM collection manager and emulator launcher.
