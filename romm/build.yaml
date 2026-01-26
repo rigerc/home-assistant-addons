@@ -10,6 +10,6 @@ labels:
   org.opencontainers.image.url: https://github.com/rigerc/home-assistant-addons
   org.opencontainers.image.source: https://github.com/rigerc/home-assistant-addons/romm
   org.opencontainers.image.documentation: https://github.com/rigerc/home-assistant-addons/romm/README.md
-  org.opencontainers.image.created: "2026-01-26T02:31:27Z"
-  org.opencontainers.image.revision: a5a80f08a603216f34782b83e0f1a4328f35a3c2
-  org.opencontainers.image.version: 0.1.16
+  org.opencontainers.image.created: "2026-01-26T02:45:38Z"
+  org.opencontainers.image.revision: 2e35279f0164b29e43f7ee93d3503d371917891b
+  org.opencontainers.image.version: 0.1.17
