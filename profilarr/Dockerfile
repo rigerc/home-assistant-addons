@@ -32,3 +32,4 @@ ENV PYTHONUNBUFFERED=1
 ENV FLASK_APP=/profilarr/main.py
 
 WORKDIR /profilarr
+EXPOSE 6099
