@@ -75,7 +75,9 @@ RUN mkdir -p /romm /redis-data && \
 COPY rootfs /
 
 # Set permissions
-RUN chmod a+x /etc/cont-init.d/*.sh
+RUN chmod a+x /etc/cont-init.d/*.sh \
+    && find /etc/services.d -type f -name "run" -exec chmod +x {} \; \
+    && find /etc/services.d -type f -name "finish" -exec chmod +x {} \;
 
 # Set environment for Python
 ENV PATH="/src/.venv/bin:${PATH}"
