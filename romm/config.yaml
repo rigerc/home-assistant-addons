@@ -15,7 +15,7 @@ boot: manual
 url: https://github.com/rigerc/home-assistant-addons/tree/master/romm
 init: false
 ingress: true
-ingress_port: 8019
+ingress_port: 8099
 panel_icon: mdi:gamepad-variant
 map:
   - share:rw
