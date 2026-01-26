@@ -1,9 +1,0 @@
-#!/usr/bin/with-contenv bashio
-
-bashio::log.info "Stopping nginx..."
-
-# Send graceful shutdown signal
-nginx -s quit 2>/dev/null || true
-
-# Wait for nginx to stop
-sleep 1

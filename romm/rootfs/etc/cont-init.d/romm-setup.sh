@@ -92,7 +92,6 @@ export_env ENABLE_RESCAN_ON_FILESYSTEM_CHANGE "$(bashio::config 'enable_file_wat
 
 # Export nginx configuration
 export_env ROMM_PORT "$(bashio::addon.ingress_port)"
-export_env ROMM_BASE_PATH "/romm"
 
 # Optional: config.yml path
 if [ -f "/config/romm/config.yml" ]; then

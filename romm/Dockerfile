@@ -15,8 +15,7 @@ COPY --from=romm-base /usr/local/lib/python3.13 /usr/local/lib/python3.13
 # - p7zip: 7zip archive support
 # - tzdata: Timezone data
 # - valkey: Redis-compatible in-memory data store (for background jobs)
-# - pcre2: PCRE library for nginx regex support
-# - zlib: Compression library (needed by Python and nginx)
+# - zlib: Compression library (needed by Python)
 # Python runtime dependencies:
 # - libffi: Foreign Function Interface library (needed by Python ctypes)
 # - libgcc: GCC runtime library (needed by Python)
@@ -33,8 +32,6 @@ RUN apk add --no-cache \
     tzdata \
     libmagic \
     valkey \
-    pcre2 \
-    gettext \
     zlib \
     libffi \
     libgcc \
@@ -54,19 +51,8 @@ COPY --from=romm-base /backend /backend
 COPY --from=romm-base /usr/bin/RAHasher /usr/bin/RAHasher
 
 # Copy nginx and frontend files from base image
-# Copy to temporary locations first to avoid conflicts, then move
+# We only need the static HTML files, not nginx itself
 COPY --from=romm-base /var/www/html /var/www/html
-COPY --from=romm-base /etc/nginx /tmp/nginx-etc
-COPY --from=romm-base /usr/lib/nginx /usr/lib/nginx
-COPY --from=romm-base /usr/sbin/nginx /usr/sbin/nginx
-
-# Move nginx config to final location and create required directories
-RUN mkdir -p /run/nginx && \
-    mkdir -p /var/log/nginx && \
-    mkdir -p /var/cache/nginx && \
-    mkdir -p /etc/nginx && \
-    cp -r /tmp/nginx-etc/* /etc/nginx/ && \
-    rm -rf /tmp/nginx-etc
 
 # Create romm directory structure
 RUN mkdir -p /romm /redis-data && \
@@ -87,4 +73,4 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /romm
-EXPOSE 8095
+EXPOSE 8099

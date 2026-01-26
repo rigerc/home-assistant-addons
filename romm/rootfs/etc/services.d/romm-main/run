@@ -4,8 +4,19 @@ bashio::log.info "Starting Romm web server..."
 
 cd /backend || bashio::exit.nok "Failed to change to /backend directory"
 
-exec gunicorn main:app \
-    --bind "unix:/tmp/gunicorn.sock" \
+# The app_wrapper module is created by romm-static-files.sh cont-init script
+# It wraps the main app and adds static file serving
+# Fall back to main:app if wrapper doesn't exist
+if [ -f "/backend/app_wrapper.py" ]; then
+    APP_MODULE="app_wrapper:app"
+    bashio::log.info "Using app_wrapper for static file serving"
+else
+    APP_MODULE="main:app"
+    bashio::log.warning "app_wrapper not found, using main app directly (static files may not work)"
+fi
+
+exec gunicorn ${APP_MODULE} \
+    --bind "0.0.0.0:${ROMM_PORT:-8099}" \
     --worker-class uvicorn_worker.UvicornWorker \
     --workers 1 \
     --timeout 300 \
