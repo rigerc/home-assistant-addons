@@ -34,6 +34,7 @@ RUN apk add --no-cache \
     libmagic \
     valkey \
     pcre2 \
+    gettext \
     zlib \
     libffi \
     libgcc \
