@@ -60,14 +60,17 @@ COPY --from=romm-base /usr/lib/nginx /usr/lib/nginx
 COPY --from=romm-base /usr/sbin/nginx /usr/sbin/nginx
 
 # Move nginx config to final location and create required directories
-RUN addgroup -g 101 -S nginx && \
-    adduser -S -D -H -u 101 -h /var/cache/nginx -s /sbin/nologin -G nginx -g nginx nginx && \
-    mkdir -p /run/nginx && \
+RUN mkdir -p /run/nginx && \
     mkdir -p /var/log/nginx && \
     mkdir -p /var/cache/nginx && \
     mkdir -p /etc/nginx && \
     cp -r /tmp/nginx-etc/* /etc/nginx/ && \
-    rm -rf /tmp/nginx-etc
+    rm -rf /tmp/nginx-etc && \
+    # Create nginx user/group only if they don't exist
+    if ! id nginx >/dev/null 2>&1; then \
+        addgroup -S nginx && \
+        adduser -S -D -H -h /var/cache/nginx -s /sbin/nologin -G nginx -g nginx nginx; \
+    fi
 
 # Create romm directory structure
 RUN mkdir -p /romm /redis-data && \
