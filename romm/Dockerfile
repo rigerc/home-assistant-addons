@@ -15,12 +15,11 @@ COPY --from=romm-base /usr/local/lib/python3.13 /usr/local/lib/python3.13
 # - p7zip: 7zip archive support
 # - tzdata: Timezone data
 # - valkey: Redis-compatible in-memory data store (for background jobs)
-# - nginx: Web server for serving frontend and proxying to backend
-# - py3-pip: For installing additional Python packages
+# - pcre2: PCRE library for nginx regex support
+# - zlib: Compression library (needed by Python and nginx)
 # Python runtime dependencies:
 # - libffi: Foreign Function Interface library (needed by Python ctypes)
 # - libgcc: GCC runtime library (needed by Python)
-# - zlib: Compression library (needed by Python)
 # - readline: Command line editing (needed by Python)
 # - sqlite-libs: SQLite database (needed by Python sqlite3 module)
 # - ncurses-libs: Terminal handling (needed by Python)
@@ -34,11 +33,10 @@ RUN apk add --no-cache \
     tzdata \
     libmagic \
     valkey \
-    nginx \
-    py3-pip \
+    pcre2 \
+    zlib \
     libffi \
     libgcc \
-    zlib \
     readline \
     sqlite-libs \
     ncurses-libs \
@@ -54,11 +52,20 @@ COPY --from=romm-base /backend /backend
 # Copy RAHasher binary for RetroAchievements support
 COPY --from=romm-base /usr/bin/RAHasher /usr/bin/RAHasher
 
-# Copy nginx configuration and frontend files from base image
+# Copy nginx and frontend files from base image
+# Copy to temporary locations first to avoid conflicts, then move
 COPY --from=romm-base /var/www/html /var/www/html
-COPY --from=romm-base /etc/nginx /etc/nginx
-COPY --from=romm-base /usr/lib/nginx/modules /usr/lib/nginx/modules
+COPY --from=romm-base /etc/nginx /tmp/nginx-etc
+COPY --from=romm-base /usr/lib/nginx /usr/lib/nginx
 COPY --from=romm-base /usr/sbin/nginx /usr/sbin/nginx
+
+# Move nginx config to final location and create required directories
+RUN mkdir -p /run/nginx && \
+    mkdir -p /var/log/nginx && \
+    mkdir -p /var/cache/nginx && \
+    mkdir -p /etc/nginx && \
+    cp -r /tmp/nginx-etc/* /etc/nginx/ && \
+    rm -rf /tmp/nginx-etc
 
 # Create romm directory structure
 RUN mkdir -p /romm /redis-data && \
