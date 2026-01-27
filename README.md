@@ -94,9 +94,9 @@ SOFTWARE.
 [license-shield]: https://img.shields.io/github/license/rigerc/home-assistant-addons.svg
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2025.svg
 [project-stage-shield]: https://img.shields.io/badge/project%20stage-production%20ready-brightgreen.svg
-[addon-cleanuparr]: https://github.com/rigerc/home-assistant-addons/tree/cleanuparr-0.1.2
-[addon-doc-cleanuparr]: https://github.com/rigerc/home-assistant-addons/blob/cleanuparr-0.1.2/README.md
-[cleanuparr-version-shield]: https://img.shields.io/badge/version-0.1.2-blue.svg
+[addon-cleanuparr]: https://github.com/rigerc/home-assistant-addons/tree/cleanuparr-0.1.3
+[addon-doc-cleanuparr]: https://github.com/rigerc/home-assistant-addons/blob/cleanuparr-0.1.3/README.md
+[cleanuparr-version-shield]: https://img.shields.io/badge/version-0.1.3-blue.svg
 [cleanuparr-aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [cleanuparr-amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
 [cleanuparr-armhf-shield]: https://img.shields.io/badge/armhf-no-red.svg
