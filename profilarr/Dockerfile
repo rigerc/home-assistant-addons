@@ -18,12 +18,11 @@ COPY --from=profilarr-base /app /profilarr
 COPY --from=profilarr-base /usr/local/bin /usr/local/bin
 COPY --from=profilarr-base /usr/local/lib /usr/local/lib
 
-# Copy nginx configuration
-COPY rootfs/etc/nginx /etc/nginx
+# Copy s6-overlay service configuration
+COPY rootfs/ /
 
-# Copy startup script
-COPY run.sh /
-RUN chmod a+x /run.sh
+# Make s6 scripts executable
+RUN chmod +x /etc/cont-init.d/* /etc/services.d/*/run /etc/services.d/*/finish 2>/dev/null || true
 
 # Set environment for Python
 ENV PYTHONPATH=/profilarr
@@ -33,6 +32,3 @@ ENV FLASK_APP=/profilarr/main.py
 
 WORKDIR /profilarr
 EXPOSE 6099
-
-# Start the add-on
-CMD ["/run.sh"]

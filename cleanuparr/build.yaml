@@ -15,4 +15,4 @@ labels:
   org.opencontainers.image.revision: "git-commit-sha"
   org.opencontainers.image.version: "1.0.0"
 args:
-  CLEANUPARR_VERSION: "2.7.0"
+  CLEANUPARR_VERSION: "2.5.1"

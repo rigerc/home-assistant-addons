@@ -41,21 +41,20 @@ case "${ARCH}" in
 esac
 
 # Download Cleanuparr
-CLEANUPARR_VERSION="${CLEANUPARR_VERSION:-2.7.0}"
-DOWNLOAD_URL="https://github.com/Cleanuparr/Cleanuparr/releases/download/v${CLEANUPARR_VERSION}/Cleanuparr-${CLEANUPARR_VERSION}-linux-${BINARY_ARCH}.tar.gz"
-
+CLEANUPARR_VERSION="${CLEANUPARR_VERSION:-2.5.1}"
+DOWNLOAD_URL="https://github.com/Cleanuparr/Cleanuparr/releases/download/v${CLEANUPARR_VERSION}/Cleanuparr-${CLEANUPARR_VERSION}-linux-${BINARY_ARCH}.zip"
 bashio::log.info "Downloading Cleanuparr v${CLEANUPARR_VERSION} for ${BINARY_ARCH}..."
-if ! curl -fsSL "${DOWNLOAD_URL}" -o /tmp/cleanuparr.tar.gz; then
+if ! curl -fsSL "${DOWNLOAD_URL}" -o /tmp/cleanuparr.zip; then
     bashio::exit.nok "Failed to download Cleanuparr binary"
 fi
 
 # Extract binary
-tar -xzf /tmp/cleanuparr.tar.gz -C /tmp/
+zip -xzf /tmp/cleanuparr.zip -C /tmp/
 mv /tmp/Cleanuparr /usr/bin/cleanuparr
 chmod +x /usr/bin/cleanuparr
 
 # Cleanup
-rm -f /tmp/cleanuparr.tar.gz
+rm -f /tmp/cleanuparr.zip
 
 bashio::log.info "Cleanuparr v${CLEANUPARR_VERSION} installed successfully"
 
