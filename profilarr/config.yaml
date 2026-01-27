@@ -1,6 +1,6 @@
 ---
 name: "Profilarr"
-version: "0.1.5"
+version: "0.1.6"
 slug: "profilarr"
 description: "Profile management for *arr applications"
 arch:
