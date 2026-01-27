@@ -1,0 +1,2 @@
+if { mkdir -p /var/log/valkey }
+chmod 02755 /var/log/valkey

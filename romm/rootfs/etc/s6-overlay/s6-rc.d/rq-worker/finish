@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv bashio
+exit_code=${1}
+
+bashio::log.warning "RQ worker exited with code ${exit_code}"
+
+if [ "${exit_code}" -ne 0 ]; then
+    bashio::log.error "RQ worker crashed - stopping add-on"
+    /run/s6/basedir/bin/halt
+fi

@@ -1,9 +1,0 @@
-#!/usr/bin/with-contenv bashio
-declare APP_EXIT_CODE=${1}
-
-bashio::log.info "Stopping file watcher..."
-
-if [ -f /tmp/watcher.pid ]; then
-    kill $(cat /tmp/watcher.pid) 2>/dev/null || true
-    rm -f /tmp/watcher.pid
-fi

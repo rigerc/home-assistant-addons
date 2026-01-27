@@ -1,0 +1,2 @@
+if { mkdir -p /var/log/romm-main }
+chmod 02755 /var/log/romm-main

@@ -1,0 +1,2 @@
+if { mkdir -p /var/log/nginx-service }
+chmod 02755 /var/log/nginx-service

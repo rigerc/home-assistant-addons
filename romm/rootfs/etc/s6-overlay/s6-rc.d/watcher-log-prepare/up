@@ -1,0 +1,2 @@
+if { mkdir -p /var/log/watcher }
+chmod 02755 /var/log/watcher

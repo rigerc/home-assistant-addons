@@ -1,0 +1,7 @@
+#!/usr/bin/with-contenv bashio
+
+bashio::log.info "Starting file watcher for /romm/library..."
+
+cd /backend || bashio::exit.nok "Failed to change to /backend directory"
+
+exec watchfiles "python watcher.py" /romm/library
