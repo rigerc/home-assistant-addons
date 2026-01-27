@@ -90,9 +90,9 @@ SOFTWARE.
 [profilarr-amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
 [profilarr-armhf-shield]: https://img.shields.io/badge/armhf-no-red.svg
 [profilarr-armv7-shield]: https://img.shields.io/badge/armv7-no-red.svg
-[addon-romm]: https://github.com/rigerc/home-assistant-addons/tree/romm-0.1.25
-[addon-doc-romm]: https://github.com/rigerc/home-assistant-addons/blob/romm-0.1.25/README.md
-[romm-version-shield]: https://img.shields.io/badge/version-0.1.25-blue.svg
+[addon-romm]: https://github.com/rigerc/home-assistant-addons/tree/romm-0.1.26
+[addon-doc-romm]: https://github.com/rigerc/home-assistant-addons/blob/romm-0.1.26/README.md
+[romm-version-shield]: https://img.shields.io/badge/version-0.1.26-blue.svg
 [romm-aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [romm-amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
 [romm-armhf-shield]: https://img.shields.io/badge/armhf-no-red.svg
