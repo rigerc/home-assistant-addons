@@ -6,17 +6,15 @@ description: "Automated cleanup for Sonarr, Radarr, Lidarr, Readarr, and Whispar
 arch:
   - aarch64
   - amd64
-  - armv7
 url: https://github.com/Cleanuparr/Cleanuparr
 init: false
-startup: application
-boot: auto
 ports:
   11011/tcp: null
 ports_description:
   11011/tcp: Web interface
 map:
-  - config:rw
+  - addon_config:rw
+  - share:rw
 options:
   log_level: info
 schema:
