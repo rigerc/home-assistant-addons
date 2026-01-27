@@ -16,10 +16,15 @@ on:
         required: true
         type: string
 
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.addon }}
+  cancel-in-progress: true
+
 jobs:
   init:
     runs-on: ubuntu-latest
     name: ⏳ Prepare ${{ inputs.addon }} Release
+    timeout-minutes: 15
     outputs:
       release_name: ${{ steps.release_notes.outputs.name }}
       release_version: ${{ steps.values.outputs.release_version }}
@@ -27,7 +32,7 @@ jobs:
       image: ${{ steps.values.outputs.image }}
     steps:
       - name: ⤵️ Check out the repository
-        uses: actions/checkout@v4.3.1
+        uses: actions/checkout@v6.0.1
       - name: 🚀 Find add-on directories
         id: addons
         uses: home-assistant/actions/helpers/find-addons@master
@@ -81,7 +86,7 @@ jobs:
       - name: Tar files
         run: tar -cvf addon.tar ${{ inputs.addon }}
       - name: ⤴️ Upload Release Artifacts
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: release-files
           path: addon.tar
@@ -90,15 +95,18 @@ jobs:
     needs: init
     runs-on: ubuntu-latest
     name: 👩‍💻 Build & Push ${{ matrix.arch }}
+    timeout-minutes: 180
     permissions:
       packages: write
       id-token: write
+      contents: read
     strategy:
+      fail-fast: false
       matrix:
         arch: ${{ fromJson(needs.init.outputs.architectures) }}
     steps:
       - name: ⤵️ Download Release Artifacts
-        uses: actions/download-artifact@v4.3.0
+        uses: actions/download-artifact@v7.0.0
         with:
           name: release-files
       - name: Untar artifacts
@@ -123,13 +131,14 @@ jobs:
     needs: ["init", "build"]
     runs-on: ubuntu-latest
     name: 🚀 Release ${{ needs.init.outputs.release_name }}
+    timeout-minutes: 15
     permissions:
       contents: write
     steps:
       - name: ⤵️ Check out the repository
-        uses: actions/checkout@v4.3.1
+        uses: actions/checkout@v6.0.1
       - name: ⤵️ Download Release Artifacts
-        uses: actions/download-artifact@v4.3.0
+        uses: actions/download-artifact@v7.0.0
         with:
           name: release-files
       - name: Untar artifacts
@@ -139,7 +148,7 @@ jobs:
         with:
           addons: ${{ inputs.addon }}
       - name: 🔧 Commit new Addon Config
-        uses: stefanzweifel/git-auto-commit-action@v5.2.0
+        uses: stefanzweifel/git-auto-commit-action@v7.1.0
         with:
           commit_message: 🚀 Released ${{ needs.init.outputs.release_name }}
           commit_user_email: actions@github.com

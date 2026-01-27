@@ -13,15 +13,20 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   init:
     runs-on: ubuntu-latest
     name: ⏳ Initialize builds
+    timeout-minutes: 10
     outputs:
       addons: ${{ steps.changed_addons.outputs.addons }}
     steps:
       - name: ⤵️ Check out the repository
-        uses: actions/checkout@v4.3.1
+        uses: actions/checkout@v6.0.1
       - name: 🗝️ Get changed files
         id: changed_files
         uses: jitterbit/get-changed-files@v1
@@ -50,13 +55,15 @@ jobs:
     runs-on: ubuntu-latest
     if: needs.init.outputs.addons != '[]'
     name: 👷‍♂️ Build ${{ matrix.addon }} for ${{ matrix.arch }}
+    timeout-minutes: 120
     strategy:
+      fail-fast: false
       matrix:
         addon: ${{ fromJson(needs.init.outputs.addons) }}
         arch: ["aarch64", "amd64", "armhf", "armv7", "i386"]
     steps:
       - name: ⤵️ Check out repository
-        uses: actions/checkout@v4.3.1
+        uses: actions/checkout@v6.0.1
       - name: ℹ️ Get information
         id: info
         uses: home-assistant/actions/helpers/info@master
@@ -66,15 +73,16 @@ jobs:
         id: check
         run: |
           if [[ "${{ steps.info.outputs.architectures }}" =~ ${{ matrix.arch }} ]]; then
-             echo "${{ matrix.arch }} is a supported arch for ${{ matrix.addon }}, starting build";
-             echo "build_arch=true" >> $GITHUB_OUTPUT;
+             echo "${{ matrix.arch }} is a supported arch for ${{ matrix.addon }}, starting build"
+             echo "build_arch=true" >> $GITHUB_OUTPUT
+             echo "image=${{ steps.info.outputs.image }}" >> $GITHUB_OUTPUT
            else
-             echo "${{ matrix.arch }} is not a valid arch for ${{ matrix.addon }}, skipping build";
-             echo "build_arch=false" >> $GITHUB_OUTPUT;
+             echo "${{ matrix.arch }} is not a valid arch for ${{ matrix.addon }}, skipping build"
+             echo "build_arch=false" >> $GITHUB_OUTPUT
           fi
       - name: 💾 Cache Docker layers
         if: steps.check.outputs.build_arch == 'true'
-        uses: actions/cache@v4.2.1
+        uses: actions/cache@v5.0.2
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ matrix.addon }}-${{ matrix.arch }}-${{ github.sha }}
