@@ -10,6 +10,6 @@ labels:
   org.opencontainers.image.url: https://github.com/rigerc/home-assistant-addons
   org.opencontainers.image.source: https://github.com/rigerc/home-assistant-addons/profilarr
   org.opencontainers.image.documentation: https://github.com/rigerc/home-assistant-addons/profilarr/README.md
-  org.opencontainers.image.created: "2026-01-27T03:20:58Z"
-  org.opencontainers.image.version: 0.1.6
-  org.opencontainers.image.revision: f9f00538b6d1091b5c1d4f762085e5dda6d5443d
+  org.opencontainers.image.created: "2026-01-27T03:56:19Z"
+  org.opencontainers.image.version: 0.1.7
+  org.opencontainers.image.revision: 487d586d0e033194a5a6edd663ca1b9f2e93983a
