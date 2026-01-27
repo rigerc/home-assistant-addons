@@ -1,0 +1,13 @@
+---
+configuration:
+  log_level:
+    name: Log level
+    description: The log level for the application
+    options:
+      trace: Trace
+      debug: Debug
+      info: Info
+      notice: Notice
+      warning: Warning
+      error: Error
+      fatal: Fatal

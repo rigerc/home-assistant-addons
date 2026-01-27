@@ -1,0 +1,56 @@
+---
+name: "Your Add-on Name"
+version: "1.0.0"
+slug: "your_addon_slug"
+description: |
+  A clear, concise description of what your add-on does.
+  This description can span multiple lines and supports markdown.
+arch:
+  - aarch64
+  - amd64
+  # Uncomment additional architectures if supported
+  # - armv7
+  # - armhf
+  # - i386
+url: https://github.com/{username}/{repository}/tree/main/{addon_directory}
+init: false
+startup: system
+boot: manual
+ports:
+  8080/tcp: 8080
+ports_description:
+  8080/tcp: Web interface
+webui: "http://[HOST]:[PORT:8080]"
+map:
+  - share:rw
+  - addon_config:rw
+options:
+  log_level: info
+
+  # Add your default configuration options here
+  # Example:
+  # server_port: 8080
+  # enable_feature: true
+
+schema:
+  log_level: list(trace|debug|info|notice|warning|error|fatal)
+
+  # Add your schema validation here
+  # Example:
+  # server_port: "int(1024,65535)"
+  # enable_feature: bool
+
+  # Nested configuration example:
+  # database:
+  #   host: str
+  #   port: "int(1,65535)"
+  #   name: str
+  #   user: str
+  #   password: password
+
+  # Optional field example (add ? suffix):
+  # optional_field: str?
+
+  # List example:
+  # env_vars:
+  #   - str?

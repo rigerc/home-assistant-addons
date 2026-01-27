@@ -1,0 +1,38 @@
+#include <tunables/global>
+
+profile addon_slug flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # Signal handling
+  signal (send) set=(kill,term,int,hup,cont),
+
+  # Basic capabilities
+  capability,
+  file,
+
+  # Network access (uncomment if needed)
+  network tcp,
+  network udp,
+
+  # Home Assistant specific paths
+  /data/** rw,
+  /share/** rw,
+  /addon_configs/** rw,
+
+  # Process management (s6-overlay)
+  /init ix,
+  /bin/** ix,
+  /usr/bin/** ix,
+  /usr/local/bin/** ix,
+
+  # Device access (uncomment if needed)
+  # /dev/** rw,
+
+  # Temporary files
+  /tmp/** rw,
+  /run/** rw,
+
+  # Deny access to sensitive areas
+  deny /var/lib/** rw,
+  deny /root/** rw,
+}
