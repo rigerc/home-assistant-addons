@@ -1,0 +1,95 @@
+#include <tunables/global>
+
+profile cleanuparr flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # Signal handling
+  # Allow sending signals to child processes
+  signal (send) set=(kill,term,int,hup,cont),
+
+  # Basic capabilities
+  # Allow standard file operations
+  capability,
+  file,
+
+  # Network access
+  # Cleanuparr needs to connect to:
+  # - *arr applications (Sonarr, Radarr, Lidarr, Readarr)
+  # - Download clients (qBittorrent, Deluge, Transmission, µTorrent)
+  # - Notification services (Discord, Telegram, Apprise, etc.)
+  network tcp,
+  network udp,
+
+  # Home Assistant specific paths
+  # /addon_configs: User configuration (mapped from addon_config)
+  # /share: Shared files (for cross-seed, etc.)
+  /addon_configs/** rw,
+  /share/** rw,
+  /config/** rw,
+  /data/** rw,
+
+  # S6-Overlay process supervision
+  # Required for proper process management and init functionality
+  /init ix,
+  /bin/** ix,
+  /usr/bin/** ix,
+  /usr/local/bin/** ix,
+  /command/** ix,
+  /package/** ix,
+
+  # Bashio helper functions
+  # Home Assistant's bashio provides helper functions for add-ons
+  /usr/lib/bashio/** ix,
+
+  # Temporary files
+  # /tmp: Temporary files and directories
+  # /run: Runtime data (S6-Overlay state)
+  /tmp/** rw,
+  /run/** rw,
+  /var/run/** rw,
+
+  # Allow read access to system configuration
+  # Required for DNS resolution, SSL certificates, etc.
+  /etc/** r,
+  /etc/hosts rw,
+  /etc/resolv.conf rw,
+  /etc/nsswitch.conf r,
+
+  # SSL/TLS certificates
+  # Required for HTTPS connections to external services
+  /ssl/** r,
+  /etc/ssl/** r,
+  /usr/share/ca-certificates/** r,
+  /etc/ssl/certs/** r,
+
+  # Process information
+  # Required for health checks and process management
+  /proc/** r,
+
+  # Shared libraries
+  # Required for running the Cleanuparr binary
+  /lib/** r,
+  /lib64/** r,
+  /usr/lib/** r,
+  /usr/lib64/** r,
+
+  # Cleanuparr binary
+  # The main application binary
+  /usr/bin/cleanuparr ix,
+
+  # Log files
+  # Cleanuparr writes logs to its configuration directory
+  /addon_configs/cleanuparr_cleanuparr/cleanuparr/logs/** rw,
+  /config/cleanuparr/logs/** rw,
+
+  # Deny access to sensitive areas
+  # Prevent access to system-critical directories
+  deny /var/lib/** rw,
+  deny /root/** rw,
+  deny /boot/** rw,
+  deny /sys/** rw,
+
+  # Deny access to other add-ons' configurations
+  deny /addon_configs/*/config.* rw,
+  deny /options.json rw,
+}

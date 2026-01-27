@@ -5,7 +5,10 @@
       "Bash(shellcheck:*)",
       "Bash(tree:*)",
       "WebSearch",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs",
+      "mcp__augments__search_documentation"
     ]
   },
   "enableAllProjectMcpServers": true,

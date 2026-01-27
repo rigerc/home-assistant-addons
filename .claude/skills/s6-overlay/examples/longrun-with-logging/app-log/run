@@ -1,0 +1,3 @@
+#!/bin/sh
+# Logger service - writes to /var/log/app with automatic rotation
+exec logutil-service /var/log/app

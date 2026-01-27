@@ -1,0 +1,75 @@
+#!/usr/bin/with-contenv bashio
+# =============================================================================
+# Home Assistant Add-on: Cleanuparr
+# Main Service Script
+# =============================================================================
+
+bashio::log.info "Starting Cleanuparr service..."
+
+# Set up error handling
+set -e
+
+# =============================================================================
+# Configuration
+# =============================================================================
+
+# Get configuration directory
+CONFIG_DIR="/config/cleanuparr"
+export CLEANUPARR_CONFIG_DIR="${CONFIG_DIR}"
+
+# Get port (default to 11011 for Ingress)
+PORT="11011"
+export PORT="${PORT}"
+export BASE_PATH=""
+
+# Get log level
+LOG_LEVEL=$(bashio::config 'log_level')
+bashio::log.info "Log level: ${LOG_LEVEL}"
+
+# Get dry run setting
+DRY_RUN=$(bashio::config 'dry_run')
+if bashio::var.true "${DRY_RUN}"; then
+  bashio::log.warning "DRY RUN MODE ENABLED - No changes will be made"
+fi
+
+# =============================================================================
+# Pre-start Checks
+# =============================================================================
+
+bashio::log.info "Running pre-start checks..."
+
+# Verify configuration directory exists
+if [ ! -d "${CONFIG_DIR}" ]; then
+  bashio::log.error "Configuration directory not found: ${CONFIG_DIR}"
+  bashio::exit.nok "Configuration directory missing"
+fi
+
+# Verify Cleanuparr binary exists
+if [ ! -x "/usr/bin/cleanuparr" ]; then
+  bashio::log.error "Cleanuparr binary not found or not executable"
+  bashio::exit.nok "Cleanuparr binary missing"
+fi
+
+# Display Cleanuparr version
+bashio::log.info "Cleanuparr version information:"
+/usr/bin/cleanuparr --version 2>&1 | while IFS= read -r line; do
+  bashio::log.info "  ${line}"
+done || true
+
+# =============================================================================
+# Start Cleanuparr
+# =============================================================================
+
+bashio::log.info "Starting Cleanuparr on port ${PORT}..."
+bashio::log.info "Configuration directory: ${CONFIG_DIR}"
+bashio::log.info "Web UI will be available via Ingress"
+
+# Change to configuration directory
+cd "${CONFIG_DIR}" || bashio::exit.nok "Failed to change to configuration directory"
+
+# Execute Cleanuparr
+# The binary handles its own logging and HTTP server
+exec /usr/bin/cleanuparr \
+  --config "${CONFIG_DIR}" \
+  --port "${PORT}" \
+  2>&1
