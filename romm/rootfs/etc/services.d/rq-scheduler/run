@@ -1,0 +1,10 @@
+#!/usr/bin/with-contenv bashio
+
+bashio::log.info "Starting RQ scheduler..."
+
+cd /backend || bashio::exit.nok "Failed to change to /backend directory"
+
+exec rqscheduler \
+    --url "redis://127.0.0.1:6379/0" \
+    --pid /tmp/rq_scheduler.pid \
+    --interval 60

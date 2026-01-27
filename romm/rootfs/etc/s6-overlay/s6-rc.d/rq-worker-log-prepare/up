@@ -1,2 +1,0 @@
-if { mkdir -p /var/log/rq-worker }
-chmod 02755 /var/log/rq-worker

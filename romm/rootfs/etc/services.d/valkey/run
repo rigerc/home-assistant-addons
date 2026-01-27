@@ -1,0 +1,35 @@
+#!/usr/bin/with-contenv bashio
+
+# Check if Valkey is already running from init script
+if python3 -c "import socket; s=socket.socket(); s.settimeout(1); s.connect(('127.0.0.1', 6379)); s.close()" 2>/dev/null; then
+    bashio::log.info "Valkey already running from init script, monitoring existing instance..."
+
+    # Get PID of the running Valkey instance
+    VALKEY_PID=$(pgrep -f "valkey-server.*6379" | head -1)
+
+    if [ -n "$VALKEY_PID" ]; then
+        bashio::log.info "Monitoring Valkey process (PID: ${VALKEY_PID})"
+
+        # Monitor the process - this keeps the service alive
+        while kill -0 "$VALKEY_PID" 2>/dev/null; do
+            sleep 5
+        done
+
+        bashio::exit.nok "Valkey process stopped unexpectedly"
+    else
+        bashio::log.warning "Port 6379 in use but couldn't find Valkey PID, restarting..."
+        sleep 2
+        exec valkey-server \
+            --dir /data/redis_data \
+            --daemonize no \
+            --loglevel warning \
+            --pidfile /tmp/valkey-server.pid
+    fi
+else
+    bashio::log.info "Starting internal valkey..."
+    exec valkey-server \
+        --dir /data/redis_data \
+        --daemonize no \
+        --loglevel warning \
+        --pidfile /tmp/valkey-server.pid
+fi

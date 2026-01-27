@@ -1,2 +1,0 @@
-if { mkdir -p /var/log/rq-scheduler }
-chmod 02755 /var/log/rq-scheduler

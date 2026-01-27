@@ -76,15 +76,6 @@ Options:
 2. Use an external MariaDB server on your network
 3. Use a cloud-hosted MySQL database
 
-**Required database setup:**
-
-```sql
-CREATE DATABASE romm;
-CREATE USER 'romm-user'@'%' IDENTIFIED BY 'your-secure-password';
-GRANT ALL PRIVILEGES ON romm.* TO 'romm-user'@'%';
-FLUSH PRIVILEGES;
-```
-
 ## Configuration
 
 ### Required Settings

@@ -1,0 +1,12 @@
+#!/usr/bin/with-contenv bashio
+
+bashio::log.info "Starting RQ worker..."
+
+cd /backend || bashio::exit.nok "Failed to change to /backend directory"
+
+exec rq worker \
+    --path /backend \
+    --url "redis://127.0.0.1:6379/0" \
+    --results-ttl 86400 \
+    --pid /tmp/rq_worker.pid \
+    high default low

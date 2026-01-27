@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv bashio
+declare APP_EXIT_CODE=${1}
+
+bashio::log.info "Stopping RQ scheduler..."
+
+if [ -f /tmp/rq_scheduler.pid ]; then
+    kill $(cat /tmp/rq_scheduler.pid) 2>/dev/null || true
+    rm -f /tmp/rq_scheduler.pid
+fi

@@ -1,9 +1,0 @@
-#!/usr/bin/with-contenv bashio
-exit_code=${1}
-
-bashio::log.info "Stopping valkey..."
-
-if [ -f /tmp/valkey-server.pid ]; then
-    kill $(cat /tmp/valkey-server.pid) 2>/dev/null || true
-    rm -f /tmp/valkey-server.pid
-fi

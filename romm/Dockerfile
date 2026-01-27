@@ -79,10 +79,10 @@ RUN mkdir -p /romm /redis-data && \
 # Copy rootfs (s6 service scripts)
 COPY rootfs /
 
-# Set permissions for s6-rc services
-RUN chmod a+x /etc/s6-overlay/scripts/*.sh \
-    && find /etc/s6-overlay/s6-rc.d -type f -name "run" -exec chmod +x {} \; \
-    && find /etc/s6-overlay/s6-rc.d -type f -name "finish" -exec chmod +x {} \;
+# Set permissions
+RUN chmod a+x /etc/cont-init.d/*.sh \
+    && find /etc/services.d -type f -name "run" -exec chmod +x {} \; \
+    && find /etc/services.d -type f -name "finish" -exec chmod +x {} \;
 
 # Set environment for Python
 ENV PATH="/src/.venv/bin:${PATH}"
