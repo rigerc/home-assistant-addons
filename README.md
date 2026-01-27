@@ -27,6 +27,17 @@ add a repository is provided.
 
 This repository contains the following add-ons:
 
+### &#10003; [Cleanuparr][addon-cleanuparr]
+
+![Latest Version][cleanuparr-version-shield]
+![Supports armhf Architecture][cleanuparr-armhf-shield]
+![Supports armv7 Architecture][cleanuparr-armv7-shield]
+![Supports aarch64 Architecture][cleanuparr-aarch64-shield]
+![Supports amd64 Architecture][cleanuparr-amd64-shield]
+
+Automated cleanup for Sonarr, Radarr, Lidarr, Readarr, and Whisparr downloads. Remove stalled, slow, failed imports, and malware torrents.
+[:books: Cleanuparr add-on documentation][addon-doc-cleanuparr]
+
 ### &#10003; [Profilarr][addon-profilarr]
 
 ![Latest Version][profilarr-version-shield]
@@ -83,6 +94,13 @@ SOFTWARE.
 [license-shield]: https://img.shields.io/github/license/rigerc/home-assistant-addons.svg
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2025.svg
 [project-stage-shield]: https://img.shields.io/badge/project%20stage-production%20ready-brightgreen.svg
+[addon-cleanuparr]: https://github.com/rigerc/home-assistant-addons/tree/cleanuparr-0.1.0
+[addon-doc-cleanuparr]: https://github.com/rigerc/home-assistant-addons/blob/cleanuparr-0.1.0/README.md
+[cleanuparr-version-shield]: https://img.shields.io/badge/version-0.1.0-blue.svg
+[cleanuparr-aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
+[cleanuparr-amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
+[cleanuparr-armhf-shield]: https://img.shields.io/badge/armhf-no-red.svg
+[cleanuparr-armv7-shield]: https://img.shields.io/badge/armv7-no-red.svg
 [addon-profilarr]: https://github.com/rigerc/home-assistant-addons/tree/profilarr-0.1.5
 [addon-doc-profilarr]: https://github.com/rigerc/home-assistant-addons/blob/profilarr-0.1.5/README.md
 [profilarr-version-shield]: https://img.shields.io/badge/version-0.1.5-blue.svg
