@@ -28,21 +28,26 @@ export_env() {
 }
 
 # Export log level
-export_env LOG_LEVEL "$(bashio::config 'log_level')"
+LOG_LEVEL="$(bashio::config 'log_level')"
+export LOG_LEVEL
+printf "%s" "$LOG_LEVEL" > "/var/run/s6/container_environment/LOG_LEVEL"
 
 # Export timezone
-export_env TZ "$(bashio::config 'tz')"
-
-# Export Git configuration
-export_env GIT_USER_NAME "$(bashio::config 'git_user_name')"
-export_env GIT_USER_EMAIL "$(bashio::config 'git_user_email')"
+TZ="$(bashio::config 'tz')"
+export TZ
+printf "%s" "$TZ" > "/var/run/s6/container_environment/TZ"
 
 # Export ingress port for nginx
-export_env PROFILARR_PORT "$(bashio::addon.ingress_port)"
+PROFILARR_PORT="6099"
+export PROFILARR_PORT
+printf "%s" "$PROFILARR_PORT" > "/var/run/s6/container_environment/PROFILARR_PORT"
 
 # Export Flask configuration
-export_env FLASK_ENV production
-export_env FLASK_APP /profilarr/app/main.py
+export FLASK_ENV=production
+printf "%s" "production" > "/var/run/s6/container_environment/FLASK_ENV"
+
+export FLASK_APP=/profilarr/app/main.py
+printf "%s" "/profilarr/app/main.py" > "/var/run/s6/container_environment/FLASK_APP"
 
 # Set Python environment
 export_env PYTHONUNBUFFERED 1

@@ -20,10 +20,11 @@ COPY --from=profilarr-base /usr/local/lib /usr/local/lib
 # Copy rootfs (s6 service scripts)
 COPY rootfs /
 
-# Set permissions for service scripts
+# Set permissions for service scripts and ensure /init is executable
 RUN chmod a+x /etc/cont-init.d/*.sh \
     && find /etc/services.d -type f -name "run" -exec chmod +x {} \; \
-    && find /etc/services.d -type f -name "finish" -exec chmod +x {} \;
+    && find /etc/services.d -type f -name "finish" -exec chmod +x {} \; \
+    && if [ -f /init ]; then chmod +x /init; fi
 
 # Set environment for Python
 ENV PYTHONPATH=/profilarr
@@ -33,3 +34,6 @@ ENV FLASK_APP=/profilarr/main.py
 
 WORKDIR /profilarr
 EXPOSE 6099
+
+# Start s6-overlay
+CMD ["/init"]
