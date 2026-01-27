@@ -1,0 +1,29 @@
+#!/usr/bin/with-contenv bashio
+# =============================================================================
+# Home Assistant Add-on: Cleanuparr
+# Main service script - runs the application
+# =============================================================================
+
+bashio::log.info "Starting Cleanuparr..."
+
+# Set up error handling
+set -e
+
+# =============================================================================
+# Pre-start checks
+# =============================================================================
+
+# Get port mapping
+PORT="$(bashio::addon.port 11011/tcp)"
+
+# =============================================================================
+# Start Cleanuparr
+# =============================================================================
+
+bashio::log.info "Cleanuparr listening on port ${PORT}"
+
+# Execute Cleanuparr
+exec /usr/bin/cleanuparr \
+    --port "${PORT}" \
+    --config "/config/cleanuparr" \
+    2>&1

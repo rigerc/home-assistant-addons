@@ -1,0 +1,19 @@
+---
+build_from:
+  aarch64: "ghcr.io/home-assistant/aarch64-base:3.23"
+  amd64: "ghcr.io/home-assistant/amd64-base:3.23"
+  armv7: "ghcr.io/home-assistant/armv7-base:3.23"
+labels:
+  maintainer: "Rigerc <github@rigerc.com>"
+  org.opencontainers.image.authors: "Rigerc <github@rigerc.com>"
+  org.opencontainers.image.licenses: "MIT License"
+  org.opencontainers.image.title: "Home Assistant Add-on: Cleanuparr"
+  org.opencontainers.image.description: "Automated cleanup for Sonarr, Radarr, Lidarr, Readarr, and Whisparr downloads"
+  org.opencontainers.image.url: https://github.com/rigerc/home-assistant-addons
+  org.opencontainers.image.source: https://github.com/rigerc/home-assistant-addons/tree/main/cleanuparr
+  org.opencontainers.image.documentation: https://github.com/rigerc/home-assistant-addons/blob/main/cleanuparr/README.md
+  org.opencontainers.image.created: "2025-01-27T00:00:00Z"
+  org.opencontainers.image.revision: "git-commit-sha"
+  org.opencontainers.image.version: "1.0.0"
+args:
+  CLEANUPARR_VERSION: "2.7.0"
