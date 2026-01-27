@@ -5,9 +5,9 @@
 # Base Images per Architecture
 # Using Home Assistant's minimal base images (Alpine Linux 3.20)
 build_from:
-  aarch64: "ghcr.io/home-assistant/aarch64-base:3.20"
-  amd64: "ghcr.io/home-assistant/amd64-base:3.20"
-  armv7: "ghcr.io/home-assistant/armv7-base:3.20"
+  aarch64: "ghcr.io/home-assistant/aarch64-base:3.23"
+  amd64: "ghcr.io/home-assistant/amd64-base:3.23"
+  armv7: "ghcr.io/home-assistant/armv7-base:3.22"
 
 # Build Arguments
 # These are passed to the Dockerfile during build
