@@ -3,14 +3,15 @@ ARG BUILD_VERSION
 FROM santiagosayshey/profilarr:v1.1.3 AS profilarr-base
 FROM ${BUILD_FROM} AS final
 
-# Install runtime dependencies
+# Install runtime dependencies (Debian)
 # - bash: For shell scripts
 # - curl: For health checks
 # - nginx: For reverse proxy (ingress)
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
     curl \
-    nginx
+    nginx \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy application files from official Profilarr image
 COPY --from=profilarr-base /app /profilarr
@@ -31,5 +32,4 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV FLASK_APP=/profilarr/main.py
 
-WORKDIR /profilarr
 EXPOSE 6099

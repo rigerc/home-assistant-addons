@@ -9,7 +9,7 @@ arch:
 image: "ghcr.io/rigerc/ha-addons-profilarr-v1-{arch}"
 url: https://github.com/Sonarr/Sonarr
 boot: manual
-init: true
+init: false
 ingress: true
 ingress_port: 6099
 panel_icon: mdi:file-document-multiple
