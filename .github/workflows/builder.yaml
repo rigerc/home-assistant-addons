@@ -26,6 +26,7 @@ jobs:
     timeout-minutes: 10
     outputs:
       addons: ${{ steps.changed_addons.outputs.addons }}
+      is_dev: ${{ steps.branch_check.outputs.is_dev }}
     steps:
       - name: ⤵️ Check out the repository
         uses: actions/checkout@v6.0.1
@@ -51,6 +52,16 @@ jobs:
           changed=$(echo ${changed_addons[@]} | rev | cut -c 2- | rev)
           echo "addons=[$changed]" >> $GITHUB_OUTPUT;
           echo "Changed add-ons: [$changed]";
+      - name: 🏷️ Check branch type
+        id: branch_check
+        run: |
+          if [[ "${{ github.ref }}" == refs/heads/dev-* ]]; then
+            echo "is_dev=true" >> $GITHUB_OUTPUT
+            echo "🔧 Dev branch detected - running validation only (no push)"
+          else
+            echo "is_dev=false" >> $GITHUB_OUTPUT
+            echo "🚀 Main branch detected - building and pushing images"
+          fi
 
   build:
     needs: init
@@ -94,8 +105,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-${{ matrix.addon }}-${{ matrix.arch }}-
             ${{ runner.os }}-buildx-${{ matrix.addon }}-
-      - name: 🚀 Build ${{ matrix.addon }} add-on
-        if: steps.check.outputs.build_arch == 'true'
+      - name: 🔧 Validate build (dev branch)
+        if: steps.check.outputs.build_arch == 'true' && needs.init.outputs.is_dev == 'true'
+        uses: home-assistant/builder@2025.11.0
+        with:
+          args: |
+            --test \
+            --${{ matrix.arch }} \
+            --target /data/${{ matrix.addon }} \
+            --image "${{ steps.check.outputs.image }}" \
+            --docker-hub "ghcr.io/${{ github.repository_owner }}" \
+            --addon
+      - name: 🚀 Build and push (main branch)
+        if: steps.check.outputs.build_arch == 'true' && needs.init.outputs.is_dev != 'true'
         uses: home-assistant/builder@2025.11.0
         with:
           args: |
