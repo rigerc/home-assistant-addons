@@ -2,21 +2,9 @@
 build_from:
   aarch64: "ghcr.io/home-assistant/aarch64-base:3.23"
   amd64: "ghcr.io/home-assistant/amd64-base:3.23"
-# Docker Labels
-# Metadata for the container image
+
 labels:
-  org.opencontainers.image.title: "Home Assistant Unofficial Add-on: cleanuparr"
-  org.opencontainers.image.description: "Automated cleanup for Sonarr, Radarr, Lidarr, Readarr, and Whisparr downloads"
-  org.opencontainers.image.source: "https://github.com/rigerc/home-assistant-addons/cleanuparr"
-  org.opencontainers.image.licenses: "Apache License 2.0"
-  org.opencontainers.image.authors: "Your Name <you@example.com>"
-  org.opencontainers.image.created: "2026-01-28T00:48:55Z"
-  org.opencontainers.image.version: "2.5.1.51"
-  org.opencontainers.image.url: https://github.com/rigerc/home-assistant-addons
-  org.opencontainers.image.documentation: https://github.com/rigerc/home-assistant-addons/cleanuparr/README.md
-  org.opencontainers.image.revision: 8d0185d22e947f1fe4293d562f71967dd9309f1e
-# Codenotary Configuration
-# Optional: Sign your images for verification (+1 security point)
-# codenotary:
-#   signer: "developer@example.com"
-#   base_image: "notary@home-assistant.io"
+  org.opencontainers.image.title: "Home Assistant Add-on: Cleanuparr"
+  org.opencontainers.image.description: "Automated cleanup for Sonarr, Radarr, and download clients"
+  org.opencontainers.image.source: "https://github.com/Cleanuparr/Cleanuparr"
+  io.hass.upstream.image: "ghcr.io/cleanuparr/cleanuparr"

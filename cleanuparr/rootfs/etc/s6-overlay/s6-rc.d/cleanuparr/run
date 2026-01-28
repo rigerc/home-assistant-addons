@@ -1,0 +1,22 @@
+#!/command/with-contenv bashio
+
+exec 2>&1
+
+bashio::log.info "Starting Cleanuparr..."
+
+# Get configuration
+LOG_LEVEL=$(bashio::config 'log_level')
+DRY_RUN=$(bashio::config 'dry_run')
+PORT=$(bashio::addon.port 11011)
+
+bashio::log.info "Log level: ${LOG_LEVEL}"
+bashio::log.info "Dry run: ${DRY_RUN}"
+bashio::log.info "Port: ${PORT}"
+
+# Set environment variables for Cleanuparr
+export ASPNETCORE_URLS="http://0.0.0.0:${PORT}"
+export ASPNETCORE_ENVIRONMENT="Production"
+export LOGLEVEL__DEFAULT="${LOG_LEVEL}"
+
+# Run Cleanuparr as appuser
+exec su-exec appuser:appgroup /usr/bin/cleanuparr

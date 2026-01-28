@@ -1,9 +1,12 @@
 ---
 name: "Cleanuparr"
-version: "2.5.1"  # github:Cleanuparr/Cleanuparr
+version: "2.5.1"  # docker:ghcr.io/cleanuparr/cleanuparr
 slug: "cleanuparr"
-description: >-
-  Automated cleanup for Sonarr, Radarr, Lidarr, Readarr, and Whisparr downloads. Remove stalled, slow, failed imports, and malware torrents. Automatic search replacement and seeding management.
+description: |
+  Automated cleanup tool for Sonarr, Radarr, and download clients.
+  Removes unwanted or blocked files, manages stalled downloads, and
+  enforces blacklists/whitelists. Includes malware detection and
+  automatic search triggers for removed content.
 url: "https://github.com/Cleanuparr/Cleanuparr"
 arch:
   - aarch64
@@ -11,108 +14,34 @@ arch:
 init: false
 startup: services
 boot: auto
-# Supported architectures
-# aarch64: ARM 64-bit (Raspberry Pi 4+)
-# amd64: Intel/AMD 64-bit
-# armv7: ARM 32-bit v7 (Raspberry Pi 2+)
 
-# Startup timing
-# - services: Start after Home Assistant services are ready
-# - auto: Automatic start
-
-# Network Configuration
-# Ingress is enabled for secure web UI access through Home Assistant
-ingress: true
-ingress_port: 11011
-ingress_entry: "/"
-panel_icon: "mdi:broom"
-panel_title: "Cleanuparr"
-panel_admin: false
-# Direct port access (disabled by default, use Ingress instead)
+# Main HTTP port - at root level, NOT in options
 ports:
-  11011/tcp: null
+  11011/tcp: 11011
+
 ports_description:
-  11011/tcp: "Web interface (use Ingress for secure access)"
-# Directory Mapping
-# addon_config: Maps to /addon_configs/cleanuparr_cleanuparr (user configuration)
-# share: Maps to /homeassistant/share (for cross-seed or other shared files)
+  11011/tcp: "Web UI and API"
+
+# Volume mappings
 map:
-  - addon_config:rw
-  - share:rw
-# Filesystem paths (automatically mounted by Supervisor)
-# /data: Persistent add-on data (not used in this add-on)
-# /config: Add-on configuration (mapped from addon_config)
-# /share: Shared files (for cross-seed, etc.)
+  - type: addon_config
+    read_only: false
 
-# Options - User configuration
+# Home Assistant integration not required
+homeassistant_api: false
+hassio_api: false
+
+# User options
 options:
-  # Application Settings
-  log_level: "info"
-  dry_run: true
-  display_support_banner: true
-  # HTTP Settings
-  http_max_retries: 3
-  http_timeout: 30
-  http_certificate_validation: "enabled_for_local_addresses"
-  # Search Settings
-  search_enabled: true
-  search_delay: 5
-  # Logging
-  log_rolling_size_mb: 10
-  log_retained_file_count: 5
-  log_time_limit_hours: 24
-  log_archive_enabled: true
-  log_archive_retained_count: 3
-  log_archive_time_limit_days: 30
-# Schema - Configuration validation
-schema:
-  # Application Settings
-  log_level: list(trace|debug|info|notice|warning|error|fatal)
-  dry_run: bool
-  display_support_banner: bool
-  # HTTP Settings
-  http_max_retries: int(0,10)
-  http_timeout: int(5,120)
-  http_certificate_validation: list(enabled|enabled_for_local_addresses|disabled)
-  # Search Settings
-  search_enabled: bool
-  search_delay: int(0,60)
-  # Logging
-  log_rolling_size_mb: int(1,100)
-  log_retained_file_count: int(1,50)
-  log_time_limit_hours: int(1,168)
-  log_archive_enabled: bool
-  log_archive_retained_count: int(1,20)
-  log_archive_time_limit_days: int(1,365)
-# Container Configuration
-tmpfs: false
-stdin: false
-timeout: 30
-# Backup Configuration
-backup: hot
-backup_exclude:
-  - "**/*.log"
-  - "**/*.zip"
-# Advanced Settings
-advanced: false
-stage: stable
-# Version Requirements
-# Minimum Home Assistant version (optional)
-# homeassistant: "2023.1.0"
+  log_level: "Information"
+  dry_run: false
 
-# Environment Variables (passed through to container)
-environment:
-  TZ: "Etc/UTC"
-  PORT: "11011"
-  BASE_PATH: ""
+schema:
+  log_level: list(Trace|Debug|Information|Warning|Error|Fatal)
+  dry_run: bool
+
 # Security
-# AppArmor profile is enabled (default)
-# This provides +1 security point
 apparmor: true
-# Image (for pre-built containers)
-# Commented out to force local builds during development
-# Uncomment and set correct image for production builds
+
+# Image reference
 image: "ghcr.io/rigerc/ha-addons-cleanuparr-{arch}"
-# Codenotary (code signing)
-# Uncomment and set your signing email
-# codenotary: "developer@example.com"

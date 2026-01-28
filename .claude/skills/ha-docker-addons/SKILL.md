@@ -33,6 +33,8 @@ Before starting, understand what the upstream image provides and requires.
 
 **Inspect the Docker image:**
 
+Use the `scripts/analyze-image.sh` helper to automate inspection and generate a summary report.
+
 ```bash
 # Pull the upstream image
 docker pull grafana/loki:3.6.4
