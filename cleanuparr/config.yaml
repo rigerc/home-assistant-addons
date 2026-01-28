@@ -1,6 +1,6 @@
 ---
 name: "Cleanuparr"
-version: "2.5.1"  # docker:ghcr.io/cleanuparr/cleanuparr
+version: "2.5.1" # docker:ghcr.io/cleanuparr/cleanuparr
 slug: "cleanuparr"
 description: |
   Automated cleanup tool for Sonarr, Radarr, and download clients.
@@ -14,34 +14,26 @@ arch:
 init: false
 startup: services
 boot: auto
-
 # Main HTTP port - at root level, NOT in options
 ports:
   11011/tcp: 11011
-
 ports_description:
   11011/tcp: "Web UI and API"
-
 # Volume mappings
 map:
   - type: addon_config
     read_only: false
-
 # Home Assistant integration not required
 homeassistant_api: false
 hassio_api: false
-
 # User options
 options:
   log_level: "Information"
   dry_run: false
-
 schema:
   log_level: list(Trace|Debug|Information|Warning|Error|Fatal)
   dry_run: bool
-
 # Security
 apparmor: true
-
 # Image reference
 image: "ghcr.io/rigerc/ha-addons-cleanuparr-{arch}"

@@ -33,7 +33,11 @@ This repository contains the following add-ons:
 ![Supports aarch64 Architecture][cleanuparr-aarch64-shield]
 ![Supports amd64 Architecture][cleanuparr-amd64-shield]
 
-Automated cleanup for Sonarr, Radarr, Lidarr, Readarr, and Whisparr downloads. Remove stalled, slow, failed imports, and malware torrents. Automatic search replacement and seeding management.
+Automated cleanup tool for Sonarr, Radarr, and download clients.
+Removes unwanted or blocked files, manages stalled downloads, and
+enforces blacklists/whitelists. Includes malware detection and
+automatic search triggers for removed content.
+
 [:books: Cleanuparr add-on documentation][addon-doc-cleanuparr]
 
 ### &#10003; [Profilarr][addon-profilarr]
@@ -88,9 +92,9 @@ SOFTWARE.
 [license-shield]: https://img.shields.io/github/license/rigerc/home-assistant-addons.svg
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2025.svg
 [project-stage-shield]: https://img.shields.io/badge/project%20stage-production%20ready-brightgreen.svg
-[addon-cleanuparr]: https://github.com/rigerc/home-assistant-addons/tree/cleanuparr-2.5.1.51
-[addon-doc-cleanuparr]: https://github.com/rigerc/home-assistant-addons/blob/cleanuparr-2.5.1.51/README.md
-[cleanuparr-version-shield]: https://img.shields.io/badge/version-2.5.1.51-blue.svg
+[addon-cleanuparr]: https://github.com/rigerc/home-assistant-addons/tree/cleanuparr-2.5.1
+[addon-doc-cleanuparr]: https://github.com/rigerc/home-assistant-addons/blob/cleanuparr-2.5.1/README.md
+[cleanuparr-version-shield]: https://img.shields.io/badge/version-2.5.1-blue.svg
 [cleanuparr-aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [cleanuparr-amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
 [cleanuparr-armhf-shield]: https://img.shields.io/badge/armhf-no-red.svg

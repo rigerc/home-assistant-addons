@@ -2,9 +2,13 @@
 build_from:
   aarch64: "ghcr.io/home-assistant/aarch64-base:3.23"
   amd64: "ghcr.io/home-assistant/amd64-base:3.23"
-
 labels:
-  org.opencontainers.image.title: "Home Assistant Add-on: Cleanuparr"
+  org.opencontainers.image.title: "Home Assistant Unofficial Add-on: cleanuparr"
   org.opencontainers.image.description: "Automated cleanup for Sonarr, Radarr, and download clients"
-  org.opencontainers.image.source: "https://github.com/Cleanuparr/Cleanuparr"
+  org.opencontainers.image.source: "https://github.com/rigerc/home-assistant-addons/cleanuparr"
   io.hass.upstream.image: "ghcr.io/cleanuparr/cleanuparr"
+  org.opencontainers.image.url: https://github.com/rigerc/home-assistant-addons
+  org.opencontainers.image.documentation: https://github.com/rigerc/home-assistant-addons/cleanuparr/README.md
+  org.opencontainers.image.created: "2026-01-28T17:42:08Z"
+  org.opencontainers.image.revision: 96e18c9e1a9c9608e201c88d4a5ffbe44501a6ac
+  org.opencontainers.image.version: 2.5.1
