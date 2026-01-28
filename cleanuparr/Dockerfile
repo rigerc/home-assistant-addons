@@ -37,9 +37,9 @@ RUN addgroup -g 1000 appgroup && \
 # Copy S6-overlay configuration (v2 legacy format)
 COPY rootfs /
 
-# Set permissions for S6 v2 service scripts
-RUN chmod +x /etc/services.d/cleanuparr/run && \
-    chmod +x /etc/services.d/cleanuparr/finish
+# Set permissions for S6 v2 scripts (same pattern as romm)
+RUN find /etc/services.d -type f -name "run" -exec chmod +x {} \; && \
+    find /etc/services.d -type f -name "finish" -exec chmod +x {} \;
 
 WORKDIR /
 
