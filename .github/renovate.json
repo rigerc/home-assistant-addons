@@ -8,38 +8,30 @@
   "customManagers": [
     {
       "customType": "regex",
-      "description": "Extract upstream app versions from config.yaml",
-      "managerFilePatterns": ["**/config.yaml"],
+      "description": "Extract base image versions from Dockerfile/build.yaml",
+      "managerFilePatterns": ["^(romm|cleanuparr|profilarr)/(Dockerfile|build.yaml)$"],
+      "matchStringsStrategy": "any",
       "matchStrings": [
-        "^version:\\s*[\"']?(?<currentValue>[\\d.]+)[\"']?\\s*#\\s*docker:(?<depName>[^\\s]+)"
+        "ARG BUILD_FROM=(?<depName>.*?):(?<currentValue>.*?)\\s+",
+        "(aarch64|amd64):\\s[\"']?(?<depName>.*?):(?<currentValue>.*?)[\"']?\\s"
       ],
-      "datasourceTemplate": "docker",
-      "versioningTemplate": "semver",
-      "autoReplaceStringTemplate": "version: \"{{{newValue}}}\" # docker:{{{depName}}}"
+      "datasourceTemplate": "docker"
     }
   ],
   "packageRules": [
     {
-      "description": "Group base image updates",
+      "description": "Group base image updates for addons",
       "groupName": "Add-on base image",
       "matchDatasources": ["docker"],
-      "matchFileNames": ["**/Dockerfile", "**/build.yaml"]
+      "matchFileNames": ["^(romm|cleanuparr|profilarr)/(Dockerfile|build.yaml)$"]
     },
     {
       "description": "Automerge patch updates for base images",
       "groupName": "Add-on base image",
       "matchDatasources": ["docker"],
-      "matchFileNames": ["**/Dockerfile", "**/build.yaml"],
+      "matchFileNames": ["^(romm|cleanuparr|profilarr)/(Dockerfile|build.yaml)$"],
       "matchUpdateTypes": ["patch"],
       "automerge": false
-    },
-    {
-      "description": "Group upstream app version updates",
-      "groupName": "Upstream app version",
-      "matchDatasources": ["docker"],
-      "matchFileNames": ["**/config.yaml"],
-      "automerge": false,
-      "addLabels": ["upstream-version"]
     }
   ]
 }

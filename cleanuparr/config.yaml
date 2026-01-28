@@ -1,6 +1,6 @@
 ---
 name: "Cleanuparr"
-version: "2.5.1" # docker:ghcr.io/cleanuparr/cleanuparr
+version: "0.1"
 slug: "cleanuparr"
 description: |
   Automated cleanup tool for Sonarr, Radarr, and download clients.

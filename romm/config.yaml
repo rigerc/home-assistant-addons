@@ -1,6 +1,6 @@
 ---
 name: "Romm"
-version: "4.6"  # docker:rommapp/romm
+version: "1.0"
 slug: "romm"
 description: |
   Self-hosted ROM collection manager and emulator launcher.
