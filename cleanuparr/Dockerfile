@@ -43,20 +43,15 @@ RUN echo "═══════════════════════�
 # =============================================================================
 RUN \
     echo "[2/4] Downloading and installing Cleanuparr binary..." && \
-    echo "→ Detecting architecture..." && \
-    case "${BUILD_ARCH}" in \
-        aarch64) \
-            BINARY_ARCH="arm64" \
-            echo "  Mapped: aarch64 → arm64" \
-            ;; \
-        amd64) \
-            BINARY_ARCH="amd64" \
-            echo "  Mapped: amd64 → amd64" \
-            ;; \
-        *) \
-            echo "  ✗ Unsupported architecture: ${BUILD_ARCH}" && exit 1 \
-            ;; \
-    esac && \
+    echo "→ Detecting architecture (BUILD_ARCH=${BUILD_ARCH})..." && \
+    if [ "${BUILD_ARCH}" = "aarch64" ]; then \
+        BINARY_ARCH="arm64" && echo "  Mapped: aarch64 → arm64"; \
+    elif [ "${BUILD_ARCH}" = "amd64" ]; then \
+        BINARY_ARCH="amd64" && echo "  Mapped: amd64 → amd64"; \
+    else \
+        echo "  ✗ Unsupported architecture: ${BUILD_ARCH}" && exit 1; \
+    fi && \
+    echo "→ BINARY_ARCH=${BINARY_ARCH}" && \
     DOWNLOAD_URL="https://github.com/Cleanuparr/Cleanuparr/releases/download/v${BUILD_VERSION}/Cleanuparr-${BUILD_VERSION}-linux-${BINARY_ARCH}.zip" && \
     echo "→ Downloading Cleanuparr v${BUILD_VERSION} for ${BINARY_ARCH}..." && \
     echo "  URL: ${DOWNLOAD_URL}" && \
