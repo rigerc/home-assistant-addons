@@ -52,12 +52,17 @@ jobs:
         id: values
         run: |
           date="$(date +"%Y-%m-%dT%H:%M:%SZ")"
-          version="${{ steps.release_notes.outputs.tag_name }}"
-          version="${version##*-}"
 
-          echo "Add-on: ${{ inputs.addon }} Version: $version Date: $date"
+          # Read upstream version from config.yaml
+          upstream_version=$(yq '.version' "${{ inputs.addon }}/config.yaml")
+
+          # Append build counter (using run_number for simplicity)
+          release_version="${upstream_version}.${{ github.run_number }}"
+
+          echo "Add-on: ${{ inputs.addon }} Upstream: ${upstream_version} Release: ${release_version} Date: $date"
           echo "release_date=$date" >> $GITHUB_OUTPUT
-          echo "release_version=$version" >> $GITHUB_OUTPUT
+          echo "release_version=$release_version" >> $GITHUB_OUTPUT
+          echo "upstream_version=$upstream_version" >> $GITHUB_OUTPUT
           echo "image=$(echo ${{ steps.info.outputs.image }} | cut -d'/' -f3)" >> $GITHUB_OUTPUT;
       - name: ✍️ Update Config Files
         run: |

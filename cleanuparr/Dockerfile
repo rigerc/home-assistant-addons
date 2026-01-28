@@ -2,7 +2,7 @@ ARG BUILD_FROM
 FROM ${BUILD_FROM}
 
 # Build arguments
-ARG APP_VERSION
+ARG BUILD_VERSION
 ARG BUILD_ARCH
 ARG BUILD_DATE
 ARG BUILD_VERSION
@@ -26,7 +26,7 @@ LABEL \
 RUN \
   echo "════════════════════════════════════════════════════════════════" && \
   echo "  Home Assistant Add-on: Cleanuparr" && \
-  echo "  Version: ${BUILD_VERSION} / Cleanuparr: ${APP_VERSION}" && \
+  echo "  Version: ${BUILD_VERSION} / Cleanuparr: ${BUILD_VERSION}" && \
   echo "  Architecture: ${BUILD_ARCH}" && \
   echo "════════════════════════════════════════════════════════════════" && \
   echo "" && \
@@ -67,8 +67,8 @@ RUN \
       echo "  ✗ Unsupported architecture: ${BUILD_ARCH}" && exit 1 \
       ;; \
   esac && \
-  DOWNLOAD_URL="https://github.com/Cleanuparr/Cleanuparr/releases/download/v${APP_VERSION}/Cleanuparr-${APP_VERSION}-linux-${BINARY_ARCH}.zip" && \
-  echo "→ Downloading Cleanuparr v${APP_VERSION} for ${BINARY_ARCH}..." && \
+  DOWNLOAD_URL="https://github.com/Cleanuparr/Cleanuparr/releases/download/v${BUILD_VERSION}/Cleanuparr-${BUILD_VERSION}-linux-${BINARY_ARCH}.zip" && \
+  echo "→ Downloading Cleanuparr v${BUILD_VERSION} for ${BINARY_ARCH}..." && \
   echo "  URL: ${DOWNLOAD_URL}" && \
   curl -fsSL "${DOWNLOAD_URL}" -o /tmp/cleanuparr.zip && \
   echo "✓ Download complete" && \
@@ -76,11 +76,11 @@ RUN \
   unzip -q /tmp/cleanuparr.zip -d /tmp/ && \
   echo "✓ Archive extracted" && \
   echo "→ Installing binary to /usr/bin/cleanuparr..." && \
-  mv "/tmp/Cleanuparr-${APP_VERSION}-linux-${BINARY_ARCH}/Cleanuparr" /usr/bin/cleanuparr && \
+  mv "/tmp/Cleanuparr-${BUILD_VERSION}-linux-${BINARY_ARCH}/Cleanuparr" /usr/bin/cleanuparr && \
   chmod +x /usr/bin/cleanuparr && \
   echo "✓ Binary installed and made executable" && \
   echo "→ Cleaning up temporary files..." && \
-  rm -rf /tmp/cleanuparr.zip "/tmp/Cleanuparr-${APP_VERSION}-linux-${BINARY_ARCH}" && \
+  rm -rf /tmp/cleanuparr.zip "/tmp/Cleanuparr-${BUILD_VERSION}-linux-${BINARY_ARCH}" && \
   echo "✓ Cleanup complete" && \
   echo "" && \
   echo "→ Verifying installation..." && \

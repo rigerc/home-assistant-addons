@@ -1,6 +1,6 @@
 ARG BUILD_FROM
-ARG APP_VERSION=0.0
-FROM rommapp/romm:${APP_VERSION} AS romm-base
+ARG BUILD_VERSION
+FROM rommapp/romm:${BUILD_VERSION} AS romm-base
 FROM ${BUILD_FROM} AS final
 
 # Copy Python runtime from Romm image (ensures compatibility with venv)

@@ -1,6 +1,6 @@
 ARG BUILD_FROM
-ARG APP_VERSION=0.0
-FROM santiagosayshey/profilarr:${APP_VERSION} AS profilarr-base
+ARG BUILD_VERSION
+FROM santiagosayshey/profilarr:${BUILD_VERSION} AS profilarr-base
 FROM ${BUILD_FROM} AS final
 
 # Install runtime dependencies
