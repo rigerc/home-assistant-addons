@@ -186,7 +186,7 @@ docker run --rm myapp/official:latest find / -type f | grep -v /proc | grep -v /
 ```dockerfile
 ARG BUILD_FROM
 ARG BUILD_VERSION
-ARG REDIS_VERSION=7.2-alpine
+ARG REDIS_VERSION=8.4-alpine
 
 # Stage 1: Application
 FROM myapp/server:${BUILD_VERSION} AS app-source
