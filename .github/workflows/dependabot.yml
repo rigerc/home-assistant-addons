@@ -1,29 +1,17 @@
-# This is the workflow to automatically approve and merge dependabot PRs
-#
-name: Dependabot automation
-
-on:
-  # Allows you to call this workflow from other workflows
-  workflow_call:
-    secrets:
-      GH_TOKEN:
-        required: false
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-permissions:
-  pull-requests: write
-  contents: write
-
+# .github/workflows/dependabot-prs.yml
+name: Dependabot Pull Request
+on: pull_request
 jobs:
   dependabot:
+    permissions:
+      pull-requests: read
     runs-on: ubuntu-latest
-    if: ${{ github.actor == 'dependabot[bot]' }}
-
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'owner/my_repo'
     steps:
-      - name: Dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@v2.5.0
-        with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
+    - name: Fetch Dependabot metadata
+      id: dependabot-metadata
+      uses: dependabot/fetch-metadata@v2
+      with:
+        alert-lookup: true
+        compat-lookup: true
+        github-token: "${{ secrets.PAT_TOKEN }}"
