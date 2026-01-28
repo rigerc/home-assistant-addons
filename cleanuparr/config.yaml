@@ -1,6 +1,6 @@
 ---
 name: "Cleanuparr"
-version: "0.1"
+version: "0.2.7"
 slug: "cleanuparr"
 description: |
   Automated cleanup tool for Sonarr, Radarr, and download clients.
