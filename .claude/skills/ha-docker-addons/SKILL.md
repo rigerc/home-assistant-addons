@@ -249,7 +249,7 @@ image: "ghcr.io/username/{arch}-addon-loki"
 
 **Critical: Port Configuration**
 - Use config's `port` property for the main port, NOT in options
-- Access main port in scripts via `bashio::addon.port 3100`
+- Access main port in scripts via `bashio::addon.port '3100'`
 - Additional ports can go in options if needed
 
 **Important: Version Comment for Renovate**
@@ -338,7 +338,7 @@ LOG_LEVEL=$(bashio::config 'log_level')
 CONFIG_FILE="/data/loki-config.yaml"
 
 # Get port from config property (not options)
-HTTP_PORT=$(bashio::addon.port 3100)
+HTTP_PORT=$(bashio::addon.port '3100')
 
 # Verify config exists
 if [ ! -f "${CONFIG_FILE}" ]; then
@@ -397,7 +397,7 @@ exec 2>&1
 bashio::log.info "Generating Loki configuration..."
 
 # Set environment for gomplate
-export LOKI_HTTP_PORT=$(bashio::addon.port 3100)
+export LOKI_HTTP_PORT=$(bashio::addon.port '3100')
 export LOKI_GRPC_PORT=$(bashio::config 'grpc_port')
 export LOKI_LOG_LEVEL=$(bashio::config 'log_level')
 export LOKI_RETENTION=$(bashio::config 'retention_period')
@@ -572,7 +572,6 @@ Utility scripts in `scripts/`:
 
 - **`scripts/analyze-image.sh`** - Inspect upstream Docker images and generate analysis report
 - **`scripts/scaffold-addon.sh`** - Create complete add-on directory structure automatically
-- **`scripts/validate-config.sh`** - Validate config.yaml and build.yaml syntax and structure
 
 ## Quick Reference
 
@@ -582,7 +581,7 @@ Utility scripts in `scripts/`:
 $(bashio::config 'option_name')
 
 # Get main port from config (not options)
-$(bashio::addon.port 3100)
+$(bashio::addon.port '3100')
 
 # Check if option exists
 bashio::config.has_value 'option_name'
@@ -601,14 +600,14 @@ bashio::log.error "Error message"
 **Port configuration pattern:**
 ```yaml
 # config.yaml
-port: 3100  # Main port (at root level)
+ports: 123/tcp  # Main port (at root level)
 options:
   other_port: 9095  # Additional ports in options
 ```
 
 ```bash
 # Access in scripts
-MAIN_PORT=$(bashio::addon.port 3100)  # From config property
+MAIN_PORT=$(bashio::addon.port '3100')  # From config property
 OTHER_PORT=$(bashio::config 'other_port')  # From options
 ```
 

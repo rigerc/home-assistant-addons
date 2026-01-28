@@ -18,5 +18,5 @@ export ASPNETCORE_URLS="http://0.0.0.0:${PORT}"
 export ASPNETCORE_ENVIRONMENT="Production"
 export LOGLEVEL__DEFAULT="${LOG_LEVEL}"
 
-# Run Cleanuparr as appuser
-exec su-exec appuser:appgroup /usr/bin/cleanuparr
+# Drop privileges and run Cleanuparr using s6-setuidgid
+exec s6-setuidgid appuser /usr/bin/cleanuparr
