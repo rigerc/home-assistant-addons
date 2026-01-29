@@ -130,20 +130,12 @@ runs:
             jq -n \
               --arg msg "$badge_message" \
               --arg color "$badge_color" \
-              --arg upstream "$upstream_version" \
-              --arg latest "$latest_version" \
-              --arg comparison "$comparison_result" \
-              --arg timestamp "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
               '{
                 schemaVersion: 1,
                 label: "upstream",
                 message: $msg,
                 color: $color,
-                cacheSeconds: 3600,
-                upstream_version: $upstream,
-                latest_available: $latest,
-                comparison_result: $comparison,
-                last_checked: $timestamp
+                cacheSeconds: 3600
               }' > ".versions/${directory}.json"
             echo "Generated version status for ${directory}: ${badge_message} (${badge_color})"
           fi
