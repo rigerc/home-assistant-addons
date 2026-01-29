@@ -3,9 +3,5 @@
   "label": "upstream",
   "message": "up-to-date ✓",
   "color": "brightgreen",
-  "cacheSeconds": 3600,
-  "upstream_version": "2.5.1",
-  "latest_available": "v2.5.1",
-  "comparison_result": "up-to-date",
-  "last_checked": "2026-01-29T22:39:28Z"
+  "cacheSeconds": 3600
 }
