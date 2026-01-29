@@ -1,6 +1,6 @@
 # Profilarr
 
-![Upstream Status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/rigerc/home-assistant-addons/main/.versions/profilarr.json) ![Add-on Version](https://img.shields.io/badge/version-0.1.9-blue)
+![Latest Upstream](https://img.shields.io/docker/v/santiagosayshey/profilarr?label=latest) ![Add-on Version](https://img.shields.io/badge/version-0.1.9-blue) ![Upstream Version](https://img.shields.io/badge/upstream-v1.1.3-informational)
 
 Profile management for *arr applications
 

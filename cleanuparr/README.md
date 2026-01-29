@@ -1,6 +1,6 @@
 # Cleanuparr
 
-![Upstream Status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/rigerc/home-assistant-addons/main/.versions/cleanuparr.json) ![Add-on Version](https://img.shields.io/badge/version-0.2.11-blue)
+![Latest Upstream](https://img.shields.io/github/release/cleanuparr/cleanuparr?label=latest) ![Add-on Version](https://img.shields.io/badge/version-0.2.11-blue) ![Upstream Version](https://img.shields.io/badge/upstream-2.5.1-informational)
 
 Automated cleanup tool for Sonarr, Radarr, and download clients.
 Removes unwanted or blocked files, manages stalled downloads, and
