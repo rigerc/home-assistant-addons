@@ -27,6 +27,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     python3 \
     python3-venv \
+    libicu72 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create Python virtual environment and install Apprise

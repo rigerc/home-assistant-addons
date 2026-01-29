@@ -1,5 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "ENABLE_TOOL_SEARCH": "auto:5",
+    "DISABLE_NON_ESSENTIAL_MODEL_CALLS": "true",
+    "DISABLE_TELEMETRY": "true"
+  },
   "permissions": {
     "allow": [
       "mcp__*",
@@ -35,26 +40,25 @@
       "Bash(sed:*)",
       "Bash(tail:*)"
     ],
-    "ask": [
-      "Bash(bun install:*)",
-      "Bash(bun update:*)",
-      "Bash(cmd.exe:*)",
-      "Bash(go get:*)"
-    ],
     "deny": [
       "Bash(git clean:*)",
       "Bash(git reset:*)",
       "Bash(git restore:*)",
       "Bash(task dev:*)"
     ],
+    "ask": [
+      "Bash(bun install:*)",
+      "Bash(bun update:*)",
+      "Bash(cmd.exe:*)",
+      "Bash(go get:*)"
+    ],
     "defaultMode": "default"
   },
-  "env": {
-    "ENABLE_TOOL_SEARCH": "auto:5",
-    "DISABLE_NON_ESSENTIAL_MODEL_CALLS": "true",
-    "DISABLE_TELEMETRY": "true"
-  },
   "enableAllProjectMcpServers": true,
-  "disabledMcpjsonServers": ["ref"],
-  "enabledPlugins": {}
+  "disabledMcpjsonServers": [
+    "ref"
+  ],
+  "enabledPlugins": {
+    "artifact@claude-plugins-official": true
+  }
 }
