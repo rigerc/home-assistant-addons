@@ -18,5 +18,8 @@ export ASPNETCORE_URLS="http://0.0.0.0:${PORT}"
 export ASPNETCORE_ENVIRONMENT="Production"
 export LOGLEVEL__DEFAULT="${LOG_LEVEL}"
 
+# Change to app directory so wwwroot can be found
+cd /app || bashio::exit.nok "Could not change to /app directory"
+
 # Run Cleanuparr
 exec /usr/bin/cleanuparr
