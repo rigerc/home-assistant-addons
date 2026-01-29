@@ -42,6 +42,9 @@ runs:
             project_url=$(jq -r '.project_url // empty' "$info_file" 2>/dev/null || echo "")
           fi
 
+          # Export variables so yq can read them via env()
+          export base_image upstream_version project_url
+
           addon=$(yq e -N -M '. | {"name": .name, "slug": .slug, "version": .version, "description": .description, "arch": .arch, "base_image": env(base_image), "upstream_version": env(upstream_version), "project_url": env(project_url) }' -o=json -I=0 "${directory}/config.yaml")
           data+=("${addon}");
           readme+=("${directory}");
