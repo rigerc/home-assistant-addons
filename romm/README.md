@@ -1,6 +1,6 @@
 # Romm
 
-![Latest Upstream](https://img.shields.io/docker/v/rommapp/romm?label=latest) ![Add-on Version](https://img.shields.io/badge/version-1.0-blue) ![Upstream Version](https://img.shields.io/badge/upstream-4.6.0-informational)
+![Upstream Status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/rigerc/home-assistant-addons/main/.versions/romm.json) ![Add-on Version](https://img.shields.io/badge/version-1.0-blue)
 
 Self-hosted ROM collection manager and emulator launcher.
 Scan, organize, and manage game collections across 400+ platforms with
