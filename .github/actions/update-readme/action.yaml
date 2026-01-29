@@ -47,6 +47,107 @@ runs:
             fi
           fi
 
+          # Compare versions and generate status badge JSON
+          if [[ -n "$upstream_image_repo" && -n "$upstream_version" ]]; then
+            # Fetch latest upstream version
+            latest_version=""
+            if [[ "$upstream_badge_type" == "github" ]]; then
+              latest_version=$(gh api repos/${upstream_image_repo}/releases/latest --jq .tag_name 2>/dev/null || echo "")
+            elif [[ "$upstream_badge_type" == "docker" ]]; then
+              latest_version=$(curl -s "https://hub.docker.com/v2/repositories/${upstream_image_repo}/tags?page_size=1&ordering=-last_updated" | jq -r '.results[0].name' 2>/dev/null || echo "")
+            fi
+
+            # Normalize versions (remove common prefixes)
+            normalize_version() {
+              echo "$1" | sed -E 's/^(v|version-|rel-)//' | sed -E 's/^([0-9]+\.[0-9]+\.[0-9]+).*/\1/'
+            }
+
+            current_normalized=$(normalize_version "$upstream_version")
+            latest_normalized=$(normalize_version "$latest_version")
+
+            # Default values
+            badge_color="lightgrey"
+            badge_message="unknown"
+            comparison_result="unknown"
+
+            if [[ -n "$latest_normalized" && -n "$current_normalized" ]]; then
+              if [[ "$current_normalized" == "$latest_normalized" ]]; then
+                badge_color="brightgreen"
+                badge_message="up-to-date ✓"
+                comparison_result="up-to-date"
+              else
+                # Parse semantic versions
+                IFS='.' read -r current_major current_minor current_patch <<< "$current_normalized"
+                IFS='.' read -r latest_major latest_minor latest_patch <<< "$latest_normalized"
+
+                # Default to 0 if empty
+                current_major=${current_major:-0}
+                current_minor=${current_minor:-0}
+                current_patch=${current_patch:-0}
+                latest_major=${latest_major:-0}
+                latest_minor=${latest_minor:-0}
+                latest_patch=${latest_patch:-0}
+
+                if (( latest_major > current_major )); then
+                  badge_color="red"
+                  badge_message="outdated ($current_normalized → $latest_normalized)"
+                  comparison_result="major-behind"
+                elif (( latest_major < current_major )); then
+                  badge_color="brightgreen"
+                  badge_message="up-to-date ✓"
+                  comparison_result="up-to-date"
+                elif (( latest_minor > current_minor )); then
+                  versions_behind=$((latest_minor - current_minor))
+                  if (( versions_behind >= 4 )); then
+                    badge_color="red"
+                  elif (( versions_behind >= 2 )); then
+                    badge_color="orange"
+                  else
+                    badge_color="yellow"
+                  fi
+                  badge_message="$versions_behind version(s) behind"
+                  comparison_result="minor-behind"
+                elif (( latest_minor < current_minor )); then
+                  badge_color="brightgreen"
+                  badge_message="up-to-date ✓"
+                  comparison_result="up-to-date"
+                elif (( latest_patch > current_patch )); then
+                  badge_color="yellow"
+                  badge_message="patch available"
+                  comparison_result="patch-behind"
+                else
+                  badge_color="brightgreen"
+                  badge_message="up-to-date ✓"
+                  comparison_result="up-to-date"
+                fi
+              fi
+            fi
+
+            # Create .versions directory if it doesn't exist
+            mkdir -p .versions
+
+            # Generate JSON file in shields.io endpoint format using jq
+            jq -n \
+              --arg msg "$badge_message" \
+              --arg color "$badge_color" \
+              --arg upstream "$upstream_version" \
+              --arg latest "$latest_version" \
+              --arg comparison "$comparison_result" \
+              --arg timestamp "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+              '{
+                schemaVersion: 1,
+                label: "upstream",
+                message: $msg,
+                color: $color,
+                cacheSeconds: 3600,
+                upstream_version: $upstream,
+                latest_available: $latest,
+                comparison_result: $comparison,
+                last_checked: $timestamp
+              }' > ".versions/${directory}.json"
+            echo "Generated version status for ${directory}: ${badge_message} (${badge_color})"
+          fi
+
           # Extract project_url from addon_info.json if it exists
           project_url=""
           info_file="${directory}/addon_info.json"

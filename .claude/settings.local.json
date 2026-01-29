@@ -8,7 +8,9 @@
       "Bash(curl:*)",
       "mcp__context7__resolve-library-id",
       "mcp__context7__query-docs",
-      "mcp__augments__search_documentation"
+      "mcp__augments__search_documentation",
+      "mcp__github__get_file_contents",
+      "Bash(actionlint:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

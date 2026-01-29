@@ -8,7 +8,7 @@
 
 # {{ $addon.name }}
 
-{{ if $addon.upstream_image_repo }}{{ if eq $addon.upstream_badge_type "docker" }}![Latest Upstream](https://img.shields.io/docker/v/{{ $addon.upstream_image_repo }}?label=latest){{ else if eq $addon.upstream_badge_type "github" }}![Latest Upstream](https://img.shields.io/github/release/{{ $addon.upstream_image_repo }}?label=latest){{ end }}{{ end }} ![Add-on Version](https://img.shields.io/badge/version-{{ $addon.version | strings.ReplaceAll "-" "--" }}-blue){{ if $addon.upstream_version }} ![Upstream Version](https://img.shields.io/badge/upstream-{{ $addon.upstream_version | strings.ReplaceAll "-" "--" }}-informational){{ end }}
+{{ if $addon.upstream_image_repo }}![Upstream Status](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/{{ $repo }}/main/.versions/{{ $addon.slug }}.json){{ end }} ![Add-on Version](https://img.shields.io/badge/version-{{ $addon.version | strings.ReplaceAll "-" "--" }}-blue)
 
 {{ $addon.description }}
 

@@ -15,9 +15,10 @@ on:
   workflow_dispatch:
     inputs:
       addons:
-        description: Addon-Names(s)
+        description: 'Specific addon name(s) to update (leave empty to regenerate all READMEs)'
         required: false
         type: string
+        default: ''
 
 jobs:
   main_readme:
@@ -28,6 +29,8 @@ jobs:
         uses: actions/checkout@v4.3.1
       - name: 📝 Update README.md
         uses: rigerc/home-assistant-addons/.github/actions/update-readme@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           addons: ${{ inputs.addons }}
       - name: 🚀 Commit new README
@@ -35,4 +38,4 @@ jobs:
         with:
           commit_message: 🔧 Update Readme
           commit_user_email: actions@github.com
-          file_pattern: "**/*.md"
+          file_pattern: "**/*.md .versions/*.json"
