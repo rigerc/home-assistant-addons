@@ -8,7 +8,11 @@ on:
       addon:
         description: Addon-Name
         required: true
-        type: string
+        type: choice
+        options:
+          - profilarr
+          - romm
+          - cleanuparr
   workflow_call:
     inputs:
       addon:

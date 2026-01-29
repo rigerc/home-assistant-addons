@@ -1,0 +1,55 @@
+---
+name: Deployer Batch
+
+# yamllint disable-line rule:truthy
+on:
+  workflow_dispatch:
+    inputs:
+      profilarr:
+        description: Profilarr
+        type: boolean
+        default: false
+      romm:
+        description: ROMM
+        type: boolean
+        default: false
+      cleanuparr:
+        description: Cleanuparr
+        type: boolean
+        default: false
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      selected: ${{ steps.get-selected.outputs.selected }}
+    steps:
+      - name: ⤵️ Check out the repository
+        uses: actions/checkout@v4
+      - name: 🎯 Get selected add-ons
+        id: get-selected
+        uses: joao-zanutto/get-selected@v1.1.1
+        with:
+          format: json
+      - name: ✅ Validate selection
+        run: |
+          SELECTED='${{ steps.get-selected.outputs.selected }}'
+          if [ "$SELECTED" = "[]" ] || [ -z "$SELECTED" ]; then
+            echo "❌ Please select at least one add-on to deploy"
+            exit 1
+          fi
+          echo "✅ Selected add-ons: $SELECTED"
+
+  deploy:
+    needs: setup
+    runs-on: ubuntu-latest
+    name: 🚀 Deploy ${{ matrix.addon }}
+    strategy:
+      fail-fast: false
+      matrix:
+        addon: ${{ fromJson(needs.setup.outputs.selected) }}
+    steps:
+      - name: 🚀 Trigger Deployer for ${{ matrix.addon }}
+        uses: ./.github/workflows/deployer.yaml
+        with:
+          addon: ${{ matrix.addon }}
