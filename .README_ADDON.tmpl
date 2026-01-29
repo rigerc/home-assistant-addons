@@ -37,8 +37,11 @@ The add-on can be configured via the Home Assistant UI. See the upstream project
 
 ## Version
 
+{{ if $addon.upstream_image_repo }}{{ if eq $addon.upstream_badge_type "docker" }}![Latest Upstream](https://img.shields.io/docker/v/{{ $addon.upstream_image_repo }}?label=latest%20upstream){{ else if eq $addon.upstream_badge_type "github" }}![Latest Upstream](https://img.shields.io/github/release/{{ $addon.upstream_image_repo }}?label=latest%20upstream){{ end }}{{ end }}
+
 **Current version:** {{ $addon.version }}
 {{ if $addon.base_image }}**Base image:** `{{ $addon.base_image }}`{{ end }}
+{{ if $addon.upstream_version }}**Upstream version:** {{ $addon.upstream_version }}{{ end }}
 
 ## Support
 

@@ -35,7 +35,7 @@ This repository contains the following add-ons:
 ### &#10003; [{{ .name }}][addon-{{ .slug }}]
 
 ![Latest Version][{{ .slug }}-version-shield]
-{{ if .upstream_version }}![Upstream Version][{{ .slug }}-upstream-shield]{{ end }}
+{{ if .upstream_image_repo }}{{ if eq .upstream_badge_type "docker" }}![Latest Upstream][{{ .slug }}-latest-upstream]{{ else if eq .upstream_badge_type "github" }}![Latest Upstream][{{ .slug }}-latest-upstream]{{ end }}{{ end }}
 ![Supports aarch64 Architecture][{{ .slug }}-aarch64-shield]
 ![Supports amd64 Architecture][{{ .slug }}-amd64-shield]
 
@@ -77,8 +77,12 @@ SOFTWARE.
 [addon-{{ .slug }}]: {{ $repo_url }}/tree/{{.slug}}-{{ .version }}
 [addon-doc-{{ .slug }}]: {{ $repo_url }}/blob/{{.slug}}-{{ .version }}/README.md
 [{{ .slug }}-version-shield]: https://img.shields.io/badge/version-{{ .version | strings.ReplaceAll "-" "--" }}-blue.svg
-{{- if .upstream_version }}
-[{{ .slug }}-upstream-shield]: https://img.shields.io/badge/upstream-{{ .upstream_version | strings.ReplaceAll "-" "--" }}-informational.svg
+{{- if .upstream_image_repo }}
+{{- if eq .upstream_badge_type "docker" }}
+[{{ .slug }}-latest-upstream]: https://img.shields.io/docker/v/{{ .upstream_image_repo }}?label=latest
+{{- else if eq .upstream_badge_type "github" }}
+[{{ .slug }}-latest-upstream]: https://img.shields.io/github/release/{{ .upstream_image_repo }}?label=latest
+{{- end }}
 {{- end }}
 {{- $addon := . }}
 {{- range $arch }}

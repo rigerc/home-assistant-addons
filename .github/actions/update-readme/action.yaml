@@ -31,8 +31,20 @@ runs:
 
           # Parse upstream version from base image (e.g., "v1.1.3" from "repo/image:v1.1.3")
           upstream_version=""
+          upstream_image_repo=""
+          upstream_badge_type=""
           if [[ -n "$base_image" ]]; then
             upstream_version=$(echo "$base_image" | grep -oE ':[^[:space:]]+' | tr -d ':')
+            # Extract image repository without tag (e.g., "ghcr.io/user/repo" or "user/repo")
+            upstream_image_repo=$(echo "$base_image" | sed 's/:[^[:space:]]*//')
+            # Determine badge type based on registry
+            if [[ "$upstream_image_repo" =~ ^ghcr\.io/ ]]; then
+              upstream_badge_type="github"
+              # Extract owner/repo from ghcr.io/owner/repo
+              upstream_image_repo=$(echo "$upstream_image_repo" | sed 's|^ghcr\.io/||')
+            else
+              upstream_badge_type="docker"
+            fi
           fi
 
           # Extract project_url from addon_info.json if it exists
@@ -43,9 +55,9 @@ runs:
           fi
 
           # Export variables so yq can read them via env()
-          export base_image upstream_version project_url
+          export base_image upstream_version project_url upstream_image_repo upstream_badge_type
 
-          addon=$(yq e -N -M '. | {"name": .name, "slug": .slug, "version": .version, "description": .description, "arch": .arch, "base_image": env(base_image), "upstream_version": env(upstream_version), "project_url": env(project_url) }' -o=json -I=0 "${directory}/config.yaml")
+          addon=$(yq e -N -M '. | {"name": .name, "slug": .slug, "version": .version, "description": .description, "arch": .arch, "base_image": env(base_image), "upstream_version": env(upstream_version), "project_url": env(project_url), "upstream_image_repo": env(upstream_image_repo), "upstream_badge_type": env(upstream_badge_type) }' -o=json -I=0 "${directory}/config.yaml")
           data+=("${addon}");
           readme+=("${directory}");
         done
