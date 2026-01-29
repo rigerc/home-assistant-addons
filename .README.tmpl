@@ -35,6 +35,7 @@ This repository contains the following add-ons:
 ### &#10003; [{{ .name }}][addon-{{ .slug }}]
 
 ![Latest Version][{{ .slug }}-version-shield]
+{{ if .upstream_version }}![Upstream Version][{{ .slug }}-upstream-shield]{{ end }}
 ![Supports aarch64 Architecture][{{ .slug }}-aarch64-shield]
 ![Supports amd64 Architecture][{{ .slug }}-amd64-shield]
 
@@ -76,6 +77,9 @@ SOFTWARE.
 [addon-{{ .slug }}]: {{ $repo_url }}/tree/{{.slug}}-{{ .version }}
 [addon-doc-{{ .slug }}]: {{ $repo_url }}/blob/{{.slug}}-{{ .version }}/README.md
 [{{ .slug }}-version-shield]: https://img.shields.io/badge/version-{{ .version | strings.ReplaceAll "-" "--" }}-blue.svg
+{{- if .upstream_version }}
+[{{ .slug }}-upstream-shield]: https://img.shields.io/badge/upstream-{{ .upstream_version | strings.ReplaceAll "-" "--" }}-informational.svg
+{{- end }}
 {{- $addon := . }}
 {{- range $arch }}
 {{- if has $addon.arch . }}

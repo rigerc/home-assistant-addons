@@ -14,7 +14,6 @@ arch:
 init: false
 startup: services
 boot: manual
-watchdog: "http://[HOST]:[PORT:11011]/health"
 # Main HTTP port - at root level, NOT in options
 ports:
   11011/tcp: 11011

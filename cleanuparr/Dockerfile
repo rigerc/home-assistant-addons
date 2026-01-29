@@ -63,6 +63,10 @@ ENV DOTNET_USE_POLLING_FILE_WATCHER=true \
     PGID=1000 \
     UMASK=022
 
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:${HTTP_PORTS}/health || exit 1
+
 # Labels
 LABEL \
   io.hass.version="${BUILD_VERSION}" \
