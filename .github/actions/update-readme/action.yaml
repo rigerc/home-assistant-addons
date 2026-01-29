@@ -83,6 +83,11 @@ runs:
         curl -o /usr/local/bin/gomplate -sSL https://github.com/hairyhenderson/gomplate/releases/download/v3.11.5/gomplate_linux-amd64
         chmod 755 /usr/local/bin/gomplate
 
+        # Generate root README.md
+        echo "Generating root README.md"
+        gomplate --file=.README.tmpl --out=README.md
+
+        # Generate individual add-on READMEs
         for addon in ${{ steps.info.outputs.readme }}; do
           echo "Generating README for ${addon}"
           # Use central template with ADDON_SLUG set to current addon directory

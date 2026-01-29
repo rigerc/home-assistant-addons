@@ -5,6 +5,13 @@ name: README
 on:
   schedule:
     - cron: "42 23 * * *"
+  push:
+    branches:
+      - main
+    paths:
+      - ".README.tmpl"
+      - ".README_ADDON.tmpl"
+      - ".github/actions/update-readme/**"
   workflow_dispatch:
     inputs:
       addons:
