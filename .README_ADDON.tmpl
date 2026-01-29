@@ -1,8 +1,10 @@
 {{- $repo := .Env.REPOSITORY -}}
 {{- $repo_url := .Env.REPOSITORY_URL -}}
-{{- $addons := .Env.ADDONS_DATA | jsonArray -}}
 {{- $slug := .Env.ADDON_SLUG -}}
-{{- $addon := where $addons "slug" $slug | first 0 | index 0 -}}
+{{- $addons := .Env.ADDONS_DATA | jsonArray -}}
+{{- range $addons -}}
+{{- if eq .slug $slug -}}
+{{- $addon := . -}}
 
 # {{ $addon.name }}{{ if $addon.upstream_version }} **{{ $addon.upstream_version }}**{{ end }}
 
@@ -46,3 +48,5 @@ The add-on can be configured via the Home Assistant UI. See the upstream project
 ## License
 
 This add-on is provided as-is.
+{{- end -}}
+{{- end -}}
