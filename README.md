@@ -29,7 +29,7 @@ This repository contains the following add-ons:
 
 ### &#10003; [Cleanuparr][addon-cleanuparr]
 
-![Latest Version][cleanuparr-version-shield]
+![Latest Upstream][cleanuparr-latest-upstream] ![Add-on Version][cleanuparr-version-shield] ![Upstream Version][cleanuparr-upstream-shield]
 ![Supports aarch64 Architecture][cleanuparr-aarch64-shield]
 ![Supports amd64 Architecture][cleanuparr-amd64-shield]
 
@@ -42,7 +42,7 @@ automatic search triggers for removed content.
 
 ### &#10003; [Profilarr][addon-profilarr]
 
-![Latest Version][profilarr-version-shield]
+![Latest Upstream][profilarr-latest-upstream] ![Add-on Version][profilarr-version-shield] ![Upstream Version][profilarr-upstream-shield]
 ![Supports aarch64 Architecture][profilarr-aarch64-shield]
 ![Supports amd64 Architecture][profilarr-amd64-shield]
 
@@ -51,7 +51,7 @@ Profile management for *arr applications
 
 ### &#10003; [Romm][addon-romm]
 
-![Latest Version][romm-version-shield]
+![Latest Upstream][romm-latest-upstream] ![Add-on Version][romm-version-shield] ![Upstream Version][romm-upstream-shield]
 ![Supports aarch64 Architecture][romm-aarch64-shield]
 ![Supports amd64 Architecture][romm-amd64-shield]
 
@@ -92,9 +92,11 @@ SOFTWARE.
 [license-shield]: https://img.shields.io/github/license/rigerc/home-assistant-addons.svg
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2025.svg
 [project-stage-shield]: https://img.shields.io/badge/project%20stage-production%20ready-brightgreen.svg
-[addon-cleanuparr]: https://github.com/rigerc/home-assistant-addons/tree/cleanuparr-0.2.11
-[addon-doc-cleanuparr]: https://github.com/rigerc/home-assistant-addons/blob/cleanuparr-0.2.11/README.md
-[cleanuparr-version-shield]: https://img.shields.io/badge/version-0.2.11-blue.svg
+[addon-cleanuparr]: https://github.com/rigerc/home-assistant-addons/tree/cleanuparr-0.2.12
+[addon-doc-cleanuparr]: https://github.com/rigerc/home-assistant-addons/blob/cleanuparr-0.2.12/README.md
+[cleanuparr-version-shield]: https://img.shields.io/badge/version-0.2.12-blue.svg
+[cleanuparr-latest-upstream]: https://img.shields.io/github/release/cleanuparr/cleanuparr?label=latest
+[cleanuparr-upstream-shield]: https://img.shields.io/badge/upstream-2.5.1-informational.svg
 [cleanuparr-aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [cleanuparr-amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
 [cleanuparr-armhf-shield]: https://img.shields.io/badge/armhf-no-red.svg
@@ -102,6 +104,8 @@ SOFTWARE.
 [addon-profilarr]: https://github.com/rigerc/home-assistant-addons/tree/profilarr-0.1.9
 [addon-doc-profilarr]: https://github.com/rigerc/home-assistant-addons/blob/profilarr-0.1.9/README.md
 [profilarr-version-shield]: https://img.shields.io/badge/version-0.1.9-blue.svg
+[profilarr-latest-upstream]: https://img.shields.io/docker/v/santiagosayshey/profilarr?label=latest
+[profilarr-upstream-shield]: https://img.shields.io/badge/upstream-v1.1.3-informational.svg
 [profilarr-aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [profilarr-amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
 [profilarr-armhf-shield]: https://img.shields.io/badge/armhf-no-red.svg
@@ -109,6 +113,8 @@ SOFTWARE.
 [addon-romm]: https://github.com/rigerc/home-assistant-addons/tree/romm-1.0
 [addon-doc-romm]: https://github.com/rigerc/home-assistant-addons/blob/romm-1.0/README.md
 [romm-version-shield]: https://img.shields.io/badge/version-1.0-blue.svg
+[romm-latest-upstream]: https://img.shields.io/docker/v/rommapp/romm?label=latest
+[romm-upstream-shield]: https://img.shields.io/badge/upstream-4.6.0-informational.svg
 [romm-aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [romm-amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
 [romm-armhf-shield]: https://img.shields.io/badge/armhf-no-red.svg
