@@ -6,7 +6,10 @@ labels:
   maintainer: "rigerc"
   org.opencontainers.image.authors: "rigerc"
   org.opencontainers.image.licenses: "MIT License"
-  org.opencontainers.image.title: "Home Assistant Unofficial Add-on: Profilarr"
+  org.opencontainers.image.title: "Home Assistant Unofficial Add-on: profilarr-v1"
   org.opencontainers.image.url: https://github.com/rigerc/home-assistant-addons
   org.opencontainers.image.source: https://github.com/rigerc/home-assistant-addons/profilarr-v1
   org.opencontainers.image.documentation: https://github.com/rigerc/home-assistant-addons/profilarr-v1/README.md
+  org.opencontainers.image.created: "2026-01-30T01:54:05Z"
+  org.opencontainers.image.revision: 4287c3fde91aa95091cb99e4dc781bca6a363674
+  org.opencontainers.image.version: 0.1.12

@@ -1,6 +1,6 @@
 # Profilarr v1
 
-![Latest Upstream](https://img.shields.io/docker/v/santiagosayshey/profilarr?label=latest%20upstream%20version) ![Add-on Version](https://img.shields.io/badge/version-1.0.0-blue?label=add-on%20version) ![Upstream Version](https://img.shields.io/badge/upstream-v1.1.3-informational)
+![Latest Upstream](https://img.shields.io/docker/v/santiagosayshey/profilarr?label=latest%20upstream%20version) ![Add-on Version](https://img.shields.io/badge/version-0.1.12-blue?label=add-on%20version) ![Upstream Version](https://img.shields.io/badge/upstream-v1.1.3-informational)
 
 Profile management for *arr applications (Sonarr, Radarr, etc.)
 
