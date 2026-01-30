@@ -14,8 +14,11 @@ permissions:
   contents: write
 
 jobs:
-  update-metadata:
+  # Job 1: Update manifest.json if config files changed
+  update-manifest:
     runs-on: ubuntu-latest
+    outputs:
+      manifest_updated: ${{ steps.check.outputs.changed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,9 +33,8 @@ jobs:
           curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/local/bin/yq
           chmod +x /usr/local/bin/yq
 
-      # Step 1: Update manifest.json if config files changed
       - name: Check if config files changed
-        id: config_changed
+        id: check
         run: |
           if git diff --name-only HEAD~1 HEAD | grep -qE '(config\.yaml|config\.yml|Dockerfile|create-addon-manifest\.sh)'; then
             echo "changed=true" >> $GITHUB_OUTPUT
@@ -41,10 +43,30 @@ jobs:
           fi
 
       - name: Run manifest generator
-        if: steps.config_changed.outputs.changed == 'true'
+        if: steps.check.outputs.changed == 'true'
         run: bash scripts/create-addon-manifest.sh
 
-      # Step 2: Update deployer.yaml if manifest slugs changed
+      - name: Upload manifest artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: manifest
+          path: manifest.json
+
+  # Job 2: Update deployer.yaml if slugs changed
+  update-deployer:
+    runs-on: ubuntu-latest
+    needs: update-manifest
+    outputs:
+      deployer_updated: ${{ steps.check.outputs.changed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
+
       - name: Get old slugs from deployer.yaml
         id: old_slugs
         run: |
@@ -65,7 +87,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Check if slugs changed
-        id: slugs_changed
+        id: check
         run: |
           if [[ "${{ steps.old_slugs.outputs.slugs }}" == "${{ steps.new_slugs.outputs.slugs }}" ]]; then
             echo "changed=false" >> $GITHUB_OUTPUT
@@ -73,9 +95,29 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-      # Step 3: Create missing release-drafter configs
+      - name: Upload deployer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployer
+          path: .github/workflows/deployer.yaml
+
+  # Job 3: Create missing release-drafter configs
+  create-drafter-configs:
+    runs-on: ubuntu-latest
+    needs: update-manifest
+    outputs:
+      configs_created: ${{ steps.create.outputs.created }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install jq
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y jq
+
       - name: Create missing release-drafter configs
-        id: create_configs
+        id: create
         run: |
           created_files=()
 
@@ -102,7 +144,43 @@ jobs:
             echo "created=false" >> $GITHUB_OUTPUT
           fi
 
-      # Commit all changes
+      - name: Upload configs artifact
+        if: steps.create.outputs.created == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: drafter-configs
+          path: .github/release-drafter-*.yml
+
+  # Job 4: Commit all changes
+  commit-changes:
+    runs-on: ubuntu-latest
+    needs: [update-manifest, update-deployer, create-drafter-configs]
+    if: |
+      needs.update-manifest.outputs.manifest_updated == 'true' ||
+      needs.update-deployer.outputs.deployer_updated == 'true' ||
+      needs.create-drafter-configs.outputs.configs_created == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download manifest artifact
+        if: needs.update-manifest.outputs.manifest_updated == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: manifest
+
+      - name: Download deployer artifact
+        if: needs.update-deployer.outputs.deployer_updated == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: deployer
+
+      - name: Download drafter configs artifact
+        if: needs.create-drafter-configs.outputs.configs_created == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: drafter-configs
+
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"

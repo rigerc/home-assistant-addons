@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Create a manifest.json file for all addons by scanning for config.yaml and Dockerfile files
 
 set -euo pipefail
 
