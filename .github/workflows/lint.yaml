@@ -13,11 +13,16 @@ on:
       - reopened
       - synchronize
   workflow_dispatch:
+  workflow_run:
+    workflows: [Addon Metadata]
+    types: [completed]
+    branches: [main]
 
 jobs:
   find:
     runs-on: ubuntu-latest
     name: 📢 Find changed addons
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name != 'workflow_run'
     outputs:
       addons: ${{ steps.changed_addons.outputs.addons }}
     steps:

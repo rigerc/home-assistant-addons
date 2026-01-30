@@ -8,6 +8,10 @@ on:
       - main
   pull_request:
     types: [opened, reopened, synchronize]
+  workflow_run:
+    workflows: [Builder]
+    types: [completed]
+    branches: [main]
 
 permissions:
   contents: read
@@ -16,6 +20,7 @@ jobs:
   find:
     name: Find add-ons
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name != 'workflow_run'
     outputs:
       addons: ${{ steps.changed_addons.outputs.addons }}
     steps:

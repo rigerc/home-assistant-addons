@@ -36,10 +36,20 @@ jobs:
       - name: Check if config files changed
         id: check
         run: |
-          if git diff --name-only HEAD~1 HEAD | grep -qE '(config\.yaml|config\.yml|Dockerfile|create-addon-manifest\.sh)'; then
-            echo "changed=true" >> $GITHUB_OUTPUT
+          # Check if HEAD~1 exists (not first run or shallow clone)
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            if git diff --name-only HEAD~1 HEAD | grep -qE '(config\.yaml|config\.yml|Dockerfile|create-addon-manifest\.sh)'; then
+              echo "changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "changed=false" >> $GITHUB_OUTPUT
+            fi
           else
-            echo "changed=false" >> $GITHUB_OUTPUT
+            # First run or shallow clone - check if any config files exist
+            if find . -mindepth 2 -maxdepth 2 \( -name "config.yaml" -o -name "config.yml" \) | grep -q .; then
+              echo "changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "changed=false" >> $GITHUB_OUTPUT
+            fi
           fi
 
       - name: Run manifest generator
