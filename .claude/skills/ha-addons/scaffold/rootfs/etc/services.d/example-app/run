@@ -1,0 +1,50 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Start the main application service
+# s6-overlay v2 docs: https://github.com/just-containers/s6-overlay
+# ==============================================================================
+
+# Redirect stderr to stdout for proper logging
+exec 2>&1
+
+bashio::log.info "Starting Example Application..."
+
+# Parse configuration from add-on options
+LOG_LEVEL=$(bashio::config 'log_level')
+MESSAGE=$(bashio::config 'message')
+ENABLE_FEATURE=$(bashio::config 'enable_feature')
+PORT=$(bashio::config 'port')
+
+# Log configuration values
+bashio::log.info "Log level: ${LOG_LEVEL}"
+bashio::log.info "Message: ${MESSAGE}"
+bashio::log.info "Feature enabled: ${ENABLE_FEATURE}"
+bashio::log.info "Port: ${PORT}"
+
+# Export environment variables for the application
+export LOG_LEVEL="${LOG_LEVEL}"
+export APP_MESSAGE="${MESSAGE}"
+export APP_PORT="${PORT}"
+
+# Parse items array if needed
+if bashio::config.has_value 'items'; then
+    bashio::log.info "Processing items configuration..."
+    for item in $(bashio::config 'items|keys'); do
+        ITEM_NAME=$(bashio::config "items[${item}].name")
+        ITEM_VALUE=$(bashio::config "items[${item}].value")
+        bashio::log.info "  - ${ITEM_NAME}: ${ITEM_VALUE}"
+    done
+fi
+
+# Change to application directory if needed
+# cd /app || bashio::exit.nok "Could not change to /app directory"
+
+# Execute your application in foreground mode
+# IMPORTANT: Must use 'exec' and run in foreground (not daemon mode)
+# Replace this with your actual application command
+exec /usr/bin/example-app --foreground --port "${PORT}"
+
+# Alternative examples:
+# exec python3 /app/main.py
+# exec node /app/server.js
+# exec /app/myapp server --no-daemon

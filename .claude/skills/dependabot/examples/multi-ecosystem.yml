@@ -1,0 +1,53 @@
+# Multi-ecosystem Dependabot configuration
+# Monitors multiple package managers in a single repository
+
+version: 2
+updates:
+  # Frontend dependencies (npm)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "frontend"
+    reviewers:
+      - "frontend-team"
+    commit-message:
+      prefix: "npm"
+      include: "scope"
+
+  # Backend dependencies (Python)
+  - package-ecosystem: "pip"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "backend"
+    reviewers:
+      - "backend-team"
+    commit-message:
+      prefix: "pip"
+
+  # Docker images
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "docker"
+    reviewers:
+      - "devops-team"
+
+  # GitHub Actions workflows
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "ci"

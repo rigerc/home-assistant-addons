@@ -1,0 +1,31 @@
+---
+configuration:
+  log_level:
+    name: "Log Level"
+    description: "Controls the verbosity of log output. Use 'info' for normal operation, 'debug' for troubleshooting."
+
+  message:
+    name: "Welcome Message"
+    description: "Custom message to display when the add-on starts."
+
+  enable_feature:
+    name: "Enable Feature"
+    description: "Enable or disable the example feature."
+
+  port:
+    name: "Port"
+    description: "Port number for the web interface (1024-65535)."
+
+  items:
+    name: "Items Configuration"
+    description: "List of items with name and value pairs."
+    fields:
+      name:
+        name: "Item Name"
+        description: "The name of this item."
+      value:
+        name: "Item Value"
+        description: "Numeric value for this item."
+
+network:
+  8080/tcp: "Web interface port (can be changed in configuration)"

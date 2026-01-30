@@ -1,0 +1,17 @@
+# .github/workflows/dependabot-prs.yml
+name: Dependabot PR Metadata
+on: pull_request
+jobs:
+  dependabot:
+    permissions:
+      pull-requests: read
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'rigerc/home-assistant-addons'
+    steps:
+    - name: Fetch Dependabot metadata
+      id: dependabot-metadata
+      uses: dependabot/fetch-metadata@v2
+      with:
+        alert-lookup: true
+        compat-lookup: true
+        github-token: "${{ secrets.GITHUB_TOKEN }}"

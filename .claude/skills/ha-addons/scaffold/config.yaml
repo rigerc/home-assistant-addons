@@ -1,0 +1,53 @@
+name: "Example Add-on"
+version: "1.0.0"
+slug: "example_addon"
+description: "A basic example Home Assistant add-on"
+# Only supporting 64-bit architectures for better performance and compatibility
+arch:
+  - amd64
+  - aarch64
+url: https://github.com/rigerc/home-assistant-addons/tree/master/example_addon
+image: "ghcr.io/rigerc/ha-addons-example_addon-v1-{arch}"
+startup: services
+boot: manual
+init: false
+# PORTS vs INGRESS:
+# - Use 'ports' when you need direct network access or non-HTTP protocols
+# - Use 'ingress' for web UIs that should integrate with Home Assistant's UI
+# - You can use both together: ingress for HA UI integration, ports for direct access
+# - For ingress-only add-ons, remove the 'ports' section entirely
+ports:
+  8080/tcp: 8080
+ports_description:
+  8080/tcp: Web interface
+# Ingress integrates the web UI into Home Assistant's interface (sidebar panel)
+# Use this for web-based add-ons to provide seamless user experience
+ingress: true
+ingress_port: 8099
+panel_icon: "mdi:puzzle"
+# Map Home Assistant directories into the container
+# Available types: homeassistant_config, addon_config, ssl, addons, backup, share, media, all_addon_configs, data
+# By default, directories are read-only. Use read_only: false for write access
+# data directory is always available at /data (read-write)
+map:
+  - type: share
+    read_only: false
+  - addon_config
+options:
+  log_level: info
+  message: "Hello from Example Add-on"
+  enable_feature: true
+  port: 8080
+  items:
+    - name: "Item 1"
+      value: 100
+    - name: "Item 2"
+      value: 200
+schema:
+  log_level: list(trace|debug|info|warning|error)
+  message: str
+  enable_feature: bool
+  port: "int(1024,65535)"
+  items:
+    - name: str
+      value: int

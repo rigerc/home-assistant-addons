@@ -1,0 +1,38 @@
+# Selective updates configuration
+# Controls exactly which dependencies to update
+
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+    # Only update specific packages
+    allow:
+      - dependency-name: "react"
+      - dependency-name: "react-dom"
+      - dependency-name: "next"
+      - dependency-name: "@types/*"
+      - dependency-type: "production"
+
+    # Ignore certain packages or version ranges
+    ignore:
+      # Never update lodash (using alternative)
+      - dependency-name: "lodash"
+
+      # Skip major version bumps for these packages
+      - dependency-name: "webpack"
+        update-types: ["version-update:semver-major"]
+
+      # Ignore specific version ranges
+      - dependency-name: "typescript"
+        versions: ["5.x"]
+
+      # Ignore pre-release versions
+      - dependency-name: "*"
+        versions: [">= 0.a", "< 1"]
+
+    labels:
+      - "dependencies"
+      - "approved-only"

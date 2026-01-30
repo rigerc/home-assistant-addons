@@ -1,0 +1,78 @@
+# Private registry configuration
+# Configures access to private package registries
+
+version: 2
+
+# Define private registries
+registries:
+  # Private npm registry (GitHub Packages)
+  npm-github:
+    type: npm-registry
+    url: https://npm.pkg.github.com
+    token: ${{secrets.GITHUB_PACKAGES_TOKEN}}
+
+  # Private Docker registry
+  docker-ecr:
+    type: docker-registry
+    url: 123456789.dkr.ecr.us-east-1.amazonaws.com
+    username: ${{secrets.AWS_ACCESS_KEY_ID}}
+    password: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+
+  # Private Python package index
+  python-azure:
+    type: python-index
+    url: https://pkgs.dev.azure.com/myorg/myproject/_packaging/myfeed/pypi/simple
+    username: ${{secrets.AZURE_DEVOPS_USER}}
+    password: ${{secrets.AZURE_DEVOPS_TOKEN}}
+
+  # Private Maven repository
+  maven-artifactory:
+    type: maven-repository
+    url: https://artifactory.example.com/maven
+    username: ${{secrets.ARTIFACTORY_USERNAME}}
+    password: ${{secrets.ARTIFACTORY_PASSWORD}}
+
+updates:
+  # npm with private registry
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    registries:
+      - npm-github
+    labels:
+      - "dependencies"
+      - "npm"
+
+  # Docker with private registry
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    registries:
+      - docker-ecr
+    labels:
+      - "dependencies"
+      - "docker"
+
+  # Python with private index
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    registries:
+      - python-azure
+    labels:
+      - "dependencies"
+      - "python"
+
+  # Maven with private repository
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    registries:
+      - maven-artifactory
+    labels:
+      - "dependencies"
+      - "maven"

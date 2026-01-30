@@ -1,0 +1,18 @@
+#!/command/execlineb -S0
+# ==============================================================================
+# Service finish script - handles service exit
+# ==============================================================================
+
+# Arguments:
+# ${1} = exit code (or 256 if killed by signal)
+# ${2} = signal number (if killed by signal)
+
+# If exit code is non-zero and not 256, halt the container
+if { s6-test ${1} -ne 0 }
+if { s6-test ${1} -ne 256 }
+
+# Write exit code for container
+foreground { redirfd -w 1 /run/s6-linux-init-container-results/exitcode echo ${1} }
+
+# Halt the container
+/run/s6/basedir/bin/halt

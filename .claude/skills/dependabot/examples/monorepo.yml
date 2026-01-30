@@ -1,0 +1,68 @@
+# Monorepo configuration
+# Handles multiple packages in a monorepo structure
+
+version: 2
+updates:
+  # Root workspace dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "workspace-root"
+    commit-message:
+      prefix: "deps(root)"
+    groups:
+      all-updates:
+        update-types:
+          - "minor"
+          - "patch"
+
+  # Frontend application
+  - package-ecosystem: "npm"
+    directory: "/apps/web"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "frontend"
+    commit-message:
+      prefix: "deps(web)"
+    reviewers:
+      - "frontend-team"
+
+  # Backend API
+  - package-ecosystem: "npm"
+    directory: "/apps/api"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "backend"
+    commit-message:
+      prefix: "deps(api)"
+    reviewers:
+      - "backend-team"
+
+  # Shared UI library
+  - package-ecosystem: "npm"
+    directory: "/packages/ui"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "ui-library"
+    commit-message:
+      prefix: "deps(ui)"
+
+  # Shared utilities
+  - package-ecosystem: "npm"
+    directory: "/packages/utils"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "utils"
+    commit-message:
+      prefix: "deps(utils)"
