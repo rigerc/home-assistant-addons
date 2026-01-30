@@ -21,11 +21,12 @@ runs:
           base_image=""
           dockerfile="${directory}/Dockerfile"
           if [[ -f "$dockerfile" ]]; then
-            # Look for BASE_IMAGE ARG or extract from first FROM statement with AS
-            base_image=$(grep -E '^ARG BASE_IMAGE=' "$dockerfile" | sed 's/^ARG BASE_IMAGE=//' | tr -d '"')
+            # Look for FROM <image>:<tag> AS <name> where image is not a variable
+            # This finds lines like "FROM repo/image:tag AS name" but not "FROM ${BUILD_FROM} AS name"
+            base_image=$(grep -E '^FROM [^$][^[:space:]]+ AS ' "$dockerfile" | head -1 | sed -E 's/^FROM[[:space:]]+([^[:space:]]+)[[:space:]]+AS.*/\1/')
             if [[ -z "$base_image" ]]; then
-              # Extract from first FROM statement (e.g., "FROM image:tag AS name" or "FROM image:tag")
-              base_image=$(grep -m1 '^FROM ' "$dockerfile" | sed -E 's/^FROM[[:space:]]+([^[:space:]]+).*/\1/')
+              # Fall back to ARG BASE_IMAGE=
+              base_image=$(grep -E '^ARG BASE_IMAGE=' "$dockerfile" | sed 's/^ARG BASE_IMAGE=//' | tr -d '"')
             fi
           fi
 
