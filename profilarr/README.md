@@ -1,6 +1,6 @@
 # Profilarr
 
-![Latest Upstream](https://img.shields.io/docker/v/santiagosayshey/profilarr?label=latest) ![Add-on Version](https://img.shields.io/badge/version-0.1.9-blue) ![Upstream Version](https://img.shields.io/badge/upstream-v1.1.3-informational)
+![Latest Upstream](https://img.shields.io/docker/v/santiagosayshey/profilarr?label=latest%20upstream%20version) ![Add-on Version](https://img.shields.io/badge/version-0.1.9-blue?label=add-on%20version) ![Upstream Version](https://img.shields.io/badge/upstream-v1.1.3-informational)
 
 Profile management for *arr applications
 
