@@ -140,9 +140,9 @@ runs:
         echo "readme=${readme[@]}" >> $GITHUB_OUTPUT;
         echo "Readme's to update: ${readme[@]}";
 
-        addons=[$(IFS=, ; echo "${data[*]}")]
-        echo "addons=${addons}" >> $GITHUB_OUTPUT;
-        echo "Resolved addon data: ${addons}";
+        addons_json=$(echo "[${data[*]}]" | jq -c '.')
+        echo "addons=${addons_json}" >> $GITHUB_OUTPUT;
+        echo "Resolved addon data: ${addons_json}";
 
     - name: 📝 Generate README.md
       shell: bash
