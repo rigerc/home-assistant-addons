@@ -49,6 +49,15 @@ automatic search triggers for removed content.
 Profile management for *arr applications
 [:books: Profilarr add-on documentation][addon-doc-profilarr]
 
+### &#10003; [Profilarr v1][addon-profilarr-v1]
+
+![Latest Upstream][profilarr-v1-latest-upstream] ![Add-on Version][profilarr-v1-version-shield] ![Upstream Version][profilarr-v1-upstream-shield]
+![Supports aarch64 Architecture][profilarr-v1-aarch64-shield]
+![Supports amd64 Architecture][profilarr-v1-amd64-shield]
+
+Profile management for *arr applications (Sonarr, Radarr, etc.)
+[:books: Profilarr v1 add-on documentation][addon-doc-profilarr-v1]
+
 ### &#10003; [Romm][addon-romm]
 
 ![Latest Upstream][romm-latest-upstream] ![Add-on Version][romm-version-shield] ![Upstream Version][romm-upstream-shield]
@@ -101,15 +110,24 @@ SOFTWARE.
 [cleanuparr-amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
 [cleanuparr-armhf-shield]: https://img.shields.io/badge/armhf-no-red.svg
 [cleanuparr-armv7-shield]: https://img.shields.io/badge/armv7-no-red.svg
-[addon-profilarr]: https://github.com/rigerc/home-assistant-addons/tree/profilarr-0.1.10
-[addon-doc-profilarr]: https://github.com/rigerc/home-assistant-addons/blob/profilarr-0.1.10/README.md
-[profilarr-version-shield]: https://img.shields.io/badge/version-0.1.10-blue.svg
+[addon-profilarr]: https://github.com/rigerc/home-assistant-addons/tree/profilarr-0.1.11
+[addon-doc-profilarr]: https://github.com/rigerc/home-assistant-addons/blob/profilarr-0.1.11/README.md
+[profilarr-version-shield]: https://img.shields.io/badge/version-0.1.11-blue.svg
 [profilarr-latest-upstream]: https://img.shields.io/docker/v/santiagosayshey/profilarr?label=latest
 [profilarr-upstream-shield]: https://img.shields.io/badge/upstream-v1.1.3-informational.svg
 [profilarr-aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [profilarr-amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
 [profilarr-armhf-shield]: https://img.shields.io/badge/armhf-no-red.svg
 [profilarr-armv7-shield]: https://img.shields.io/badge/armv7-no-red.svg
+[addon-profilarr-v1]: https://github.com/rigerc/home-assistant-addons/tree/profilarr-v1-1.0.0
+[addon-doc-profilarr-v1]: https://github.com/rigerc/home-assistant-addons/blob/profilarr-v1-1.0.0/README.md
+[profilarr-v1-version-shield]: https://img.shields.io/badge/version-1.0.0-blue.svg
+[profilarr-v1-latest-upstream]: https://img.shields.io/docker/v/santiagosayshey/profilarr?label=latest
+[profilarr-v1-upstream-shield]: https://img.shields.io/badge/upstream-v1.1.3-informational.svg
+[profilarr-v1-aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
+[profilarr-v1-amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
+[profilarr-v1-armhf-shield]: https://img.shields.io/badge/armhf-no-red.svg
+[profilarr-v1-armv7-shield]: https://img.shields.io/badge/armv7-no-red.svg
 [addon-romm]: https://github.com/rigerc/home-assistant-addons/tree/romm-1.0
 [addon-doc-romm]: https://github.com/rigerc/home-assistant-addons/blob/romm-1.0/README.md
 [romm-version-shield]: https://img.shields.io/badge/version-1.0-blue.svg
