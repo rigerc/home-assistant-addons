@@ -61,7 +61,7 @@ jobs:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v4
       - name: 🚀 Run Shellcheck
-        uses: ludeeus/action-shellcheck@v2
+        uses: ludeeus/action-shellcheck@2.0.0
         env:
           SHELLCHECK_OPTS: -s bash
         with:
@@ -74,7 +74,7 @@ jobs:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v4
       - name: 🚀 Run mdl
-        uses: actionshub/markdownlint@v1
+        uses: actionshub/markdownlint@v3.1.4
         with:
           filesToIgnoreRegex: "(.*(README|CHANGELOG|DOCS).md|^\\.claude/.*|^docs/.*|^scripts/.*)"
 

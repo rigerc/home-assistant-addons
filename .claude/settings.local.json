@@ -14,7 +14,8 @@
       "Bash(docker run:*)",
       "Bash(gh search repos:*)",
       "Bash(gh repo view:*)",
-      "Bash(gh api:*)"
+      "Bash(gh api:*)",
+      "Bash(gh release list:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
