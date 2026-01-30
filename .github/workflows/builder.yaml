@@ -6,10 +6,9 @@ env:
 
 # yamllint disable-line rule:truthy
 on:
-  workflow_run:
-    workflows: [Lint]
-    types: [completed]
+  push:
     branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -20,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     name: ⏳ Initialize builds
     timeout-minutes: 10
-    if: github.event.workflow_run.conclusion == 'success'
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     outputs:
       addons: ${{ steps.changed_addons.outputs.addons }}
       is_dev: ${{ steps.branch_check.outputs.is_dev }}

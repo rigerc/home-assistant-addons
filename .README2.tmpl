@@ -1,0 +1,96 @@
+# {{ .repo.name }}
+
+[![Project Stage](https://img.shields.io/badge/project%20stage-{{ .repo.stage }}-brightgreen.svg)]({{ .repo.url }})
+[![Maintenance](https://img.shields.io/maintenance/yes/{{ .repo.year }}.svg)]({{ .repo.url }})
+[![License](https://img.shields.io/github/license/{{ .repo.owner }}/{{ .repo.repo }}.svg)](LICENSE.md)
+
+## About
+
+{{ .repo.description }}
+
+**Why use these add-ons?** {{ .repo.why }}
+
+## Installation
+
+### Adding the Repository
+
+1. Navigate to **Settings** → **Add-ons** → **Add-on Store** in your Home Assistant frontend
+2. Click the three-dot menu in the top-right corner
+3. Select **Add-on store** (or "Add repository")
+4. Enter this URL: `https://github.com/{{ .repo.owner }}/{{ .repo.repo }}`
+5. Click **Add**
+
+### Installing an Add-on
+
+1. Browse the **Add-on Store** and find the add-on you want
+2. Click the add-on to view details
+3. Click the **INSTALL** button
+4. Configure the add-on using the **Configuration** tab
+5. Start the add-on from the **Info** tab
+
+## Add-ons
+
+{{- range .addons }}
+### [{{ .name }}](./{{ .slug }}/README.md)
+
+[![Version](https://img.shields.io/badge/version-{{ .version }}-blue)]({{ $.repo.url }}/tree/{{ .slug }}-{{ .version }})
+{{- range .architectures }}
+[![{{ . }}](https://img.shields.io/badge/{{ . }}-yes-green)]({{ $.repo.url }})
+{{- end }}
+[![Upstream](https://img.shields.io/badge/upstream-{{ .upstream_version }}-informational)]({{ .upstream_url }})
+[![Outdated](https://img.shields.io/badge/outdated-{{ if .outdated }}yes-critical{{ else }}no-success{{ end }})]({{ $.repo.url }})
+
+{{ .description }}
+
+{{- if .features }}
+**Key features:**
+{{- range .features }}
+- {{ . }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+## Supported Architectures
+
+All add-ons in this repository support the following architectures:
+
+| Architecture | Status |
+|--------------|--------|
+{{- range .supported_architectures }}
+| {{ if eq .status "yes" }}**{{ .name }}**{{ else }}{{ .name }}{{ end }} {{ if .note }}({{ .note }}){{ end }} | {{ if eq .status "yes" }}✅ Supported{{ else }}❌ Not supported{{ end }} |
+{{- end }}
+
+## Troubleshooting
+
+### Add-on won't start
+
+1. Check the **Log** tab in the add-on panel for error messages
+2. Verify your configuration in the **Configuration** tab
+3. Ensure your Home Assistant has sufficient resources
+4. Try restarting the add-on or your entire Home Assistant
+
+### Upstream updates
+
+Add-ons are built to track the latest releases from their upstream projects. When a new version is released:
+
+1. The add-on will be updated automatically (check the **Version** in the Info tab)
+2. You can manually update by clicking **UPDATE** if available
+3. Configuration changes between versions are noted in individual add-on documentation
+
+## Contributing
+
+Found a bug or have a feature request? Please [open an issue]({{ .repo.url }}/issues) or submit a pull request.
+
+### Development
+
+To build or modify add-ons locally, refer to the [Home Assistant Add-on Development documentation](https://developers.home-assistant.io/docs/add-ons/).
+
+## License
+
+This repository is licensed under the {{ .repo.license }} License. See the [`LICENSE`](LICENSE.md) file for details.
+
+Individual add-ons may include software under different licenses - refer to specific add-on documentation for more information.
+
+---
+
+[Add Repository](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https://github.com/{{ .repo.owner }}/{{ .repo.repo }}) · [Report Issue]({{ .repo.url }}/issues)
