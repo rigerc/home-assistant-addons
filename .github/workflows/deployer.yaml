@@ -10,8 +10,6 @@ on:
         type: choice
         options:
           - cleanuparr
-          - profilarr
-          - profilarr-v1
           - romm
   workflow_call:
     inputs:

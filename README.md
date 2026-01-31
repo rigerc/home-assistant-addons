@@ -35,20 +35,6 @@ automatic metadata fetching and in-browser gameplay.
 [![Version](https://img.shields.io/badge/version-0.1.26-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/romm)
 &nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
 &nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
-### [Profilarr](./profilarr/)
-
-Profile management for *arr applications
-
-[![Version](https://img.shields.io/badge/version-0.1.14-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/profilarr)
-&nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
-&nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
-### [Profilarr v1](./profilarr-v1/)
-
-Profile management for *arr applications (Sonarr, Radarr, etc.)
-
-[![Version](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/profilarr-v1)
-&nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
-&nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
 ### [Cleanuparr](./cleanuparr/)
 
 Automated cleanup tool for Sonarr, Radarr, and download clients.
