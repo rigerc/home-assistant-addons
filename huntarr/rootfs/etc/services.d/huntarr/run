@@ -1,0 +1,28 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Start Huntarr service
+# s6-overlay v2 docs: https://github.com/just-containers/s6-overlay
+# ==============================================================================
+
+# Redirect stderr to stdout for proper logging
+exec 2>&1
+
+bashio::log.info "Starting Huntarr..."
+
+# Parse configuration from add-on options
+LOG_LEVEL=$(bashio::config 'log_level')
+
+# Log configuration
+bashio::log.info "Log level: ${LOG_LEVEL}"
+
+# Set environment variables
+export TZ="$(bashio::config 'timezone' 'UTC')"
+export PYTHONPATH=/app
+export PYTHONUNBUFFERED=1
+
+# Change to application directory
+cd /app || bashio::exit.nok "Could not change to /app directory"
+
+# Execute Huntarr in foreground mode
+# IMPORTANT: Must use 'exec' and run in foreground (not daemon mode)
+exec python3 main.py
