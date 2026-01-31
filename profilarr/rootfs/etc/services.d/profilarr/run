@@ -1,0 +1,12 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Start Profilarr service
+# ==============================================================================
+
+bashio::log.info "Starting Profilarr..."
+
+# Change to app directory
+cd /app || bashio::exit.nok "Could not change to /app directory"
+
+# Start Profilarr using upstream entrypoint
+exec /entrypoint.sh

@@ -1,0 +1,33 @@
+---
+name: "Profilarr"
+version: "0.1.0"
+slug: "profilarr"
+description: |
+  Profile manager for Radarr and Sonarr instances.
+  Centrally manage quality profiles, custom formats, and
+  release profiles with Git-backed configuration storage.
+url: "https://github.com/Dictionarry-Hub/profilarr"
+arch:
+  - aarch64
+  - amd64
+init: false
+startup: services
+webui: "http://[HOST]:[PORT:6868]"
+boot: manual
+ports:
+  6868/tcp: 6868
+ports_description:
+  6868/tcp: "Web UI and API"
+ingress: true
+ingress_port: 6868
+panel_icon: "mdi:cog-transfer"
+map:
+  - share:rw
+  - addon_config:rw
+options:
+  auth_mode: "on"
+  log_level: "info"
+schema:
+  auth_mode: list(on|local|oidc|off)
+  log_level: list(trace|debug|info|warning|error)
+image: "ghcr.io/rigerc/ha-addons-profilarr-{arch}"

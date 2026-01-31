@@ -1,0 +1,12 @@
+---
+configuration:
+  log_level:
+    name: "Log Level"
+    description: "Controls the verbosity of log output. Use 'info' for normal operation, 'debug' for troubleshooting."
+
+  auth_mode:
+    name: "Authentication Mode"
+    description: "Authentication mode for Profilarr: 'on' (full auth), 'local' (no auth on local network), 'oidc' (OpenID Connect), 'off' (no authentication)."
+
+network:
+  6868/tcp: "Profilarr web interface and API"
