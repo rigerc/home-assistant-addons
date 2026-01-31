@@ -1,4 +1,4 @@
-name: Addon Metadata
+ame: Addon Metadata
 
 on:
   push:
@@ -29,6 +29,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.PAT }}
 
       - name: Install dependencies
         run: |
