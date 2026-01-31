@@ -11,6 +11,7 @@ on:
         options:
           - cleanuparr
           - romm
+          - huntarr
   workflow_call:
     inputs:
       addon:
