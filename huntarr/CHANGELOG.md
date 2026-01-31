@@ -2,9 +2,18 @@
 
 All notable changes to this add-on will be documented in this file.
 
+## huntarr 0.1.0 - 2026-01-31
+
+### Changes
+
+#### ✨ New features
+
+- Dev next @rigerc (#28)
+
 ## [9.1.1] - 2026-01-31
 
 ### Added
+
 - Initial release of Huntarr Home Assistant add-on
 - Multi-architecture support (amd64, aarch64)
 - Web interface with ingress support
