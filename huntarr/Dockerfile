@@ -21,6 +21,11 @@ COPY --from=huntarr-source /app /app
 # Copy S6-overlay configuration (v2 legacy format)
 COPY rootfs /
 
+# Set permissions
+RUN chmod a+x /etc/cont-init.d/*.sh \
+    && find /etc/services.d -type f -name "run" -exec chmod +x {} \; \
+    && find /etc/services.d -type f -name "finish" -exec chmod +x {} \;
+
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
   CMD curl -f http://localhost:9705/health || exit 1

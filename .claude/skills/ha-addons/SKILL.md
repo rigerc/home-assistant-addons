@@ -95,6 +95,8 @@ Execute the discovery script:
 
 ### Interpreting Discovery Output
 
+Inspect `.claude/skills/ha-addons/scaffold/` for valid add-on structure.
+
 **Architecture Support** → Use in `config.yaml` → `arch:`
 **Base OS** → Choose appropriate Home Assistant base image
 **Exposed Ports** → Configure `ports:` or `ingress:`
