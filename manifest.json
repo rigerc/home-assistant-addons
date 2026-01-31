@@ -9,7 +9,7 @@
       "amd64"
     ],
     "image": "rommapp/romm",
-    "tag": "4.6.0",
+    "tag": "4.6.1",
     "project": "https://github.com/rommapp/romm"
   },
   {
