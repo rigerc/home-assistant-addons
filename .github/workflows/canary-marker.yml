@@ -1,0 +1,128 @@
+---
+name: Canary Marker
+
+on:
+  push:
+
+permissions:
+  contents: write
+
+jobs:
+  update-canary:
+    name: Update canary markers
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - name: Install yq
+        run: |
+          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
+
+      - name: Update canary markers
+        id: update
+        run: |
+          #!/bin/bash
+          set -euo pipefail
+
+          BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+          echo "Branch: $BRANCH_NAME"
+
+          # Flag to track if any changes were made
+          CHANGES_MADE=false
+
+          if [[ "$BRANCH_NAME" == dev-* ]]; then
+            echo "Dev branch detected - adding canary markers"
+            MODE="add"
+          else
+            echo "Non-dev branch - removing canary markers"
+            MODE="remove"
+          fi
+
+          # Update repository.yaml
+          if [[ -f "repository.yaml" ]]; then
+            CURRENT_NAME=$(yq -r '.name' repository.yaml)
+
+            if [[ "$MODE" == "add" ]]; then
+              if [[ ! "$CURRENT_NAME" =~ \(canary\) ]]; then
+                NEW_NAME="${CURRENT_NAME} (canary)"
+                yq -i ".name = \"$NEW_NAME\"" repository.yaml
+                echo "✓ Added (canary) to repository.yaml name"
+                CHANGES_MADE=true
+              else
+                echo "✓ repository.yaml already has (canary)"
+              fi
+            else
+              if [[ "$CURRENT_NAME" =~ \(canary\) ]]; then
+                NEW_NAME="${CURRENT_NAME/ (canary)/}"
+                yq -i ".name = \"$NEW_NAME\"" repository.yaml
+                echo "✓ Removed (canary) from repository.yaml name"
+                CHANGES_MADE=true
+              else
+                echo "✓ repository.yaml doesn't have (canary)"
+              fi
+            fi
+          fi
+
+          # Update all addon config.yaml files
+          for config in */config.yaml; do
+            if [[ -f "$config" ]]; then
+              ADDON_DIR=$(dirname "$config")
+              echo "Processing $config..."
+
+              # Update name field
+              CURRENT_NAME=$(yq -r '.name' "$config")
+              if [[ "$MODE" == "add" ]]; then
+                if [[ ! "$CURRENT_NAME" =~ \(canary\) ]]; then
+                  NEW_NAME="${CURRENT_NAME} (canary)"
+                  yq -i ".name = \"$NEW_NAME\"" "$config"
+                  echo "  ✓ Added (canary) to name"
+                  CHANGES_MADE=true
+                fi
+              else
+                if [[ "$CURRENT_NAME" =~ \(canary\) ]]; then
+                  NEW_NAME="${CURRENT_NAME/ (canary)/}"
+                  yq -i ".name = \"$NEW_NAME\"" "$config"
+                  echo "  ✓ Removed (canary) from name"
+                  CHANGES_MADE=true
+                fi
+              fi
+
+              # Update slug field
+              CURRENT_SLUG=$(yq -r '.slug' "$config")
+              if [[ "$MODE" == "add" ]]; then
+                if [[ ! "$CURRENT_SLUG" =~ -canary$ ]]; then
+                  NEW_SLUG="${CURRENT_SLUG}-canary"
+                  yq -i ".slug = \"$NEW_SLUG\"" "$config"
+                  echo "  ✓ Added -canary to slug"
+                  CHANGES_MADE=true
+                fi
+              else
+                if [[ "$CURRENT_SLUG" =~ -canary$ ]]; then
+                  NEW_SLUG="${CURRENT_SLUG%-canary}"
+                  yq -i ".slug = \"$NEW_SLUG\"" "$config"
+                  echo "  ✓ Removed -canary from slug"
+                  CHANGES_MADE=true
+                fi
+              fi
+            fi
+          done
+
+          if [[ "$CHANGES_MADE" == "true" ]]; then
+            echo "changes=true" >> "$GITHUB_OUTPUT"
+            echo "✅ Changes were made"
+          else
+            echo "changes=false" >> "$GITHUB_OUTPUT"
+            echo "✅ No changes needed"
+          fi
+
+      - name: Commit changes
+        if: steps.update.outputs.changes == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update canary markers for branch ${{ github.ref_name }} [skip ci]"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"

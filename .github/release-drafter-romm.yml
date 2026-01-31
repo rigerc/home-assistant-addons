@@ -36,6 +36,8 @@ categories:
   - title: "⬆️ Dependency updates"
     labels:
       - "dependencies"
+      - "docker"
+      - "addons"
 
 version-resolver:
   major:
@@ -52,6 +54,8 @@ version-resolver:
       - "chore"
       - "ci"
       - "dependencies"
+      - "docker"
+      - "addons"
       - "documentation"
       - "enhancement"
       - "performance"
