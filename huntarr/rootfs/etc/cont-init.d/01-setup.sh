@@ -7,9 +7,9 @@
 bashio::log.info "Running Huntarr initialization..."
 
 # Create config directory if it doesn't exist
+# Create config directory if it doesn't exist
 if [ ! -d "/config" ]; then
-    bashio::log.info "Creating /config directory..."
-    mkdir -p /config
+    bashio::exit.fatal "Configuration directory '/config' not found. Please ensure it is mounted correctly."
 fi
 
 # Set proper permissions for config directory
