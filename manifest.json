@@ -23,7 +23,7 @@
     ],
     "image": "santiagosayshey/profilarr",
     "tag": "v1.1.3",
-    "project": ""
+    "project": "https://github.com/Dictionarry-Hub/profilarr"
   },
   {
     "slug": "profilarr-v1",
@@ -36,7 +36,7 @@
     ],
     "image": "santiagosayshey/profilarr",
     "tag": "v1.1.3",
-    "project": ""
+    "project": "https://github.com/Dictionarry-Hub/profilarr"
   },
   {
     "slug": "romm",
@@ -49,6 +49,6 @@
     ],
     "image": "rommapp/romm",
     "tag": "4.6.0",
-    "project": ""
+    "project": "https://github.com/rommapp/romm"
   }
 ]

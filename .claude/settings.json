@@ -59,6 +59,7 @@
     "ref"
   ],
   "enabledPlugins": {
-    "artifact@claude-plugins-official": true
+    "artifact@claude-plugins-official": true,
+    "workflows@claude-starter-complete": true
   }
 }
