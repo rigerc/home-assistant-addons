@@ -13,7 +13,7 @@ on:
       - '**/config.yaml'
       - '**/Dockerfile'
       - '**/build.yaml'
-      - '/.github/workflows/addon-metadata.yml'
+      - '.github/workflows/addon-metadata.yml'
   workflow_dispatch:
 
 permissions:
