@@ -7,9 +7,12 @@ labels:
   maintainer: "rigerc"
   org.opencontainers.image.authors: "rigerc"
   org.opencontainers.image.licenses: "MIT License"
-  org.opencontainers.image.title: "Home Assistant Unofficial Add-on: Profilarr"
+  org.opencontainers.image.title: "Home Assistant Unofficial Add-on: profilarr"
   org.opencontainers.image.description: "Profile manager for Radarr and Sonarr instances"
   org.opencontainers.image.source: "https://github.com/rigerc/home-assistant-addons/profilarr"
   io.hass.upstream.image: "santiagosayshey/profilarr"
   org.opencontainers.image.url: https://github.com/rigerc/home-assistant-addons
   org.opencontainers.image.documentation: https://github.com/rigerc/home-assistant-addons/profilarr/README.md
+  org.opencontainers.image.created: "2026-01-31T22:45:12Z"
+  org.opencontainers.image.revision: e58f956c087090926581ce248f16629f092ca6b2
+  org.opencontainers.image.version: 1.0.1

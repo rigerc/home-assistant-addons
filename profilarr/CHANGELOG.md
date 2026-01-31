@@ -2,9 +2,16 @@
 
 All notable changes to this add-on will be documented in this file.
 
+## Profilarr 1.0.1 - 2026-01-31
+
+### Changes
+
+- No changes
+
 ## [0.1.0] - 2026-01-31
 
 ### Added
+
 - Initial release of Profilarr add-on
 - Support for amd64 and aarch64 architectures
 - Ingress support for embedded UI access in Home Assistant
