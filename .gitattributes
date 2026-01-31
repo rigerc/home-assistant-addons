@@ -1,5 +1,6 @@
 # Generated files - mark to help with merge conflicts
-README.md           linguist-generated
-*/README.md         linguist-generated
-manifest.json       linguist-generated
-*/CHANGELOG.md      linguist-generated
+# merge=ours means: on conflict, keep main branch version and regenerate after merge
+README.md           linguist-generated merge=ours
+*/README.md         linguist-generated merge=ours
+manifest.json       linguist-generated merge=ours
+*/CHANGELOG.md      linguist-generated merge=ours
