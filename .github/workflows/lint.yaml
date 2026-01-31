@@ -28,7 +28,7 @@ jobs:
       addons: ${{ steps.changed_addons.outputs.addons }}
     steps:
       - name: ⤵️ Check out the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: 🗝️ Get changed files
         id: changed_files
         uses: jitterbit/get-changed-files@v1
@@ -70,7 +70,7 @@ jobs:
         path: ${{ fromJson(needs.find.outputs.addons) }}
     steps:
       - name: ⤵️ Check out code from GitHub
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: 📋 Verify build.yaml has project key
         run: |
           BUILD_FILE="${{ matrix.path }}/build.yaml"
@@ -107,7 +107,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ⤵️ Check out code from GitHub
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: 🚀 Run Shellcheck
         uses: ludeeus/action-shellcheck@2.0.0
         env:
@@ -120,7 +120,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ⤵️ Check out code from GitHub
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: 🚀 Run mdl
         uses: actionshub/markdownlint@v3.1.4
         with:
@@ -131,7 +131,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ⤵️ Check out code from GitHub
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: 🚀 Run JQ
         run: |
           find . -name "*.json" \
@@ -145,6 +145,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ⤵️ Check out code from GitHub
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: 🚀 Run YAMLLint
         uses: frenck/action-yamllint@v1

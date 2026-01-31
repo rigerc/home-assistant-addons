@@ -35,7 +35,7 @@ jobs:
       image: ${{ steps.values.outputs.image }}
     steps:
       - name: ⤵️ Check out the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: "\U0001F680 Find add-on directories"
         id: addons
         uses: home-assistant/actions/helpers/find-addons@master
@@ -125,7 +125,7 @@ jobs:
       contents: write
     steps:
       - name: ⤵️ Check out the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: ⤵️ Download Release Artifacts
         uses: actions/download-artifact@v4
         with:
