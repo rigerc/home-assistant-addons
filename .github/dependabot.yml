@@ -1,5 +1,6 @@
 version: 2
 updates:
+  # Docker images for Home Assistant add-ons
   - package-ecosystem: "docker"
     directories:
       - "/romm"
@@ -8,12 +9,43 @@ updates:
       - "/cleanuparr"
     schedule:
       interval: "weekly"
+      day: "monday"
+      time: "05:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
     labels:
       - "dependencies"
+      - "docker"
+      - "addons"
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+    groups:
+      # Group all minor and patch updates together
+      docker-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+
+  # GitHub Actions workflows
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "monday"
+      time: "05:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
     labels:
       - "dependencies"
       - "ci"
+      - "github-actions"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    groups:
+      # Group all minor and patch updates together
+      actions-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
