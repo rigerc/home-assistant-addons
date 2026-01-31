@@ -33,5 +33,7 @@ map:
     read_only: false
 options:
   log_level: info
+  timezone: "UTC"
 schema:
   log_level: list(trace|debug|info|warning|error)
+  timezone: str

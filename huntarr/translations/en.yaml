@@ -3,6 +3,9 @@ configuration:
   log_level:
     name: "Log Level"
     description: "Controls the verbosity of log output. Use 'info' for normal operation, 'debug' for troubleshooting."
+  timezone:
+    name: "Timezone"
+    description: "Set the timezone for Huntarr operations."
 
 network:
   9705/tcp: "Huntarr web interface"
