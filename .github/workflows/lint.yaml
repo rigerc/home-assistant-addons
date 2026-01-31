@@ -71,6 +71,32 @@ jobs:
     steps:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v4
+      - name: 📋 Verify build.yaml has project key
+        run: |
+          BUILD_FILE="${{ matrix.path }}/build.yaml"
+          if [[ ! -f "$BUILD_FILE" ]]; then
+            echo "❌ Error: build.yaml not found in ${{ matrix.path }}"
+            exit 1
+          fi
+
+          # Install yq if not available
+          if ! command -v yq &> /dev/null; then
+            wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+            chmod +x /usr/local/bin/yq
+          fi
+
+          # Check if project key exists and has a non-empty value
+          PROJECT_VALUE=$(yq -r '.project // empty' "$BUILD_FILE")
+
+          if [[ -z "$PROJECT_VALUE" || "$PROJECT_VALUE" == "null" ]]; then
+            echo "❌ Error: build.yaml in ${{ matrix.path }} is missing 'project' key or has empty value"
+            echo "Expected format:"
+            echo "---"
+            echo "project: https://github.com/upstream/project"
+            exit 1
+          fi
+
+          echo "✅ build.yaml has project key with value: $PROJECT_VALUE"
       - name: 🚀 Run Home Assistant Add-on Lint
         uses: frenck/action-addon-linter@v2
         with:
