@@ -10,9 +10,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Install yq
-      uses: frenck/action-setup-yq@v1
-
     - name: Install jq
       uses: dcarbone/install-jq-action@v3
 
@@ -24,125 +21,24 @@ runs:
         chmod +x /usr/local/bin/gomplate
         gomplate --version
 
-    - name: Setup crane
-      uses: imjasonh/setup-crane@v0.1
-
     - name: ℹ️ Gather Addon Info
       id: info
       shell: bash
       run: |
         set -euo pipefail
-        data=()
-        readme=()
 
-        # Read addon slugs from manifest.json
         if [[ ! -f "manifest.json" ]]; then
           echo "Error: manifest.json not found"
           exit 1
         fi
 
-        slugs=$(jq -r '.[].slug' manifest.json)
+        # Read all addons from manifest.json
+        addons_json=$(jq -c '.' manifest.json)
+        addon_slugs=$(jq -r '.[].slug' manifest.json)
 
-        for slug in $slugs; do
-          directory="${slug}"
-
-          # Get manifest data for this addon
-          manifest_data=$(jq -r ".[] | select(.slug == \"${slug}\")" manifest.json)
-          image=$(echo "$manifest_data" | jq -r '.image')
-          tag=$(echo "$manifest_data" | jq -r '.tag')
-
-          # Parse upstream image info from manifest
-          upstream_version=""
-          upstream_image_repo=""
-          upstream_badge_type=""
-          outdated="false"
-
-          if [[ -n "$image" && "$image" != "null" ]]; then
-            upstream_version="$tag"
-            upstream_image_repo="$image"
-
-            # Determine badge type based on registry
-            if [[ "$image" =~ ^ghcr\.io/ ]]; then
-              upstream_badge_type="github"
-              # Extract owner/repo from ghcr.io/owner/repo
-              upstream_image_repo=$(echo "$image" | sed 's|^ghcr\.io/||')
-            else
-              upstream_badge_type="docker"
-            fi
-
-            # Check for updates using crane
-            echo "Checking for updates for ${image}:${tag}"
-            if latest_tag=$(crane ls "${image}" 2>/dev/null | grep -E '^[0-9]' | sort -V | tail -1 2>/dev/null); then
-              echo "  Current: ${tag}, Latest: ${latest_tag}"
-              if [[ "$tag" != "$latest_tag" ]]; then
-                outdated="true"
-              fi
-            elif latest_tag=$(crane ls "${image}" 2>/dev/null | grep -E '^v[0-9]' | sort -V | tail -1 2>/dev/null); then
-              echo "  Current: ${tag}, Latest: ${latest_tag}"
-              if [[ "$tag" != "$latest_tag" ]]; then
-                outdated="true"
-              fi
-            else
-              echo "  Could not fetch tags for ${image}"
-            fi
-          fi
-
-          # Extract project_url from addon_info.json if it exists
-          project_url=""
-          info_file="${directory}/addon_info.json"
-          if [[ -f "$info_file" ]]; then
-            project_url=$(jq -r '.project_url // empty' "$info_file" 2>/dev/null || echo "")
-          fi
-
-          # Build addon JSON from manifest data only
-          addon=$(jq -n \
-            --arg slug "$slug" \
-            --arg version "$(echo "$manifest_data" | jq -r '.version')" \
-            --arg name "$(echo "$manifest_data" | jq -r '.name')" \
-            --arg description "$(echo "$manifest_data" | jq -r '.description')" \
-            --argjson arch "$(echo "$manifest_data" | jq -c '.arch')" \
-            --arg upstream_version "$upstream_version" \
-            --arg project_url "$project_url" \
-            --arg upstream_image_repo "$upstream_image_repo" \
-            --arg upstream_badge_type "$upstream_badge_type" \
-            --arg outdated "$outdated" \
-            '{
-              slug: $slug,
-              version: $version,
-              name: $name,
-              description: $description,
-              arch: $arch,
-              upstream_version: $upstream_version,
-              project_url: $project_url,
-              upstream_image_repo: $upstream_image_repo,
-              upstream_badge_type: $upstream_badge_type,
-              outdated: ($outdated == "true")
-            }')
-          data+=("${addon}");
-          readme+=("${directory}");
-        done
-
-        # Filter to specific addons if input provided
-        if [[ -n "${{ inputs.addons }}" ]]; then
-          filtered_readme=()
-          declare -A dir_set
-          for dir in "${readme[@]}"; do
-            dir_set["$dir"]=1
-          done
-          for addon in ${{ inputs.addons }}; do
-            if [[ -n "${dir_set[$addon]:-}" ]]; then
-              filtered_readme+=("$addon")
-            fi
-          done
-          readme=("${filtered_readme[@]}")
-        fi
-
-        echo "readme=${readme[@]}" >> $GITHUB_OUTPUT;
-        echo "Readme's to update: ${readme[@]}";
-
-        addons_json=$(echo "[${data[*]}]" | jq -c '.')
-        echo "addons=${addons_json}" >> $GITHUB_OUTPUT;
-        echo "Resolved addon data: ${addons_json}";
+        echo "addons=${addons_json}" >> $GITHUB_OUTPUT
+        echo "readme=${addon_slugs}" >> $GITHUB_OUTPUT
+        echo "Addons: ${addon_slugs}"
 
     - name: 📝 Generate README.md
       shell: bash

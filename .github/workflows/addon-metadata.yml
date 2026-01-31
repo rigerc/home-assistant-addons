@@ -1,215 +1,43 @@
----
 name: Addon Metadata
 
 on:
   push:
-    branches: [main, dev-*]
-  pull_request:
-    branches: [main, dev-*]
+    paths:
+      - '**/config.yaml'
+      - '**/Dockerfile'
+      - '**/build.yaml'
 
 permissions:
   contents: write
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  update-manifest:
+  metadata:
     runs-on: ubuntu-latest
-    name: 📦 Update Manifest
-    outputs:
-      manifest_updated: ${{ steps.check.outputs.changed }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
-      - name: Install yq
-        uses: frenck/action-setup-yq@v1
-
-      - name: Install jq
-        uses: dcarbone/install-jq-action@v3
-
-      - name: Check if config files changed
-        id: check
+      - name: Install dependencies
         run: |
-          # Check if HEAD~1 exists (not first run or shallow clone)
-          if git rev-parse HEAD~1 >/dev/null 2>&1; then
-            if git diff --name-only HEAD~1 HEAD | grep -qE '(config\.yaml|config\.yml|Dockerfile|create-addon-manifest\.sh)'; then
-              echo "changed=true" >> "$GITHUB_OUTPUT"
-            else
-              echo "changed=false" >> "$GITHUB_OUTPUT"
-            fi
-          else
-            # First run or shallow clone - check if any config files exist
-            if find . -mindepth 2 -maxdepth 2 \( -name "config.yaml" -o -name "config.yml" \) | grep -q .; then
-              echo "changed=true" >> "$GITHUB_OUTPUT"
-            else
-              echo "changed=false" >> "$GITHUB_OUTPUT"
-            fi
-          fi
+          sudo apt-get update
+          sudo apt-get install -y yq jq
 
-      - name: Run manifest generator
-        if: steps.check.outputs.changed == 'true'
-        run: bash scripts/create-addon-manifest.sh
-
-      - name: Upload manifest artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: manifest
-          path: manifest.json
-
-  update-deployer:
-    runs-on: ubuntu-latest
-    name: 🔧 Update Deployer & Dependabot
-    needs: update-manifest
-    outputs:
-      deployer_updated: ${{ steps.check.outputs.changed }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install yq
-        uses: frenck/action-setup-yq@v1
-
-      - name: Get old slugs from deployer.yaml
-        id: old_slugs
+      - name: Generate manifest and update configs
         run: |
-          old=$(yq '.on.workflow_dispatch.inputs.addon.options | sort' .github/workflows/deployer.yaml)
-          {
-            echo "slugs<<EOF"
-            echo "$old"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
-
-      - name: Run update-deployer-addons.sh
-        run: bash scripts/update-deployer-addons.sh
-
-      - name: Get new slugs from deployer.yaml
-        id: new_slugs
-        run: |
-          new=$(yq '.on.workflow_dispatch.inputs.addon.options | sort' .github/workflows/deployer.yaml)
-          {
-            echo "slugs<<EOF"
-            echo "$new"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
-
-      - name: Check if slugs changed
-        id: check
-        run: |
-          if [[ "${{ steps.old_slugs.outputs.slugs }}" == "${{ steps.new_slugs.outputs.slugs }}" ]]; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Upload deployer artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: deployer
-          path: .github/workflows/deployer.yaml
-
-      - name: Upload dependabot artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dependabot
-          path: .github/dependabot.yml
-
-  create-drafter-configs:
-    runs-on: ubuntu-latest
-    name: ✨ Create Drafter Configs
-    needs: update-manifest
-    outputs:
-      configs_created: ${{ steps.create.outputs.created }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install jq
-        uses: dcarbone/install-jq-action@v3
-
-      - name: Create missing release-drafter configs
-        id: create
-        run: |
-          created_files=()
-
-          # Get all slugs from manifest.json
-          slugs=$(jq -r '.[].slug' manifest.json)
-
-          for slug in $slugs; do
-            config_file=".github/release-drafter-${slug}.yml"
-
-            # Check if config already exists
-            if [[ -f "$config_file" ]]; then
-              continue
-            fi
-
-            # Read template and replace {slug} with actual slug
-            sed "s/{slug}/${slug}/g" .claude/skills/ha-addons/references/release-drafter-template.yml > "$config_file"
-            created_files+=("$config_file")
-          done
-
-          if [[ ${#created_files[@]} -gt 0 ]]; then
-            echo "created=true" >> "$GITHUB_OUTPUT"
-            echo "Created ${#created_files[@]} config(s)"
-          else
-            echo "created=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Upload configs artifact
-        if: steps.create.outputs.created == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: drafter-configs
-          path: .github/release-drafter-*.yml
-
-  commit-changes:
-    runs-on: ubuntu-latest
-    name: 🚀 Commit Changes
-    needs: [update-manifest, update-deployer, create-drafter-configs]
-    if: |
-      github.actor != 'dependabot[bot]' && (
-        needs.update-manifest.outputs.manifest_updated == 'true' ||
-        needs.update-deployer.outputs.deployer_updated == 'true' ||
-        needs.create-drafter-configs.outputs.configs_created == 'true'
-      )
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Download manifest artifact
-        if: needs.update-manifest.outputs.manifest_updated == 'true'
-        uses: actions/download-artifact@v4
-        with:
-          name: manifest
-
-      - name: Download deployer artifact
-        if: needs.update-deployer.outputs.deployer_updated == 'true'
-        uses: actions/download-artifact@v4
-        with:
-          name: deployer
-
-      - name: Download dependabot artifact
-        if: needs.update-deployer.outputs.deployer_updated == 'true'
-        uses: actions/download-artifact@v4
-        with:
-          name: dependabot
-
-      - name: Download drafter configs artifact
-        if: needs.create-drafter-configs.outputs.configs_created == 'true'
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: drafter-configs
+          ./scripts/manifest.sh --update-dependabot --update-workflow
 
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v7
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add manifest.json .github/dependabot.yml .github/workflows/deployer.yaml
+          git diff --staged --quiet || git commit -m "chore: update addon metadata [skip ci]"
+
+      - name: Push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: update addon metadata [skip ci]"
-          commit_user_email: actions@github.com
-          file_pattern: |
-            manifest.json
-            .github/workflows/deployer.yaml
-            .github/dependabot.yml
-            .github/release-drafter-*.yml
+          file_pattern: manifest.json .github/dependabot.yml .github/workflows/deployer.yaml
+
+      - name: Update READMEs
+        uses: ./.github/actions/update-readme
