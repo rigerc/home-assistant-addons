@@ -30,7 +30,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
 
       - name: Install dependencies
         run: |
