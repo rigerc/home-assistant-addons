@@ -7,7 +7,10 @@ labels:
   maintainer: "rigerc"
   org.opencontainers.image.authors: "rigerc"
   org.opencontainers.image.licenses: "MIT License"
-  org.opencontainers.image.title: "Home Assistant Unofficial Add-on: Huntarr"
+  org.opencontainers.image.title: "Home Assistant Unofficial Add-on: huntarr"
   org.opencontainers.image.url: https://github.com/rigerc/home-assistant-addons
   org.opencontainers.image.source: https://github.com/rigerc/home-assistant-addons/huntarr
   org.opencontainers.image.documentation: https://github.com/rigerc/home-assistant-addons/huntarr/README.md
+  org.opencontainers.image.created: "2026-01-31T21:32:44Z"
+  org.opencontainers.image.revision: 6ac4822abbd3ecfe652192a729bcf195fc669bed
+  org.opencontainers.image.version: 0.1.0
