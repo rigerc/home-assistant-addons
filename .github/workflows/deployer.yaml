@@ -1,6 +1,7 @@
 ---
 name: Deployer
 # yamllint disable-line rule:truthy
+
 on:
   workflow_dispatch:
     inputs:
@@ -11,7 +12,6 @@ on:
         options:
           - cleanuparr
           - romm
-          - huntarr
   workflow_call:
     inputs:
       addon:

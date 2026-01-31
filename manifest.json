@@ -1,18 +1,5 @@
 [
   {
-    "slug": "romm",
-    "version": "0.1.26",
-    "name": "Romm",
-    "description": "Self-hosted ROM collection manager and emulator launcher.\nScan, organize, and manage game collections across 400+ platforms with\nautomatic metadata fetching and in-browser gameplay.",
-    "arch": [
-      "aarch64",
-      "amd64"
-    ],
-    "image": "rommapp/romm",
-    "tag": "4.6.0",
-    "project": "https://github.com/rommapp/romm"
-  },
-  {
     "slug": "cleanuparr",
     "version": "0.2.13",
     "name": "Cleanuparr",
@@ -24,5 +11,18 @@
     "image": "ghcr.io/cleanuparr/cleanuparr",
     "tag": "2.5.1",
     "project": "https://github.com/Cleanuparr/Cleanuparr"
+  },
+  {
+    "slug": "romm",
+    "version": "0.1.26",
+    "name": "Romm",
+    "description": "Self-hosted ROM collection manager and emulator launcher.\nScan, organize, and manage game collections across 400+ platforms with\nautomatic metadata fetching and in-browser gameplay.",
+    "arch": [
+      "aarch64",
+      "amd64"
+    ],
+    "image": "rommapp/romm",
+    "tag": "4.6.0",
+    "project": "https://github.com/rommapp/romm"
   }
 ]

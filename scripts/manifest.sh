@@ -150,7 +150,7 @@ extract_addon_info() {
   [[ -n "${slug}" && -n "${version}" ]] || return 1
 
   # Extract first FROM ... AS line from Dockerfile
-  from_line="$(grep -E '^FROM .* AS ' "${dockerfile}" | head -n1 || true)"
+  from_line="$(grep -iE '^FROM .* AS ' "${dockerfile}" | head -n1 || true)"
   [[ -n "${from_line}" ]] || return 1
 
   image_tag="$(awk '{print $2}' <<< "${from_line}")"
