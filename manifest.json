@@ -13,6 +13,19 @@
     "project": "https://github.com/rommapp/romm"
   },
   {
+    "slug": "profilarr",
+    "version": "0.1.0",
+    "name": "Profilarr",
+    "description": "Profile manager for Radarr and Sonarr instances.\nCentrally manage quality profiles, custom formats, and\nrelease profiles with Git-backed configuration storage.",
+    "arch": [
+      "aarch64",
+      "amd64"
+    ],
+    "image": "santiagosayshey/profilarr",
+    "tag": "v1.1.3",
+    "project": "https://github.com/Dictionarry-Hub/profilarr"
+  },
+  {
     "slug": "huntarr",
     "version": "0.1.1",
     "name": "Huntarr",

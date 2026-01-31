@@ -4,6 +4,7 @@ updates:
   - package-ecosystem: "docker"
     directories:
       - "/romm"
+      - "/profilarr"
       - "/huntarr"
       - "/cleanuparr"
     schedule:

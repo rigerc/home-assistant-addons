@@ -12,6 +12,7 @@ on:
         options:
           - cleanuparr
           - huntarr
+          - profilarr
           - romm
   workflow_call:
     inputs:
