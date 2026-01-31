@@ -29,5 +29,5 @@ jobs:
           valid-labels: >-
             breaking-change, bugfix, documentation, enhancement, refactor,
             performance, new-feature, maintenance, ci, dependencies,
-            translations
+            translations, docker, addons, github-actions
           disable-reviews: true
