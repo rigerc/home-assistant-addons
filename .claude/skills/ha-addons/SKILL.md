@@ -78,6 +78,10 @@ Run discovery when wrapping an existing application to extract:
 
 ### Running Discovery
 
+Before proceeding, check if docker is available with the command `docker -v`.
+
+If so:
+
 Execute the discovery script:
 
 ```bash
