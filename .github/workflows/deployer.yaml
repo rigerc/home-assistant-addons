@@ -11,6 +11,7 @@ on:
         type: choice
         options:
           - cleanuparr
+          - huntarr
           - romm
   workflow_call:
     inputs:

@@ -1,22 +1,15 @@
-# Example Add-on
 
-A basic example Home Assistant add-on.
+# Huntarr
 
-## About
+[![Version](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/huntarr)
+&nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
+&nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
 
-This is a scaffold/template for creating Home Assistant add-ons.
+Automation utility that continuously searches media libraries for missing content and quality upgrades
 
-## Installation
+## Documentation
 
-1. Add this repository to your Home Assistant add-on store
-2. Install the add-on
-3. Configure the add-on (if needed)
-4. Start the add-on
+For full documentation, see [DOCS.md](./DOCS.md).
 
-## Configuration
-
-No configuration required for basic functionality.
-
-## Support
-
-For issues and questions, please use the GitHub issue tracker.
+## Project
+This add-on is a wrapper for the [Huntarr project](https://github.com/plexguide/Huntarr.io).
