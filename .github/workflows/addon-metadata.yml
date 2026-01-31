@@ -45,11 +45,6 @@ jobs:
       - name: Update READMEs
         uses: ./.github/actions/update-readme
 
-      - name: Commit changes
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-
       - name: Push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
