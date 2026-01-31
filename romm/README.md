@@ -1,7 +1,7 @@
 
 # Romm
 
-[![Version](https://img.shields.io/badge/version-1.0-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/romm)
+[![Version](https://img.shields.io/badge/version-0.1.26-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/romm)
 &nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
 &nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
 
