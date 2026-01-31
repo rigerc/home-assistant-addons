@@ -1,5 +1,5 @@
 name: "Huntarr"
-version: "0.1.0" # Add-on verison, not upstream version
+version: "0.1.1" # Add-on verison, not upstream version
 slug: "huntarr"
 description: "Automation utility that continuously searches media libraries for missing content and quality upgrades"
 # Only supporting 64-bit architectures for better performance and compatibility
