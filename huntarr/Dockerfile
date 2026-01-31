@@ -18,9 +18,6 @@ ENV PYTHONPATH=/app \
 # Copy Huntarr application from upstream image
 COPY --from=huntarr-source /app /app
 
-# Set working directory
-WORKDIR /app
-
 # Copy S6-overlay configuration (v2 legacy format)
 COPY rootfs /
 
