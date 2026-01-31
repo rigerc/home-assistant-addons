@@ -7,6 +7,13 @@ on:
       - '**/Dockerfile'
       - '**/build.yaml'
       - '/.github/workflows/addon-metadata.yml'
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+    paths:
+      - '**/config.yaml'
+      - '**/Dockerfile'
+      - '**/build.yaml'
+      - '/.github/workflows/addon-metadata.yml'
   workflow_dispatch:
 
 permissions:
@@ -15,6 +22,9 @@ permissions:
 jobs:
   metadata:
     runs-on: ubuntu-latest
+    if: |
+      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) &&
+      (github.event_name != 'pull_request' || !contains(github.event.pull_request.labels.*.name, 'ci'))
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5

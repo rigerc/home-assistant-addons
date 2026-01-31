@@ -8,6 +8,9 @@ env:
 on:
   push:
     branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+    branches: [main]
   workflow_dispatch:
   workflow_run:
     workflows: [addon-metadata]
@@ -23,7 +26,9 @@ jobs:
     name: ⏳ Initialize builds
     timeout-minutes: 10
     if: |
-      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') ||
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci')) ||
+      github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     outputs:
       addons: ${{ steps.changed_addons.outputs.addons }}
@@ -66,9 +71,9 @@ jobs:
       - name: 🏷️ Check branch type
         id: branch_check
         run: |
-          if [[ "${{ github.ref }}" =~ ^refs/heads/dev- ]]; then
+          if [[ "${{ github.ref }}" =~ ^refs/heads/dev- ]] || [[ "${{ github.event_name }}" == "pull_request" ]]; then
             echo "is_dev=true" >> "$GITHUB_OUTPUT"
-            echo "🔧 Dev branch detected - running validation only (no push)"
+            echo "🔧 Dev branch or PR detected - running validation only (no push)"
           else
             echo "is_dev=false" >> "$GITHUB_OUTPUT"
             echo "🚀 Main branch detected - building and pushing images"
