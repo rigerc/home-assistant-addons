@@ -1,8 +1,0 @@
-#!/usr/bin/with-contenv bashio
-declare APP_EXIT_CODE=${1}
-
-bashio::log.warning "Profilarr web server exited with code ${APP_EXIT_CODE}"
-
-if [ "${APP_EXIT_CODE}" -ne 0 ]; then
-    bashio::log.error "Profilarr crashed"
-fi

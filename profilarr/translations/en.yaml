@@ -1,8 +1,0 @@
----
-configuration:
-  log_level:
-    name: Log Level
-    description: The log level for the application.
-  tz:
-    name: Timezone
-    description: The timezone for the application.

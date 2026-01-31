@@ -1,8 +1,0 @@
----
-configuration:
-  log_level:
-    name: "Log Level"
-    description: "Controls the verbosity of log output. Use 'info' for normal operation, 'debug' for troubleshooting."
-  tz:
-    name: "Timezone"
-    description: "Timezone for the add-on (e.g., America/New_York, Europe/London, UTC)."
