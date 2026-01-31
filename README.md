@@ -39,7 +39,7 @@ automatic metadata fetching and in-browser gameplay.
 
 Automation utility that continuously searches media libraries for missing content and quality upgrades
 
-[![Version](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/huntarr)
+[![Version](https://img.shields.io/badge/version-0.1.1-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/huntarr)
 &nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
 &nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
 ### [Cleanuparr](./cleanuparr/)
