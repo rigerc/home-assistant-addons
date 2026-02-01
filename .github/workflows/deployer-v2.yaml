@@ -32,20 +32,9 @@ jobs:
       - name: Build addons list from inputs
         id: set-addons
         run: |
-          # Build JSON array from dynamically generated inputs
-          # External script generates input definitions; this step converts them to array
-          addons_json="$(
-            jq -n '[
-              if ($cleanuparr == "true") then "cleanuparr" else null end,
-              if ($huntarr == "true") then "huntarr" else null end,
-              if ($profilarr == "true") then "profilarr" else null end,
-              if ($romm == "true") then "romm" else null end
-            ] | map(select(. != null))' \
-              --arg cleanuparr "${{ inputs.cleanuparr }}" \
-              --arg huntarr "${{ inputs.huntarr }}" \
-              --arg profilarr "${{ inputs.profilarr }}" \
-              --arg romm "${{ inputs.romm }}"
-          )"
+          # Convert all inputs to JSON and filter for true values
+          # External script dynamically generates the input definitions
+          addons_json="$(echo '${{ toJSON(inputs) }}' | jq -rc 'to_entries | map(select(.value == true)) | map(.key)')"
 
           echo "selected_addons=$addons_json" >> "$GITHUB_OUTPUT"
   prepare-addon:
