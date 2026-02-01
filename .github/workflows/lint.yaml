@@ -25,29 +25,45 @@ jobs:
       (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci')) ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     outputs:
-      addons: ${{ steps.build_list.outputs.addons }}
+      addons: ${{ steps.changed_addons.outputs.addons }}
     steps:
       - name: ⤵️ Check out the repository
         uses: actions/checkout@v4
       - name: 🔍 Find all add-ons
         id: addons
         uses: ./.github/actions/find-addons
-      - name: 🗝️ Filter changed add-ons
-        id: changed_addons
-        uses: dorny/paths-filter@v3
         with:
-          filters: ${{ steps.addons.outputs.addons_json == '[]' && '{}' || format('{{ {0} }}', steps.addons.outputs.addons_json) }}
-          list-files: skip
-      - name: 🦺 Build changed add-ons list
-        id: build_list
+          ignore: ".gemini"
+      - name: 🗝️ Get changed files
+        id: changed_files
+        uses: jitterbit/get-changed-files@v1
+        if: github.event_name != 'workflow_dispatch'
+      - name: 🦺 Get changed add-ons
+        id: changed_addons
         run: |
-          # Output the changes directly as the addons list
-          addons="${{ steps.changed_addons.outputs.changes }}"
-          if [[ -z "$addons" ]]; then
-            addons="[]"
-          fi
-          echo "addons=$addons" >> "$GITHUB_OUTPUT"
-          echo "Changed add-ons: $addons"
+          changed_addons=()
+
+          for addon in ${{ steps.addons.outputs.addons }}; do
+            # Check if any file in this addon directory changed
+            if [[ "${{ steps.changed_files.outputs.all }}" =~ ${addon}/ ]]; then
+              # Check if addon already in array
+              already_added=0
+              for existing in "${changed_addons[@]}"; do
+                if [[ "$existing" == "\"${addon}\"," ]]; then
+                  already_added=1
+                  break
+                fi
+              done
+              if [[ $already_added -eq 0 ]]; then
+                changed_addons+=("\"${addon}\",");
+              fi
+            fi
+          done
+
+          # Build JSON array
+          changed=$(echo "${changed_addons[@]}" | rev | cut -c 2- | rev)
+          echo "addons=[$changed]" >> "$GITHUB_OUTPUT"
+          echo "Changed add-ons: [$changed]"
 
   lint-addon:
     name: 🔍 Lint add-on ${{ matrix.path }}

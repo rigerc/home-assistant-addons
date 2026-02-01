@@ -43,6 +43,8 @@ jobs:
       - name: 🚀 Find add-on directories
         id: addons
         uses: ./.github/actions/find-addons
+        with:
+          ignore: ".gemini"
       - name: 🦺 Get changed add-ons
         id: changed_addons
         run: |

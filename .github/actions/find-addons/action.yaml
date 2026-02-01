@@ -1,100 +1,68 @@
 ---
-name: Find Add-ons
-description: "Find all add-on directories, excluding specified paths"
+name: 'Home Assistant helper: find-addons'
+description: 'Find all add-ons directories in the repository, with optional ignore patterns'
 
 inputs:
-  exclude:
-    description: Comma-separated list of paths to exclude (e.g., '.gemini,.github')
+  ignore:
+    description: Comma-separated list of folders to ignore (e.g., '.gemini,.github')
     required: false
-    default: ".gemini"
+    default: ""
 
 outputs:
   addons:
-    description: Space-separated list of all add-on directories
-    value: ${{ steps.find_addons.outputs.addons }}
-  addons_json:
-    description: JSON array of all add-on directories
-    value: ${{ steps.find_addons.outputs.addons_json }}
-  count:
-    description: Number of add-ons found
-    value: ${{ steps.find_addons.outputs.count }}
+    description: Returns a list of all add-ons in the repository
+    value: ${{ steps.addons.outputs.addons }}
+  addons_list:
+    description: Returns a JSON list of all add-ons in the repository
+    value: ${{ steps.addons.outputs.addons_list }}
 
 runs:
   using: "composite"
   steps:
-    - name: 🔍 Find all add-on directories
-      id: find_addons
-      shell: bash
+    - shell: bash
+      id: addons
       run: |
-        set -euo pipefail
+        declare -a addons
+        declare -a addons_list
 
-        # Find all directories containing config.yaml, config.yml, or build.yaml
-        addons=()
-        seen=()
-
-        for dir in */; do
-          # Remove trailing slash
-          dir="${dir%/}"
-
-          # Skip if already processed
-          if [[ " ${seen[*]} " =~ " ${dir} " ]]; then
-            continue
-          fi
-
-          # Check if directory has add-on files (config.yaml, config.yml, or build.yaml)
-          is_addon=false
-          if [[ -f "${dir}/config.yaml" ]] || [[ -f "${dir}/config.yml" ]] || [[ -f "${dir}/build.yaml" ]]; then
-            is_addon=true
-          fi
-
-          # Skip if not an add-on
-          if [[ "$is_addon" == "false" ]]; then
-            continue
-          fi
-
-          # Check if directory should be excluded
-          excluded=false
-          IFS=',' read -ra EXCLUDED_PATHS <<< "${{ inputs.exclude }}"
-          for excluded_path in "${EXCLUDED_PATHS[@]}"; do
+        # Build find command with ignore patterns
+        ignore_patterns=""
+        if [[ -n "${{ inputs.ignore }}" ]]; then
+          IFS=',' read -ra IGNORED_FOLDERS <<< "${{ inputs.ignore }}"
+          for folder in "${IGNORED_FOLDERS[@]}"; do
             # Trim whitespace
-            excluded_path="${excluded_path// /}"
-            if [[ "$dir" == "$excluded_path" ]]; then
-              excluded=true
-              break
-            fi
+            folder="${folder// /}"
+            ignore_patterns+=" -not -path './${folder}/*'"
           done
+        fi
 
-          # Add to list if not excluded
-          if [[ "$excluded" == "false" ]]; then
-            addons+=("$dir")
-            seen+=("$dir")
+        # Find add-ons (config.json, config.yaml, or config.yml)
+        eval "find ./ -maxdepth 2 \( -name config.json -o -name config.yaml -o -name config.yml \) $ignore_patterns" | while read -r file; do
+          addon=$(echo "$file" | cut -d "/" -f2)
+          # Skip if empty or already added
+          if [[ -n "$addon" ]] && [[ ! " ${addons[@]} " =~ " ${addon} " ]]; then
+            addons+=("${addon}")
+            addons_list+=("\"${addon}\",")
           fi
         done
 
-        # Sort add-ons alphabetically
+        # Sort addons
         IFS=$'\n' sorted_addons=($(sort <<<"${addons[*]}"))
         unset IFS
 
-        # Create space-separated list
-        addons_list="${sorted_addons[*]}"
-
-        # Create JSON array manually to avoid any jq formatting issues
-        addons_json="["
-        first=true
+        # Rebuild addons_list from sorted
+        addons_list=()
         for addon in "${sorted_addons[@]}"; do
-          if [[ "$first" == "true" ]]; then
-            addons_json+="\"$addon\""
-            first=false
-          else
-            addons_json+=",\"$addon\""
-          fi
+          addons_list+=("\"${addon}\",")
         done
-        addons_json+="]"
 
-        # Count
-        count=${#sorted_addons[@]}
+        # Build JSON array string
+        json_list=$(echo ${addons_list[@]} | rev | cut -c 2- | rev)
 
-        echo "addons=$addons_list" >> "$GITHUB_OUTPUT"
-        echo "addons_json=$addons_json" >> "$GITHUB_OUTPUT"
-        echo "count=$count" >> "$GITHUB_OUTPUT"
-        echo "Found $count add-ons: $addons_list"
+        # Build space-separated list
+        addons_space="${sorted_addons[*]}"
+
+        echo "Found addons: ${sorted_addons[@]}"
+        echo "Found addons (JSON): [${json_list}]"
+        echo "addons=$addons_space" >> "$GITHUB_OUTPUT"
+        echo "addons_list=[${json_list}]" >> "$GITHUB_OUTPUT"
