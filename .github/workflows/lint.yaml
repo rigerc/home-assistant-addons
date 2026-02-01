@@ -36,23 +36,11 @@ jobs:
       - name: 🚀 Find add-on directories
         id: addons
         uses: home-assistant/actions/helpers/find-addons@master
-      - name: 🚫 Filter excluded directories
-        id: filtered_addons
-        run: |
-          # Convert space-separated list to JSON array and filter out excluded directories
-          addons="${{ steps.addons.outputs.addons }}"
-          if [[ -n "$addons" ]]; then
-            filtered=$(echo "$addons" | tr ' ' '\n' | jq -R -s 'split("\n") | map(select(. != "" and . != ".gemini"))')
-          else
-            filtered='[]'
-          fi
-          echo "addons=$filtered" >> "$GITHUB_OUTPUT"
-          echo "Filtered add-ons: $filtered"
       - name: 🦺 Get changed add-ons
         id: changed_addons
         run: |
           changed_addons=()
-          for addon in $(echo '${{ steps.filtered_addons.outputs.addons }}' | jq -r '.[]'); do
+          for addon in ${{ steps.addons.outputs.addons }}; do
             if [[ "${{ steps.changed_files.outputs.all }}" =~ ${addon}/ ]]; then
               # Check if addon already in array
               already_added=0

@@ -48,10 +48,6 @@ jobs:
         run: |
           changed_addons=()
           for addon in ${{ steps.addons.outputs.addons }}; do
-            # Skip if addon is .gemini
-            if [[ "$addon" == ".gemini" ]]; then
-              continue
-            fi
             for file in ${{ env.MONITORED_FILES }}; do
               if [[ "${{ steps.changed_files.outputs.all }}" =~ ${addon}/${file} ]]; then
                 # Check if addon already in array
