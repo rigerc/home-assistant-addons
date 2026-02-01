@@ -41,8 +41,13 @@ jobs:
       - name: 🚫 Filter excluded directories
         id: filtered_addons
         run: |
-          # Remove .gemini and other excluded directories from addon list
-          filtered=$(jq -c '[.[] | select(. != ".gemini")]' <<< '${{ steps.addons.outputs.addons }}')
+          # Convert space-separated list to JSON array and filter out excluded directories
+          addons="${{ steps.addons.outputs.addons }}"
+          if [[ -n "$addons" ]]; then
+            filtered=$(echo "$addons" | tr ' ' '\n' | jq -R '[.[] | select(. != ".gemini")] | @json')
+          else
+            filtered='[]'
+          fi
           echo "addons=$filtered" >> "$GITHUB_OUTPUT"
           echo "Filtered add-ons: $filtered"
       - name: 🦺 Get changed add-ons
