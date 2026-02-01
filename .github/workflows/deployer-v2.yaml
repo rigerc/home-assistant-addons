@@ -32,12 +32,16 @@ jobs:
       - name: Validate addon selection
         id: validate
         run: |
-          # Debug: show all INPUT_ variables
-          env | grep '^INPUT_' || echo "No INPUT_ vars found"
-
-          # Build JSON array of selected addons from environment variables
-          # GitHub Actions sets INPUT_<name> for each workflow input
-          addons_json="$(env | grep '^INPUT_.*=true$' | sed 's/^INPUT_//' | sed 's/=true$//' | jq -R . | jq -s .)"
+          # Build JSON array from inputs using explicit checks
+          # This works regardless of how GitHub Actions sets environment variables
+          addons_json="$(
+            jq -n '{inputs: $inputs}' --args inputs. \
+              --arg cleanuparr "${{ inputs.cleanuparr }}" \
+              --arg huntarr "${{ inputs.huntarr }}" \
+              --arg profilarr "${{ inputs.profilarr }}" \
+              --arg romm "${{ inputs.romm }}" \
+            | jq '[.inputs | to_entries[] | select(.value == "true") | .key]'
+          )"
 
           echo "Debug: addons_json=$addons_json"
 
