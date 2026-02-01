@@ -55,7 +55,7 @@ jobs:
           retention-days: 1
 
       - name: Commit manifest and config changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "chore: update addon manifest and configs [skip ci]"
           file_pattern: |
@@ -88,7 +88,7 @@ jobs:
         uses: ./.github/actions/update-readme
 
       - name: Commit README changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "chore: update addon READMEs [skip ci]"
           file_pattern: |
