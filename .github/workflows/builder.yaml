@@ -42,7 +42,7 @@ jobs:
         if: github.event_name != 'workflow_dispatch'
       - name: 🚀 Find add-on directories
         id: addons
-        uses: home-assistant/actions/helpers/find-addons@master
+        uses: ./.github/actions/find-addons
       - name: 🦺 Get changed add-ons
         id: changed_addons
         run: |

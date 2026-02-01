@@ -36,9 +36,6 @@ jobs:
     steps:
       - name: ⤵️ Check out the repository
         uses: actions/checkout@v4
-      - name: "\U0001F680 Find add-on directories"
-        id: addons
-        uses: home-assistant/actions/helpers/find-addons@master
       - name: ℹ️ Get information
         id: info
         uses: home-assistant/actions/helpers/info@master
