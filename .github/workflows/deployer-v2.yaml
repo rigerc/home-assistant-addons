@@ -34,9 +34,11 @@ jobs:
         run: |
           # Convert all inputs to JSON and filter for true values
           # External script dynamically generates the input definitions
-          addons_json="$(echo '${{ toJSON(inputs) }}' | jq -rc 'to_entries | map(select(.value == true)) | map(.key)')"
+          addons_json="$(jq -rc 'to_entries | map(select(.value == true)) | map(.key)' <<< "$INPUTS_JSON")"
 
           echo "selected_addons=$addons_json" >> "$GITHUB_OUTPUT"
+        env:
+          INPUTS_JSON: ${{ toJSON(inputs) }}
   prepare-addon:
     needs: init
     runs-on: ubuntu-latest
