@@ -1,3 +1,4 @@
+---
 have_fun: false
 memory_config:
   disabled: false
@@ -12,4 +13,4 @@ code_review:
     include_drafts: true
 ignore_patterns:
   - README.md
-  - */README.md
+  - "*/README.md"

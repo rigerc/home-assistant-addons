@@ -1,7 +1,11 @@
+---
 name: "Huntarr"
-version: "0.1.2" # Add-on verison, not upstream version
+# Add-on version, not upstream version
+version: "0.1.2"
 slug: "huntarr"
-description: "Automation utility that continuously searches media libraries for missing content and quality upgrades"
+description: >-
+  Automation utility that continuously searches media libraries for missing
+  content and quality upgrades
 # Only supporting 64-bit architectures for better performance and compatibility
 arch:
   - amd64
@@ -10,7 +14,9 @@ url: https://github.com/rigerc/home-assistant-addons/tree/master/huntarr
 image: "ghcr.io/rigerc/ha-addons-huntarr-{arch}"
 startup: services
 boot: manual
-init: false # Set this to `false` to disable the Docker default system init. Use this if the image has its own init system (Like [s6-overlay](https://github.com/just-containers/s6-overlay)). *Note: Starting in V3 of S6 setting this to `false` is required or the addon won't start, see [here](https://developers.home-assistant.io/blog/2022/05/12/s6-overlay-base-images) for more information.*
+# Set to false to disable Docker default init. Use if the image has its own
+# init system (e.g., s6-overlay). Required for s6-overlay v3.
+init: false
 # PORTS vs INGRESS:
 # - Use 'ports' when you need direct network access or non-HTTP protocols
 # - Use 'ingress' for web UIs that should integrate with Home Assistant's UI
@@ -26,7 +32,6 @@ ingress: true
 ingress_port: 9705
 panel_icon: "mdi:magnify"
 # Map Home Assistant directories into the container
-# List of Home Assistant directory types to bind mount into your container. Possible values: `homeassistant_config`, `addon_config`, `ssl`, `addons`, `backup`, `share`, `media`, `all_addon_configs`, and `data`. Defaults to read-only, which you can change by adding the property `read_only: false`. By default, all paths map to `/<type-name>` inside the addon container, but an optional `path` property can also be supplied to configure the path (Example: `path: /custom/config/path`). If used, the path must not be empty, unique from any other path defined for the addon, and not the root path. Note that the `data` directory is always mapped and writable, but the `path` property can be set using the same conventions.
 map:
   - addon_config:rw
 options:

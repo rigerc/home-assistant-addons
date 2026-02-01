@@ -86,7 +86,7 @@ jobs:
           fi
 
           # Check if project key exists and has a non-empty value
-          PROJECT_VALUE=$(yq -r '.project // empty' "$BUILD_FILE")
+          PROJECT_VALUE=$(yq -r '.project // ""' "$BUILD_FILE")
 
           if [[ -z "$PROJECT_VALUE" || "$PROJECT_VALUE" == "null" ]]; then
             echo "❌ Error: build.yaml in ${{ matrix.path }} is missing 'project' key or has empty value"

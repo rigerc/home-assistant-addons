@@ -6,7 +6,9 @@ configuration:
 
   auth_mode:
     name: "Authentication Mode"
-    description: "Authentication mode for Profilarr: 'on' (full auth), 'local' (no auth on local network), 'oidc' (OpenID Connect), 'off' (no authentication)."
+    description: >-
+      Authentication mode for Profilarr: 'on' (full auth), 'local' (no auth
+      on local network), 'oidc' (OpenID Connect), 'off' (no authentication).
 
 network:
   6868/tcp: "Profilarr web interface and API"

@@ -34,7 +34,9 @@ configuration:
 
   metadata_providers:
     name: "Metadata Providers"
-    description: "API credentials for game metadata sources. Configure providers to fetch game info, artwork, and achievements."
+    description: >-
+      API credentials for game metadata sources. Configure providers to fetch
+      game info, artwork, and achievements.
 
   metadata_providers.screenscraper_user:
     name: "ScreenScraper Username"

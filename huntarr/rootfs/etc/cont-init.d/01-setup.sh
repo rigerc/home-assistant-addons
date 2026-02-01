@@ -20,7 +20,8 @@ LOG_LEVEL=$(bashio::config 'log_level')
 bashio::log.info "Log level set to: ${LOG_LEVEL}"
 
 # Set timezone environment variable
-export TZ="$(bashio::config 'timezone' 'UTC')"
+TZ="$(bashio::config 'timezone' 'UTC')"
+export TZ
 bashio::log.info "Timezone set to: ${TZ}"
 
 bashio::log.info "Huntarr initialization complete"

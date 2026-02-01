@@ -2,6 +2,7 @@
 ignore: |
   .claude/
   .github/
+  .gemini/
   docs/
   scripts/
 
