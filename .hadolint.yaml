@@ -1,3 +1,4 @@
+---
 ignored:
   # HA add-ons use ${BUILD_FROM} variable which can't be tagged
   - DL3006

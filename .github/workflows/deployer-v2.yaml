@@ -34,7 +34,7 @@ jobs:
         run: |
           # Build JSON array of selected addons from environment variables
           # GitHub Actions sets INPUT_<name> for each workflow input
-          addons_json=$(env | grep '^INPUT_.*=true$' | sed 's/^INPUT_//' | sed 's/=true$//' | jq -R . | jq -s .)
+          addons_json="$(env | grep '^INPUT_.*=true$' | sed 's/^INPUT_//' | sed 's/=true$//' | jq -R . | jq -s .)"
 
           # Validate at least one addon is selected
           if [[ "$(echo "$addons_json" | jq '. | length')" -eq 0 ]]; then
@@ -42,7 +42,7 @@ jobs:
             exit 1
           fi
 
-          echo "selected_addons=$addons_json" >> $GITHUB_OUTPUT
+          echo "selected_addons=$addons_json" >> "$GITHUB_OUTPUT"
           echo "Selected addons: $addons_json"
   prepare-addon:
     needs: init
@@ -144,8 +144,7 @@ jobs:
       - name: "\U0001FA9A Generate Build-Values"
         id: values
         run: |
-          date="$(date +"%Y-%m-%dT%H:%M:%SZ")"
-          echo "image=$(echo ${{ steps.info.outputs.image }} | cut -d'/' -f3)" >> "$GITHUB_OUTPUT"
+          echo "image=$(echo "${{ steps.info.outputs.image }}" | cut -d'/' -f3)" >> "$GITHUB_OUTPUT"
       - name: "\U0001F3D7  Login to GitHub Container Registry"
         uses: docker/login-action@v3
         with:
