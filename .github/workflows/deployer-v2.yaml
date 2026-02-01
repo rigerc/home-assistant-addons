@@ -21,7 +21,6 @@ on:
         description: Release romm
         type: boolean
         default: false
-
 jobs:
   init:
     runs-on: ubuntu-latest
@@ -33,22 +32,18 @@ jobs:
       - name: Validate addon selection
         id: validate
         run: |
-          addons=()
-          ${{ inputs.cleanuparr == 'true' && 'addons+=("cleanuparr")' || '' }}
-          ${{ inputs.huntarr == 'true' && 'addons+=("huntarr")' || '' }}
-          ${{ inputs.profilarr == 'true' && 'addons+=("profilarr")' || '' }}
-          ${{ inputs.romm == 'true' && 'addons+=("romm")' || '' }}
+          # Build JSON array of selected addons from environment variables
+          # GitHub Actions sets INPUT_<name> for each workflow input
+          addons_json=$(env | grep '^INPUT_.*=true$' | sed 's/^INPUT_//' | sed 's/=true$//' | jq -R . | jq -s .)
 
-          if [ ${#addons[@]} -eq 0 ]; then
+          # Validate at least one addon is selected
+          if [[ "$(echo "$addons_json" | jq '. | length')" -eq 0 ]]; then
             echo "error: At least one addon must be selected"
             exit 1
           fi
 
-          # Convert to JSON array
-          addons_json=$(printf '%s\n' "${addons[@]}" | jq -R . | jq -s .)
           echo "selected_addons=$addons_json" >> $GITHUB_OUTPUT
           echo "Selected addons: $addons_json"
-
   prepare-addon:
     needs: init
     runs-on: ubuntu-latest
@@ -71,7 +66,7 @@ jobs:
       - name: ⤵️ Check out the repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch full history for outdated commits
+          fetch-depth: 0 # Fetch full history for outdated commits
       - name: ℹ️ Get information
         id: info
         uses: home-assistant/actions/helpers/info@master
@@ -114,7 +109,6 @@ jobs:
         with:
           name: release-files-${{ matrix.addon }}
           path: addon-${{ matrix.addon }}.tar
-
   build:
     needs: init
     runs-on: ubuntu-latest
@@ -167,7 +161,6 @@ jobs:
             --image "${{ steps.values.outputs.image }}" \
             --docker-hub "ghcr.io/${{ github.repository_owner }}" \
             --addon
-
   release:
     needs: ["init", "build"]
     runs-on: ubuntu-latest
@@ -187,7 +180,7 @@ jobs:
       - name: ⤵️ Check out the repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch full history for outdated commits
+          fetch-depth: 0 # Fetch full history for outdated commits
       - name: "\U0001F4DD Run Release Drafter"
         uses: release-drafter/release-drafter@v6
         id: release_notes
