@@ -27,17 +27,17 @@ jobs:
     name: Select Addons
     timeout-minutes: 5
     outputs:
-      selected_addons: ${{ steps.set-addons.outputs.addons_json }}
+      selected_addons: ${{ steps.filter.outputs.addons }}
     steps:
       - name: Build addons list from inputs
-        id: set-addons
+        id: filter
         run: |
-          # Convert all inputs to JSON and filter for true values
+          # Convert inputs to compact JSON and filter true values
           # External script dynamically generates the input definitions
-          # Note: workflow_dispatch boolean inputs are strings "true"/"false"
-          addons_json="$(jq -rc 'to_entries | map(select(.value == "true")) | map(.key)' <<< "$INPUTS_JSON")"
+          # Use printf for safer handling of multi-line JSON
+          addons_json="$(printf '%s' "$INPUTS_JSON" | jq -rc 'to_entries | map(select(.value == true)) | map(.key)')"
 
-          echo "selected_addons=$addons_json" >> "$GITHUB_OUTPUT"
+          echo "addons=$addons_json" >> "$GITHUB_OUTPUT"
         env:
           INPUTS_JSON: ${{ toJSON(inputs) }}
   prepare-addon:
