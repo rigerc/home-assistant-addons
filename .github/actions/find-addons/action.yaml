@@ -37,14 +37,14 @@ runs:
         fi
 
         # Find add-ons (config.json, config.yaml, or config.yml)
-        eval "find ./ -maxdepth 2 \( -name config.json -o -name config.yaml -o -name config.yml \) $ignore_patterns" | while read -r file; do
+        while IFS= read -r file; do
           addon=$(echo "$file" | cut -d "/" -f2)
           # Skip if empty or already added
           if [[ -n "$addon" ]] && [[ ! " ${addons[@]} " =~ " ${addon} " ]]; then
             addons+=("${addon}")
             addons_list+=("\"${addon}\",")
           fi
-        done
+        done < <(eval "find ./ -maxdepth 2 \( -name config.json -o -name config.yaml -o -name config.yml \) $ignore_patterns")
 
         # Sort addons
         IFS=$'\n' sorted_addons=($(sort <<<"${addons[*]}"))
