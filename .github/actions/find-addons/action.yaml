@@ -78,8 +78,18 @@ runs:
         # Create space-separated list
         addons_list="${sorted_addons[*]}"
 
-        # Create JSON array
-        addons_json=$(printf '%s\n' "${sorted_addons[@]}" | jq -R . | jq -s .)
+        # Create JSON array manually to avoid any jq formatting issues
+        addons_json="["
+        first=true
+        for addon in "${sorted_addons[@]}"; do
+          if [[ "$first" == "true" ]]; then
+            addons_json+="\"$addon\""
+            first=false
+          else
+            addons_json+=",\"$addon\""
+          fi
+        done
+        addons_json+="]"
 
         # Count
         count=${#sorted_addons[@]}
