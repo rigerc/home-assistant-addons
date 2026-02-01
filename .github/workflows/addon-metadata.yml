@@ -48,7 +48,7 @@ jobs:
           ./scripts/manifest.sh -d -w -r
 
       - name: Upload manifest artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: manifest
           path: manifest.json
