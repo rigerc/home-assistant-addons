@@ -18,6 +18,11 @@ ENV PYTHONPATH=/app \
 # Copy Huntarr application from upstream image
 COPY --from=huntarr-source /app /app
 
+# Install Python dependencies from requirements.txt if it exists
+RUN if [ -f /app/requirements.txt ]; then \
+        pip3 install --no-cache-dir -r /app/requirements.txt; \
+    fi
+
 # Copy S6-overlay configuration (v2 legacy format)
 COPY rootfs /
 

@@ -385,8 +385,16 @@ check_claude_update() {
 
   # Handle update scenarios
   if [[ "${update_available}" == "true" ]]; then
-    # Update available, try brew upgrade
-    gum style --foreground 212 "Update available (v${old_version}), upgrading..."
+    # Get the available version from brew info
+    local available_version
+    available_version="$(brew info --json=v2 claude-code 2>/dev/null | grep -o '"version":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "")"
+    log "${LOG_LEVEL_DEBUG}" "${log_level}" "Available version from brew: ${available_version}"
+
+    if [[ -n "${available_version}" ]]; then
+      gum style --foreground 212 "Update available: v${old_version} → v${available_version}"
+    else
+      gum style --foreground 212 "Update available (v${old_version}), upgrading..."
+    fi
     log "${LOG_LEVEL_DEBUG}" "${log_level}" "Running brew upgrade claude-code..."
 
     local brew_output
