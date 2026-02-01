@@ -3,13 +3,6 @@ name: skill-generator
 description: This skill should be used when the user asks to "create a skill", "generate a skill", "build a new skill", "make a skill for Claude Code", or wants to create reusable Claude Code capabilities. Generates well-structured skills using the latest official documentation.
 version: 0.1.0
 allowed-tools: Read, Grep, Write, Bash, Edit
-hooks:
-  PostToolUse:
-    - matcher: "Write|Edit"
-      filter: "**/SKILL.md"
-      hooks:
-        - type: command
-          command: ${CLAUDE_PROJECT_DIR}/.claude/skills/skill-generator/scripts/validate-skill.sh
 ---
 
 # Skill Generator for Claude Code

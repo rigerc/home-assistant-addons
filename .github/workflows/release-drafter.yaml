@@ -38,11 +38,19 @@ jobs:
       - name: 🔍 Find add-on directories
         id: addons
         uses: home-assistant/actions/helpers/find-addons@master
+      - name: 🚫 Filter excluded directories
+        id: filtered_addons
+        run: |
+          # Remove .gemini and other excluded directories from addon list
+          addons="${{ steps.addons.outputs.addons }}"
+          filtered=$(echo "$addons" | jq -c '[.[] | select(. != ".gemini")]')
+          echo "addons=$filtered" >> "$GITHUB_OUTPUT"
+          echo "Filtered add-ons: $filtered"
       - name: 🦺 Get changed add-ons
         id: changed_addons
         run: |
           changed_addons=()
-          for addon in ${{ steps.addons.outputs.addons }}; do
+          for addon in $(echo '${{ steps.filtered_addons.outputs.addons }}' | jq -r '.[]'); do
             if [[ "${{ steps.changed_files.outputs.all }}" =~ ${addon}/ ]]; then
               # Check if addon already in array
               already_added=0

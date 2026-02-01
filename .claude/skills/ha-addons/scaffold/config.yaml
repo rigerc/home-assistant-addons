@@ -10,7 +10,11 @@ url: https://github.com/rigerc/home-assistant-addons/tree/master/example_addon
 image: "ghcr.io/rigerc/ha-addons-example_addon-{arch}"
 startup: services
 boot: manual
-init: false # Set this to `false` to disable the Docker default system init. Use this if the image has its own init system (Like [s6-overlay](https://github.com/just-containers/s6-overlay)). *Note: Starting in V3 of S6 setting this to `false` is required or the addon won't start, see [here](https://developers.home-assistant.io/blog/2022/05/12/s6-overlay-base-images) for more information.*
+# Set this to `false` to disable the Docker default system init. Use this if the image has its own init system 
+# (Like [s6-overlay](https://github.com/just-containers/s6-overlay)). 
+# Note: Starting in V3 of S6 setting this to `false` is required or the addon won't start, 
+# see [here](https://developers.home-assistant.io/blog/2022/05/12/s6-overlay-base-images) for more information.*
+init: false 
 # PORTS vs INGRESS:
 # - Use 'ports' when you need direct network access or non-HTTP protocols
 # - Use 'ingress' for web UIs that should integrate with Home Assistant's UI

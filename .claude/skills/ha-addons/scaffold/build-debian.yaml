@@ -2,8 +2,8 @@
 build_from:
   aarch64: "ghcr.io/home-assistant/aarch64-base-debian:trixie"
   amd64: "ghcr.io/home-assistant/amd64-base-debian:trixie"
-project: "https://github.com/"
 labels:
+  project: "https://github.com/owner/repo"
   maintainer: "rigerc"
   org.opencontainers.image.authors: "rigerc"
   org.opencontainers.image.licenses: "MIT License"

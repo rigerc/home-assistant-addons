@@ -12,7 +12,6 @@ arch:
   - amd64
 init: false
 startup: services
-webui: "http://[HOST]:[PORT:6868]"
 boot: manual
 ports:
   6868/tcp: 6868

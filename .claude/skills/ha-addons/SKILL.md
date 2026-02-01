@@ -2,6 +2,13 @@
 name: ha-addons
 description: This skill should be used when the user asks to "create a Home Assistant add-on", "wrap a Docker image for HA", "create an HA addon", "scaffold an add-on", "convert docker-compose to add-on", "analyze for add-on creation", or mentions Home Assistant add-ons, Supervisor add-ons, or wrapping applications for Home Assistant.
 version: 1.0.0
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Glob
+  - AskUserQuestion
 ---
 
 # Home Assistant Add-on Development
@@ -63,6 +70,8 @@ Before starting, gather:
 If wrapping an existing application:
 - **Source**: GitHub URL or Docker image name
 
+**Note:** Additional files (Dockerfile, docker-compose.yaml, config examples) will be requested after discovery phase if needed for complete add-on configuration.
+
 ## Phase 1: Discovery & Analysis
 
 ### When to Use Discovery
@@ -104,17 +113,84 @@ Inspect `.claude/skills/ha-addons/scaffold/` for valid add-on structure.
 **Volumes** → Map to `map:` directory entries
 **Startup Command** → Use in service run script
 
+### Post-Discovery: Gather Additional Information
+
+**CRITICAL:** After running discovery, use the AskUserQuestion tool to gather missing information.
+
+**Use AskUserQuestion to ask:**
+
+Present the discovery findings and gather clarifications in a single AskUserQuestion call with multiple questions:
+
+**Question 1: Verify Discovery Results**
+- Header: "Verification"
+- Question: "I analyzed [source] and found [summary of key findings]. Is this the correct application and version for the add-on?"
+- Options: ["Yes, proceed", "No, different version needed", "Need to modify findings"]
+
+**Question 2: Additional Files Available**
+- Header: "Files"
+- Question: "Which additional files can you provide to ensure accurate configuration?"
+- Multi-select: true
+- Options:
+  - "Application Dockerfile" - Custom or modified Dockerfile with exact dependencies
+  - "docker-compose.yaml file" - Complete environment and service configuration
+  - "Configuration examples" - Example config files (.env, settings.yaml, etc.)
+  - "None available" - Use discovered information only
+
+**Question 3: Network Access Method**
+- Header: "Access"
+- Question: "How should users access this application?"
+- Options:
+  - "Ingress only (embedded in HA UI)" - Seamless HA integration, single sign-on
+  - "Direct port access only" - Independent access, works with external tools
+  - "Both ingress and ports" - Maximum flexibility
+
+**Question 4: Configuration Scope**
+- Header: "Config Options"
+- Question: "Which configuration options should be user-configurable in Home Assistant?"
+- Multi-select: true
+- Options:
+  - "Port number" - Allow users to change the port
+  - "Log level" - Control logging verbosity
+  - "All environment variables" - Expose all discovered env vars
+  - "Essential options only" - Only critical settings
+
+After receiving responses, if files were indicated as available, prompt the user to share them:
+```
+Please share the files you indicated:
+- [List files they selected]
+
+You can paste the file contents or provide file paths.
+```
+
 ### Document Findings
 
-Create a checklist:
+After gathering additional information, create a comprehensive checklist:
+
 ```markdown
-## Add-on Requirements (from discovery)
+## Add-on Requirements (from discovery + clarifications)
+
+### Basic Info
+- [ ] Application: [name and version]
+- [ ] Source: [GitHub URL or Docker image]
+
+### Technical Details
 - [ ] Architecture: amd64, aarch64
 - [ ] Base OS: Alpine Linux
 - [ ] Ports: 8080/tcp (web UI)
 - [ ] Volumes: /config, /data
 - [ ] Dependencies: python3, curl
 - [ ] Startup: python /app/server.py
+
+### User Configuration
+- [ ] Expose port option (default: 8080)
+- [ ] Expose log_level option
+- [ ] Network mode: ingress + ports
+- [ ] Optional: SSL support
+
+### Additional Files Needed
+- [x] Dockerfile (provided/discovered)
+- [ ] docker-compose.yaml (requested)
+- [ ] Configuration examples (requested)
 ```
 
 ## Phase 2: Setup & Scaffolding
@@ -297,7 +373,41 @@ exec /app/myapp --port "${PORT}" --foreground
 
 ## Phase 5: Testing
 
+### Validate Add-on Structure
+
+**MANDATORY:** Before building, validate the add-on structure using the linter:
+
+```bash
+# Validate the add-on configuration
+.claude/skills/ha-addons/scripts/lint-addon.sh {slug}
+
+# For community add-ons (requires version: "dev" and build.yaml)
+.claude/skills/ha-addons/scripts/lint-addon.sh {slug} --community
+```
+
+The linter validates:
+- Required fields in config.yaml and build.yaml
+- Schema compliance with Home Assistant standards
+- Deprecated architectures (armhf, armv7, i386)
+- Deprecated configurations (auto_uart, codenotary, watchdog, squash)
+- Configuration conflicts (ingress vs webui, full_access vs device options)
+- Default values that can be removed
+- Map folder conflicts (config vs homeassistant_config vs addon_config)
+
+**Fix all errors before proceeding.** Warnings are informational but should be addressed when possible.
+
+**Dependencies:** The linter requires `jq` and `yq`:
+```bash
+# Check if dependencies are installed
+jq --version && yq --version
+
+# Install if missing (Debian/Ubuntu)
+apt install jq && snap install yq
+```
+
 ### Build Locally
+
+After validation passes:
 
 ```bash
 docker build -t local/my-addon .
@@ -325,6 +435,7 @@ docker run --rm -it \
 - Check logs for errors
 - Test web interface (if applicable)
 - Verify configuration changes work
+- Re-run linter if configuration was modified
 
 ## Phase 6: Documentation
 
@@ -350,6 +461,7 @@ For this repository, add-ons are deployed via GitHub Actions when pushed to main
 ### Reference Files
 
 Detailed documentation in `references/`:
+- **`references/discovery-clarifications.md`** - Complete guide for post-discovery questions and gathering additional files
 - **`references/bashio-guide.md`** - Complete Bashio function reference
 - **`references/config-reference.md`** - config.yaml options and schema types
 - **`references/s6-overlay-guide.md`** - s6-overlay service management
