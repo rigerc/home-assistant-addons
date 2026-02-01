@@ -2,8 +2,8 @@
 build_from:
   aarch64: "ghcr.io/home-assistant/aarch64-base-debian:trixie"
   amd64: "ghcr.io/home-assistant/amd64-base-debian:trixie"
-project: "https://github.com/Cleanuparr/Cleanuparr"
 labels:
+  project: "https://github.com/Cleanuparr/Cleanuparr"
   org.opencontainers.image.title: "Home Assistant Unofficial Add-on: cleanuparr"
   org.opencontainers.image.description: "Automated cleanup for Sonarr, Radarr, and download clients"
   org.opencontainers.image.source: "https://github.com/rigerc/home-assistant-addons/cleanuparr"

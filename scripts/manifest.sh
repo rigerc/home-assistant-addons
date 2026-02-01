@@ -143,7 +143,7 @@ extract_addon_info() {
   # Extract project from build.yaml if it exists
   project=""
   if [[ -f "${build_yaml}" ]]; then
-    project="$(yq -r '.project // ""' "${build_yaml}")"
+    project="$(yq -r '.labels.project // ""' "${build_yaml}")"
   fi
 
   # Validate required fields

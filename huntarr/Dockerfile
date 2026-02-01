@@ -7,20 +7,26 @@ FROM ${BUILD_FROM}
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     python3-pip \
+    python3-venv \
     curl \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Set Python environment
 ENV PYTHONPATH=/app \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    VIRTUAL_ENV=/opt/venv
+
+# Create and activate virtual environment
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Copy Huntarr application from upstream image
 COPY --from=huntarr-source /app /app
 
 # Install Python dependencies from requirements.txt if it exists
 RUN if [ -f /app/requirements.txt ]; then \
-        pip3 install --no-cache-dir -r /app/requirements.txt; \
+        pip install --no-cache-dir -r /app/requirements.txt; \
     fi
 
 # Copy S6-overlay configuration (v2 legacy format)

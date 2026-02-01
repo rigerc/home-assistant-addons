@@ -86,13 +86,14 @@ jobs:
           fi
 
           # Check if project key exists and has a non-empty value
-          PROJECT_VALUE=$(yq -r '.project // ""' "$BUILD_FILE")
+          PROJECT_VALUE=$(yq -r '.labels.project // ""' "$BUILD_FILE")
 
           if [[ -z "$PROJECT_VALUE" || "$PROJECT_VALUE" == "null" ]]; then
-            echo "❌ Error: build.yaml in ${{ matrix.path }} is missing 'project' key or has empty value"
+            echo "❌ Error: build.yaml in ${{ matrix.path }} is missing 'labels.project' key or has empty value"
             echo "Expected format:"
             echo "---"
-            echo "project: https://github.com/upstream/project"
+            echo "labels:"
+            echo "  project: https://github.com/upstream/project"
             exit 1
           fi
 
