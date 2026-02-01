@@ -1,0 +1,15 @@
+ignored:
+  # HA add-ons use ${BUILD_FROM} variable which can't be tagged
+  - DL3006
+
+  # SHELL is already set appropriately in HA base images
+  - DL4005
+
+  # pip --no-cache-dir is intentional in HA add-ons (smaller final image)
+  - DL3042
+
+  # Version pinning handled in requirements.txt
+  - DL3013
+
+  # ShellCheck: variable expansion in sed/find commands is intentional
+  - SC2016

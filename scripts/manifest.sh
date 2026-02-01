@@ -16,6 +16,7 @@ readonly PROJECT_ROOT
 readonly MANIFEST_OUTPUT="${PROJECT_ROOT}/manifest.json"
 readonly DEPENDABOT_CONFIG="${PROJECT_ROOT}/.github/dependabot.yml"
 readonly DEPLOYER_WORKFLOW="${PROJECT_ROOT}/.github/workflows/deployer.yaml"
+readonly DEPLOYER_V2_WORKFLOW="${PROJECT_ROOT}/.github/workflows/deployer-v2.yaml"
 RELEASE_DRAFTER_TEMPLATE="${SCRIPT_DIR}/release-drafter-template.yml"
 readonly RELEASE_DRAFTER_TEMPLATE
 GITHUB_DIR="${PROJECT_ROOT}/.github"
@@ -48,14 +49,14 @@ Generate manifest.json for Home Assistant addons.
 
 OPTIONS:
   -d, --update-dependabot   Update .github/dependabot.yml with addon directories
-  -w, --update-workflow     Update .github/workflows/deployer.yaml workflow_dispatch options
+  -w, --update-workflow     Update deployer.yaml and deployer-v2.yaml workflow_dispatch inputs
   -r, --create-release-drafter Create release-drafter config files for addons (if missing)
   -h, --help                Display this help message
 
 EXAMPLES:
   $(basename "${BASH_SOURCE[0]}")                      # Generate manifest.json only
   $(basename "${BASH_SOURCE[0]}") -d                  # Generate manifest.json and update dependabot.yml
-  $(basename "${BASH_SOURCE[0]}") -w                  # Generate manifest.json and update workflow_dispatch options
+  $(basename "${BASH_SOURCE[0]}") -w                  # Generate manifest.json and update workflow inputs
   $(basename "${BASH_SOURCE[0]}") -r                  # Generate manifest.json and create release-drafter configs
   $(basename "${BASH_SOURCE[0]}") -d -w -r            # Generate manifest.json and update all configs
 
@@ -344,6 +345,72 @@ update_workflow_dispatch() {
 }
 
 #######################################
+# Update workflow_dispatch boolean inputs in deployer-v2.yaml
+# Globals:
+#   DEPLOYER_V2_WORKFLOW
+# Arguments:
+#   slugs - Array of addon slugs (one per line via stdin)
+# Returns:
+#   0 on success, 1 on error
+#######################################
+update_workflow_dispatch_v2() {
+  local -a slugs
+  readarray -t slugs
+
+  [[ "${#slugs[@]}" -gt 0 ]] || {
+    err "No addon slugs found for workflow v2 update"
+    return 1
+  }
+
+  [[ -f "${DEPLOYER_V2_WORKFLOW}" ]] || {
+    err "Deployer V2 workflow not found: ${DEPLOYER_V2_WORKFLOW}"
+    return 1
+  }
+
+  # Check if yq is available
+  if ! command -v yq &>/dev/null; then
+    err "yq is required for workflow_dispatch v2 updates"
+    return 1
+  fi
+
+  # Sort slugs alphabetically for consistent output
+  local sorted_slugs
+  sorted_slugs="$(printf '%s\n' "${slugs[@]}" | sort)"
+  mapfile -t slugs <<< "${sorted_slugs}"
+
+  local updated_yaml
+  updated_yaml="$(mktemp)"
+
+  # Clear existing workflow_dispatch inputs first
+  yq eval '.on.workflow_dispatch.inputs = {}' "${DEPLOYER_V2_WORKFLOW}" > "${updated_yaml}"
+
+  # Add each slug as a boolean input
+  for slug in "${slugs[@]}"; do
+    local next_temp
+    next_temp="$(mktemp)"
+
+    # Build input block with description, type, and default
+    yq eval \
+      ".on.workflow_dispatch.inputs.${slug} = {\"description\": \"Release ${slug}\", \"type\": \"boolean\", \"default\": false}" \
+      "${updated_yaml}" > "${next_temp}"
+
+    rm -f "${updated_yaml}"
+    updated_yaml="${next_temp}"
+  done
+
+  # Verify the update is valid YAML
+  if ! yq eval . "${updated_yaml}" >/dev/null 2>&1; then
+    err "Generated invalid YAML for workflow v2 file"
+    rm -f "${updated_yaml}"
+    return 1
+  fi
+
+  # Replace original file
+  mv "${updated_yaml}" "${DEPLOYER_V2_WORKFLOW}"
+  echo "Updated ${DEPLOYER_V2_WORKFLOW} with ${#slugs[@]} boolean inputs" >&2
+}
+
+#######################################
 # Create release-drafter config files from template
 # Globals:
 #   RELEASE_DRAFTER_TEMPLATE
@@ -420,9 +487,14 @@ main() {
     update_dependabot <<< "${slugs_output}"
   fi
 
-  # Update workflow_dispatch if requested
+  # Update workflow_dispatch if requested (both deployer.yaml and deployer-v2.yaml)
   if [[ "${UPDATE_WORKFLOW_DISPATCH}" == "true" ]]; then
     update_workflow_dispatch <<< "${slugs_output}"
+
+    # Only update v2 workflow if it exists
+    if [[ -f "${DEPLOYER_V2_WORKFLOW}" ]]; then
+      update_workflow_dispatch_v2 <<< "${slugs_output}"
+    fi
   fi
 
   # Create release-drafter configs if requested

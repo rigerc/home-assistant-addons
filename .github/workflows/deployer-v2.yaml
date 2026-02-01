@@ -1,0 +1,219 @@
+---
+name: Deployer V2
+# yamllint disable-line rule:truthy
+
+on:
+  workflow_dispatch:
+    inputs:
+      cleanuparr:
+        description: Release cleanuparr
+        type: boolean
+        default: false
+      huntarr:
+        description: Release huntarr
+        type: boolean
+        default: false
+      profilarr:
+        description: Release profilarr
+        type: boolean
+        default: false
+      romm:
+        description: Release romm
+        type: boolean
+        default: false
+
+jobs:
+  init:
+    runs-on: ubuntu-latest
+    name: Select Addons
+    timeout-minutes: 5
+    outputs:
+      selected_addons: ${{ steps.validate.outputs.selected_addons }}
+    steps:
+      - name: Validate addon selection
+        id: validate
+        run: |
+          addons=()
+          ${{ inputs.cleanuparr == 'true' && 'addons+=("cleanuparr")' || '' }}
+          ${{ inputs.huntarr == 'true' && 'addons+=("huntarr")' || '' }}
+          ${{ inputs.profilarr == 'true' && 'addons+=("profilarr")' || '' }}
+          ${{ inputs.romm == 'true' && 'addons+=("romm")' || '' }}
+
+          if [ ${#addons[@]} -eq 0 ]; then
+            echo "error: At least one addon must be selected"
+            exit 1
+          fi
+
+          # Convert to JSON array
+          addons_json=$(printf '%s\n' "${addons[@]}" | jq -R . | jq -s .)
+          echo "selected_addons=$addons_json" >> $GITHUB_OUTPUT
+          echo "Selected addons: $addons_json"
+
+  prepare-addon:
+    needs: init
+    runs-on: ubuntu-latest
+    name: "⏳ Prepare ${{ matrix.addon }} Release"
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        addon: ${{ fromJson(needs.init.outputs.selected_addons) }}
+    outputs:
+      addon_0_release_name: ${{ steps.release_notes.outputs.name }}
+      addon_0_release_version: ${{ steps.values.outputs.release_version }}
+      addon_0_architectures: ${{ steps.info.outputs.architectures }}
+      addon_0_image: ${{ steps.values.outputs.image }}
+    concurrency:
+      group: ${{ github.workflow }}-${{ matrix.addon }}-prepare
+      cancel-in-progress: true
+    steps:
+      - name: ⤵️ Check out the repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for outdated commits
+      - name: ℹ️ Get information
+        id: info
+        uses: home-assistant/actions/helpers/info@master
+        with:
+          path: "./${{ matrix.addon }}"
+      - name: "\U0001F4DD Run Release Drafter"
+        uses: release-drafter/release-drafter@v6
+        id: release_notes
+        with:
+          config-name: "release-drafter-${{ matrix.addon }}.yml"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: "\U0001FA9A Generate Build-Values"
+        id: values
+        run: |
+          date="$(date +"%Y-%m-%dT%H:%M:%SZ")"
+
+          version="${{ steps.release_notes.outputs.tag_name }}"
+          version="${version##*-}"
+
+          echo "Add-on: ${{ matrix.addon }} Version: ${version} Date: $date"
+          {
+            echo "release_date=$date"
+            echo "release_version=$version"
+            echo "image=$(echo ${{ steps.info.outputs.image }} | cut -d'/' -f3)"
+          } >> "$GITHUB_OUTPUT"
+      - name: ✍️ Update Config Files
+        run: "echo \"\U0001F4E6 Updating version in config.yaml\"\nyq -i '.version = \"${{ steps.values.outputs.release_version }}\"' \"${{ matrix.addon }}/config.yaml\"\nhead \"${{ matrix.addon }}/config.yaml\"\n\necho \"\U0001F381 Adding Docker Labels in config.yaml\"\nyq -i '\n  .labels.\"org.opencontainers.image.title\" = \"Home Assistant Unofficial Add-on: ${{ matrix.addon }}\" |\n  .labels.\"org.opencontainers.image.url\" = \"https://github.com/${{ github.repository }}\" |\n  .labels.\"org.opencontainers.image.source\" = \"https://github.com/${{ github.repository }}/${{ matrix.addon }}\" |\n  .labels.\"org.opencontainers.image.documentation\" = \"https://github.com/${{ github.repository }}/${{ matrix.addon }}/README.md\" |\n  .labels.\"org.opencontainers.image.created\" = \"${{ steps.values.outputs.release_date }}\" |\n  .labels.\"org.opencontainers.image.revision\" = \"${{ github.sha }}\" |\n  .labels.\"org.opencontainers.image.version\" = \"${{ steps.values.outputs.release_version }}\"\n' \"${{ matrix.addon }}/build.yaml\"\ncat \"${{ matrix.addon }}/build.yaml\"\n"
+      - name: "\U0001F4DD Update CHANGELOG.md"
+        uses: stefanzweifel/changelog-updater-action@v1
+        id: update_changelog
+        with:
+          latest-version: ${{ steps.release_notes.outputs.name }}
+          release-notes: ${{ steps.release_notes.outputs.body }}
+          path-to-changelog: ${{ matrix.addon }}/CHANGELOG.md
+      - name: Tar files
+        run: tar -cvf addon-${{ matrix.addon }}.tar ${{ matrix.addon }}
+      - name: ⤴️ Upload Release Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-files-${{ matrix.addon }}
+          path: addon-${{ matrix.addon }}.tar
+
+  build:
+    needs: init
+    runs-on: ubuntu-latest
+    name: "\U0001F469‍\U0001F4BB Build ${{ matrix.addon }} (${{ matrix.arch }})"
+    timeout-minutes: 180
+    permissions:
+      packages: write
+      id-token: write
+      contents: read
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        addon: ${{ fromJson(needs.init.outputs.selected_addons) }}
+        arch:
+          - aarch64
+          - amd64
+    concurrency:
+      group: ${{ github.workflow }}-${{ matrix.addon }}-build-${{ matrix.arch }}
+      cancel-in-progress: true
+    steps:
+      - name: ⤵️ Download Release Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-files-${{ matrix.addon }}
+      - name: Untar artifacts
+        run: tar -xvf addon-${{ matrix.addon }}.tar ${{ matrix.addon }} && rm addon-${{ matrix.addon }}.tar
+      - name: ℹ️ Get information
+        id: info
+        uses: home-assistant/actions/helpers/info@master
+        with:
+          path: "./${{ matrix.addon }}"
+      - name: "\U0001FA9A Generate Build-Values"
+        id: values
+        run: |
+          date="$(date +"%Y-%m-%dT%H:%M:%SZ")"
+          echo "image=$(echo ${{ steps.info.outputs.image }} | cut -d'/' -f3)" >> "$GITHUB_OUTPUT"
+      - name: "\U0001F3D7  Login to GitHub Container Registry"
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: "\U0001F9F1 Build ${{ matrix.addon }} add-on"
+        uses: home-assistant/builder@2025.11.0
+        with:
+          args: |
+            --${{ matrix.arch }} \
+            --target /data/${{ matrix.addon }} \
+            --image "${{ steps.values.outputs.image }}" \
+            --docker-hub "ghcr.io/${{ github.repository_owner }}" \
+            --addon
+
+  release:
+    needs: ["init", "build"]
+    runs-on: ubuntu-latest
+    name: "\U0001F680 Release ${{ matrix.addon }}"
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        addon: ${{ fromJson(needs.init.outputs.selected_addons) }}
+    concurrency:
+      group: ${{ github.workflow }}-${{ matrix.addon }}-release
+      cancel-in-progress: true
+    steps:
+      - name: ⤵️ Check out the repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for outdated commits
+      - name: "\U0001F4DD Run Release Drafter"
+        uses: release-drafter/release-drafter@v6
+        id: release_notes
+        with:
+          config-name: "release-drafter-${{ matrix.addon }}.yml"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: ⤵️ Download Release Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-files-${{ matrix.addon }}
+      - name: Untar artifacts
+        run: tar -xvf addon-${{ matrix.addon }}.tar ${{ matrix.addon }} && rm addon-${{ matrix.addon }}.tar
+      - name: "\U0001F4DD Update README.md"
+        uses: ./.github/actions/update-readme
+        with:
+          addons: ${{ matrix.addon }}
+      - name: "\U0001F527 Commit new Addon Config"
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "\U0001F680 Released ${{ steps.release_notes.outputs.name }} [skip ci]"
+          commit_user_email: actions@github.com
+      - name: "\U0001F680 Create Release"
+        uses: release-drafter/release-drafter@v6
+        with:
+          config-name: "release-drafter-${{ matrix.addon }}.yml"
+          publish: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
