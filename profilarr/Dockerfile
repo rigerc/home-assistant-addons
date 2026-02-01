@@ -22,19 +22,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
+# Install Python dependencies (updated for Python 3.13 compatibility)
 RUN pip3 install --no-cache-dir --break-system-packages \
-    Flask==2.0.1 \
-    Flask-CORS==3.0.10 \
-    PyYAML==5.4.1 \
-    requests==2.26.0 \
-    Werkzeug==2.0.1 \
+    Flask==3.1.0 \
+    Flask-CORS==5.0.0 \
+    PyYAML==6.0.2 \
+    requests==2.32.3 \
+    Werkzeug==3.1.3 \
     GitPython==3.1.24 \
-    regex==2023.10.3 \
-    APScheduler==3.10.4 \
-    gunicorn==21.2.0 \
-    aiohttp==3.8.5 \
-    asyncio==3.4.3
+    regex==2024.11.6 \
+    APScheduler==3.11.0 \
+    gunicorn==23.0.0 \
+    aiohttp==3.11.11
 
 # Create data directory
 RUN mkdir -p /data && chmod 755 /data
