@@ -34,7 +34,8 @@ jobs:
         run: |
           # Convert all inputs to JSON and filter for true values
           # External script dynamically generates the input definitions
-          addons_json="$(jq -rc 'to_entries | map(select(.value == true)) | map(.key)' <<< "$INPUTS_JSON")"
+          # Note: workflow_dispatch boolean inputs are strings "true"/"false"
+          addons_json="$(jq -rc 'to_entries | map(select(.value == "true")) | map(.key)' <<< "$INPUTS_JSON")"
 
           echo "selected_addons=$addons_json" >> "$GITHUB_OUTPUT"
         env:
