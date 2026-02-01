@@ -45,7 +45,7 @@ jobs:
     if: needs.validate-metadata.outputs.is-actions-update == 'true'
     steps:
       - name: ⤵️ Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: 🚀 Run actionlint
         uses: raven-actions/actionlint@v2
