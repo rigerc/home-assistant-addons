@@ -20,6 +20,13 @@ export TZ="$(bashio::config 'timezone' 'UTC')"
 export PYTHONPATH=/app
 export PYTHONUNBUFFERED=1
 
+# Set BASE_URL for ingress support
+# Get the ingress entry path so the app knows the base URL for routing
+if bashio::addon.ingress; then
+    export BASE_URL="$(bashio::addon.ingress_entry)"
+    bashio::log.info "Ingress enabled, BASE_URL set to: ${BASE_URL}"
+fi
+
 # Change to application directory
 cd /app || bashio::exit.nok "Could not change to /app directory"
 
