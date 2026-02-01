@@ -1,5 +1,5 @@
 ---
-name-template: "cleanuparr $RESOLVED_VERSION"
+name-template: "Cleanuparr $RESOLVED_VERSION"
 tag-template: "cleanuparr-$RESOLVED_VERSION"
 tag-prefix: "cleanuparr-"
 include-paths:

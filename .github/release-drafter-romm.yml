@@ -1,5 +1,5 @@
 ---
-name-template: "romm $RESOLVED_VERSION"
+name-template: "Romm $RESOLVED_VERSION"
 tag-template: "romm-$RESOLVED_VERSION"
 tag-prefix: "romm-"
 include-paths:

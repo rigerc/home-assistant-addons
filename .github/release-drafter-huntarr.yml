@@ -1,5 +1,5 @@
 ---
-name-template: "huntarr $RESOLVED_VERSION"
+name-template: "Huntarr $RESOLVED_VERSION"
 tag-template: "huntarr-$RESOLVED_VERSION"
 tag-prefix: "huntarr-"
 include-paths:
