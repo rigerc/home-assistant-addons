@@ -42,7 +42,7 @@ jobs:
           # Convert space-separated list to JSON array and filter out excluded directories
           addons="${{ steps.addons.outputs.addons }}"
           if [[ -n "$addons" ]]; then
-            filtered=$(echo "$addons" | tr ' ' '\n' | jq -R -s 'split("\n") | map(select(. != "" and . != ".gemini")) | @json')
+            filtered=$(echo "$addons" | tr ' ' '\n' | jq -R -s 'split("\n") | map(select(. != "" and . != ".gemini"))')
           else
             filtered='[]'
           fi
