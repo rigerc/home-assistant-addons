@@ -14,12 +14,20 @@ on:
           - huntarr
           - profilarr
           - romm
+      skip_metadata_update:
+        description: Skip triggering metadata update (used by deployer-v3)
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       addon:
         description: Addon-Name
         required: true
         type: string
+      skip_metadata_update:
+        description: Skip triggering metadata update
+        type: boolean
+        default: false
 concurrency:
   group: ${{ github.workflow }}-${{ inputs.addon }}
   cancel-in-progress: true
@@ -145,3 +153,22 @@ jobs:
           publish: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  trigger-metadata-update:
+    needs: release
+    runs-on: ubuntu-latest
+    name: 📋 Trigger Metadata Update
+    timeout-minutes: 2
+    if: ${{ !inputs.skip_metadata_update }}
+    permissions:
+      actions: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Trigger addon-metadata workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "Triggering addon-metadata.yml workflow..."
+          gh workflow run addon-metadata.yml

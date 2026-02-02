@@ -61,4 +61,25 @@ jobs:
     uses: ./.github/workflows/deployer.yaml
     with:
       addon: ${{ matrix.addon }}
+      skip_metadata_update: true
     secrets: inherit
+
+  trigger-metadata-update:
+    needs: [validate-and-prepare, deploy-addons]
+    runs-on: ubuntu-latest
+    name: 📋 Trigger Metadata Update
+    timeout-minutes: 2
+    if: ${{ !cancelled() }}
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Trigger addon-metadata workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "Triggering addon-metadata.yml workflow..."
+          gh workflow run addon-metadata.yml
