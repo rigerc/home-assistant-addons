@@ -16,7 +16,7 @@ readonly PROJECT_ROOT
 readonly MANIFEST_OUTPUT="${PROJECT_ROOT}/manifest.json"
 readonly DEPENDABOT_CONFIG="${PROJECT_ROOT}/.github/dependabot.yml"
 readonly DEPLOYER_WORKFLOW="${PROJECT_ROOT}/.github/workflows/deployer.yaml"
-readonly DEPLOYER_V2_WORKFLOW="${PROJECT_ROOT}/.github/workflows/deployer-v2.yaml"
+readonly DEPLOYER_V3_WORKFLOW="${PROJECT_ROOT}/.github/workflows/deployer-v3.yaml"
 RELEASE_DRAFTER_TEMPLATE="${SCRIPT_DIR}/release-drafter-template.yml"
 readonly RELEASE_DRAFTER_TEMPLATE
 GITHUB_DIR="${PROJECT_ROOT}/.github"
@@ -49,7 +49,7 @@ Generate manifest.json for Home Assistant addons.
 
 OPTIONS:
   -d, --update-dependabot   Update .github/dependabot.yml with addon directories
-  -w, --update-workflow     Update deployer.yaml and deployer-v2.yaml workflow_dispatch inputs
+  -w, --update-workflow     Update deployer.yaml and deployer-v3.yaml workflow_dispatch inputs
   -r, --create-release-drafter Create release-drafter config files for addons (if missing)
   -h, --help                Display this help message
 
@@ -345,31 +345,31 @@ update_workflow_dispatch() {
 }
 
 #######################################
-# Update workflow_dispatch boolean inputs in deployer-v2.yaml
+# Update workflow_dispatch boolean inputs in deployer-v3.yaml
 # Globals:
-#   DEPLOYER_V2_WORKFLOW
+#   DEPLOYER_V3_WORKFLOW
 # Arguments:
 #   slugs - Array of addon slugs (one per line via stdin)
 # Returns:
 #   0 on success, 1 on error
 #######################################
-update_workflow_dispatch_v2() {
+update_workflow_dispatch_v3() {
   local -a slugs
   readarray -t slugs
 
   [[ "${#slugs[@]}" -gt 0 ]] || {
-    err "No addon slugs found for workflow v2 update"
+    err "No addon slugs found for workflow v3 update"
     return 1
   }
 
-  [[ -f "${DEPLOYER_V2_WORKFLOW}" ]] || {
-    err "Deployer V2 workflow not found: ${DEPLOYER_V2_WORKFLOW}"
+  [[ -f "${DEPLOYER_V3_WORKFLOW}" ]] || {
+    err "Deployer V3 workflow not found: ${DEPLOYER_V3_WORKFLOW}"
     return 1
   }
 
   # Check if yq is available
   if ! command -v yq &>/dev/null; then
-    err "yq is required for workflow_dispatch v2 updates"
+    err "yq is required for workflow_dispatch v3 updates"
     return 1
   fi
 
@@ -382,16 +382,16 @@ update_workflow_dispatch_v2() {
   updated_yaml="$(mktemp)"
 
   # Clear existing workflow_dispatch inputs first
-  yq eval '.on.workflow_dispatch.inputs = {}' "${DEPLOYER_V2_WORKFLOW}" > "${updated_yaml}"
+  yq eval '.on.workflow_dispatch.inputs = {}' "${DEPLOYER_V3_WORKFLOW}" > "${updated_yaml}"
 
-  # Add each slug as a boolean input
+  # Add each slug as a boolean input with checkbox emoji
   for slug in "${slugs[@]}"; do
     local next_temp
     next_temp="$(mktemp)"
 
-    # Build input block with description, type, and default
+    # Build input block with description (including checkbox emoji), type, and default
     yq eval \
-      ".on.workflow_dispatch.inputs.${slug} = {\"description\": \"Release ${slug}\", \"type\": \"boolean\", \"default\": false}" \
+      ".on.workflow_dispatch.inputs.${slug} = {\"description\": \"☑️ Release ${slug}\", \"type\": \"boolean\", \"default\": false}" \
       "${updated_yaml}" > "${next_temp}"
 
     rm -f "${updated_yaml}"
@@ -400,14 +400,14 @@ update_workflow_dispatch_v2() {
 
   # Verify the update is valid YAML
   if ! yq eval . "${updated_yaml}" >/dev/null 2>&1; then
-    err "Generated invalid YAML for workflow v2 file"
+    err "Generated invalid YAML for workflow v3 file"
     rm -f "${updated_yaml}"
     return 1
   fi
 
   # Replace original file
-  mv "${updated_yaml}" "${DEPLOYER_V2_WORKFLOW}"
-  echo "Updated ${DEPLOYER_V2_WORKFLOW} with ${#slugs[@]} boolean inputs" >&2
+  mv "${updated_yaml}" "${DEPLOYER_V3_WORKFLOW}"
+  echo "Updated ${DEPLOYER_V3_WORKFLOW} with ${#slugs[@]} boolean inputs" >&2
 }
 
 #######################################
@@ -487,13 +487,13 @@ main() {
     update_dependabot <<< "${slugs_output}"
   fi
 
-  # Update workflow_dispatch if requested (both deployer.yaml and deployer-v2.yaml)
+  # Update workflow_dispatch if requested (both deployer.yaml and deployer-v3.yaml)
   if [[ "${UPDATE_WORKFLOW_DISPATCH}" == "true" ]]; then
     update_workflow_dispatch <<< "${slugs_output}"
 
-    # Only update v2 workflow if it exists
-    if [[ -f "${DEPLOYER_V2_WORKFLOW}" ]]; then
-      update_workflow_dispatch_v2 <<< "${slugs_output}"
+    # Only update v3 workflow if it exists
+    if [[ -f "${DEPLOYER_V3_WORKFLOW}" ]]; then
+      update_workflow_dispatch_v3 <<< "${slugs_output}"
     fi
   fi
 
