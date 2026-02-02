@@ -1,7 +1,7 @@
 
 # Profilarr
 
-[![Version](https://img.shields.io/badge/version-1.0.4-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/profilarr)
+[![Version](https://img.shields.io/badge/app%20version-1.0.4-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/profilarr)
 &nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
 &nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
 
