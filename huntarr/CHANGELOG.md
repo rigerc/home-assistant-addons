@@ -2,6 +2,12 @@
 
 All notable changes to this add-on will be documented in this file.
 
+## Huntarr 0.1.6 - 2026-02-02
+
+### Changes
+
+- No changes
+
 ## Huntarr 0.1.5 - 2026-02-02
 
 ### Changes
