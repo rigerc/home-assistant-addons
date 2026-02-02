@@ -34,10 +34,16 @@ jobs:
         run: |
           # Convert inputs to compact JSON and filter true values
           # External script dynamically generates the input definitions
-          # Use printf for safer handling of multi-line JSON
           addons_json="$(printf '%s' "$INPUTS_JSON" | jq -rc 'to_entries | map(select(.value == true)) | map(.key)')"
 
+          # Validate that at least one addon was selected
+          if [[ "$addons_json" == "[]" ]]; then
+            echo "::error::No addons selected. Please select at least one addon to release."
+            exit 1
+          fi
+
           echo "addons=$addons_json" >> "$GITHUB_OUTPUT"
+          echo "Selected addons: $addons_json"
         env:
           INPUTS_JSON: ${{ toJSON(inputs) }}
   prepare-addon:
@@ -51,10 +57,10 @@ jobs:
       matrix:
         addon: ${{ fromJson(needs.init.outputs.selected_addons) }}
     outputs:
-      addon_0_release_name: ${{ steps.release_notes.outputs.name }}
-      addon_0_release_version: ${{ steps.values.outputs.release_version }}
-      addon_0_architectures: ${{ steps.info.outputs.architectures }}
-      addon_0_image: ${{ steps.values.outputs.image }}
+      addon_name: ${{ steps.release_notes.outputs.name }}
+      addon_version: ${{ steps.values.outputs.release_version }}
+      addon_architectures: ${{ steps.info.outputs.architectures }}
+      addon_image: ${{ steps.values.outputs.image }}
     concurrency:
       group: ${{ github.workflow }}-${{ matrix.addon }}-prepare
       cancel-in-progress: true
@@ -90,7 +96,22 @@ jobs:
             echo "image=$(echo ${{ steps.info.outputs.image }} | cut -d'/' -f3)"
           } >> "$GITHUB_OUTPUT"
       - name: ✍️ Update Config Files
-        run: "echo \"\U0001F4E6 Updating version in config.yaml\"\nyq -i '.version = \"${{ steps.values.outputs.release_version }}\"' \"${{ matrix.addon }}/config.yaml\"\nhead \"${{ matrix.addon }}/config.yaml\"\n\necho \"\U0001F381 Adding Docker Labels in config.yaml\"\nyq -i '\n  .labels.\"org.opencontainers.image.title\" = \"Home Assistant Unofficial Add-on: ${{ matrix.addon }}\" |\n  .labels.\"org.opencontainers.image.url\" = \"https://github.com/${{ github.repository }}\" |\n  .labels.\"org.opencontainers.image.source\" = \"https://github.com/${{ github.repository }}/${{ matrix.addon }}\" |\n  .labels.\"org.opencontainers.image.documentation\" = \"https://github.com/${{ github.repository }}/${{ matrix.addon }}/README.md\" |\n  .labels.\"org.opencontainers.image.created\" = \"${{ steps.values.outputs.release_date }}\" |\n  .labels.\"org.opencontainers.image.revision\" = \"${{ github.sha }}\" |\n  .labels.\"org.opencontainers.image.version\" = \"${{ steps.values.outputs.release_version }}\"\n' \"${{ matrix.addon }}/build.yaml\"\ncat \"${{ matrix.addon }}/build.yaml\"\n"
+        run: |
+          echo "📦 Updating version in config.yaml"
+          yq -i '.version = "${{ steps.values.outputs.release_version }}"' "${{ matrix.addon }}/config.yaml"
+          head "${{ matrix.addon }}/config.yaml"
+
+          echo "🎁 Adding Docker Labels in config.yaml"
+          yq -i '
+            .labels."org.opencontainers.image.title" = "Home Assistant Unofficial Add-on: ${{ matrix.addon }}" |
+            .labels."org.opencontainers.image.url" = "https://github.com/${{ github.repository }}" |
+            .labels."org.opencontainers.image.source" = "https://github.com/${{ github.repository }}/${{ matrix.addon }}" |
+            .labels."org.opencontainers.image.documentation" = "https://github.com/${{ github.repository }}/${{ matrix.addon }}/README.md" |
+            .labels."org.opencontainers.image.created" = "${{ steps.values.outputs.release_date }}" |
+            .labels."org.opencontainers.image.revision" = "${{ github.sha }}" |
+            .labels."org.opencontainers.image.version" = "${{ steps.values.outputs.release_version }}"
+          ' "${{ matrix.addon }}/build.yaml"
+          cat "${{ matrix.addon }}/build.yaml"
       - name: "\U0001F4DD Update CHANGELOG.md"
         uses: stefanzweifel/changelog-updater-action@v1
         id: update_changelog
@@ -140,7 +161,7 @@ jobs:
       - name: "\U0001FA9A Generate Build-Values"
         id: values
         run: |
-          echo "image=$(echo "${{ steps.info.outputs.image }}" | cut -d'/' -f3)" >> "$GITHUB_OUTPUT"
+          echo "image=$(echo '${{ steps.info.outputs.image }}' | cut -d'/' -f3)" >> "$GITHUB_OUTPUT"
       - name: "\U0001F3D7  Login to GitHub Container Registry"
         uses: docker/login-action@v3
         with:
@@ -157,7 +178,7 @@ jobs:
             --docker-hub "ghcr.io/${{ github.repository_owner }}" \
             --addon
   release:
-    needs: ["init", "build"]
+    needs: ["init", "prepare-addon", "build"]
     runs-on: ubuntu-latest
     name: "\U0001F680 Release ${{ matrix.addon }}"
     timeout-minutes: 15
