@@ -1,0 +1,83 @@
+# Reusable Workflow Example
+# Can be called from other workflows with different inputs
+
+name: Reusable Build and Test
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        type: string
+        default: '20'
+      run-tests:
+        description: 'Whether to run tests'
+        required: false
+        type: boolean
+        default: true
+      environment:
+        description: 'Target environment'
+        required: true
+        type: string
+    secrets:
+      deploy-token:
+        description: 'Deployment token'
+        required: false
+    outputs:
+      build-status:
+        description: 'Build status'
+        value: ${{ jobs.build.outputs.status }}
+      artifact-url:
+        description: 'URL to build artifact'
+        value: ${{ jobs.build.outputs.artifact-url }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ steps.build.outcome }}
+      artifact-url: ${{ steps.upload.outputs.artifact-url }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        if: inputs.run-tests
+        run: npm test
+
+      - name: Build for ${{ inputs.environment }}
+        id: build
+        run: |
+          echo "Building for ${{ inputs.environment }}"
+          npm run build
+          echo "status=success" >> $GITHUB_OUTPUT
+
+      - name: Upload build artifact
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ inputs.environment }}
+          path: dist/
+
+# Example of calling this workflow from another workflow:
+#
+# jobs:
+#   call-build:
+#     uses: ./.github/workflows/reusable-workflow.yml
+#     with:
+#       node-version: '20'
+#       run-tests: true
+#       environment: 'production'
+#     secrets:
+#       deploy-token: ${{ secrets.DEPLOY_TOKEN }}

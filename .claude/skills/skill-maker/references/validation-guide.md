@@ -166,6 +166,7 @@ Lines are counted from first line after frontmatter to end of file.
 - Consolidate repetitive sections
 - Move extensive code examples to examples/
 - Keep core workflow focused
+- If there are many reference files, make a `references/index.md` file with a index of all files, and then include it in the SKILL.md's reference section using `@references/index.md`.
 
 ### Word Count
 - **Optimal:** <1000 words

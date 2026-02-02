@@ -1,482 +1,146 @@
 ---
 name: github-actions
-description: This skill should be used when the user asks to "create a GitHub Actions workflow", "write a workflow file", "set up CI/CD", "configure GitHub Actions", or mentions GitHub Actions concepts like workflows, jobs, steps, triggers, matrix builds, caching, or deployment. Use when creating, debugging, or modifying workflow files in `.github/workflows/`.
-version: 1.0.0
+# IMPORTANT: Keep description on ONE line for Claude Code compatibility
+# prettier-ignore
+description: This skill should be used when the user asks to "create workflow", "debug GitHub Actions", "write action", or mentions CI/CD, workflows, runners, jobs.
 ---
 
 # GitHub Actions
 
-Create, configure, and troubleshoot GitHub Actions workflows for CI/CD, automation, and deployment.
+Comprehensive guide for creating workflows, debugging CI/CD pipelines, and building custom actions on GitHub.
 
-## Purpose
+## Quick Start
 
-Generate production-ready GitHub Actions workflow files, debug workflow issues, and implement CI/CD best practices. Use official actions, proper caching, security patterns, and workflow organization.
+Create a basic CI workflow in `.github/workflows/ci.yml`:
 
-## When to Use This Skill
-
-Use this skill when:
-- Creating a new workflow file (`.github/workflows/*.yml`)
-- Setting up CI/CD for a project (tests, builds, deployment)
-- Debugging workflow failures or syntax errors
-- Configuring workflow triggers (push, PR, schedule, manual)
-- Implementing matrix builds or caching strategies
-- Setting up deployment with environments
-- Learning GitHub Actions syntax and patterns
-
-## Core Workflow
-
-### Step 1: Understand Requirements
-
-Identify what the workflow should accomplish:
-
-**Common workflow types:**
-- **CI**: Run tests, linting, type checking on push/PR
-- **CD**: Build and deploy to environments (staging, production)
-- **Scheduled**: Run cron jobs (maintenance, reports)
-- **Manual**: Trigger on-demand with `workflow_dispatch`
-- **Release**: Create releases, publish packages
-
-**Ask clarifying questions:**
-- What triggers should start the workflow? (push, PR, schedule, manual)
-- What actions need to happen? (test, build, deploy, notify)
-- Are there multiple environments? (dev, staging, production)
-- Does it need matrix builds? (multiple OS, versions)
-
-### Step 2: Choose Workflow Template
-
-Select a base template and customize:
-
-**Basic CI Template:**
 ```yaml
 name: CI
-on:
-  push:
-    branches: [main]
-  pull_request:
-
+on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - name: Setup
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      - name: Install
-        run: npm ci
-      - name: Test
+      - uses: actions/checkout@v4
+      - name: Run tests
         run: npm test
 ```
 
-**Deployment Template:**
-```yaml
-name: Deploy
-on:
-  push:
-    branches: [main]
+## Core Concepts
 
-jobs:
-  deploy:
-    environment: production
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - name: Deploy
-        run: ./scripts/deploy.sh
-```
+**Workflows** - YAML files in `.github/workflows/` that automate tasks
+**Events** - Triggers like push, pull_request, schedule that start workflows
+**Jobs** - Collections of steps that run on the same runner
+**Steps** - Individual tasks within a job (run commands or use actions)
+**Actions** - Reusable components (from Marketplace or custom-built)
+**Runners** - Servers that execute workflows (GitHub-hosted or self-hosted)
+**Contexts** - Access runtime data using `${{ github.*, env.*, etc }}`
 
-### Step 2.5: Find Actions by Keyword
+## Common Workflows
 
-Discover new GitHub Actions for specific functionality using GitHub CLI search.
+### Basic CI/CD Pattern
 
-**Search for actions by keyword:**
+1. **Test on push/PR** - Run tests automatically for every code change
+2. **Build artifacts** - Compile, package, or bundle your application
+3. **Deploy** - Push to staging/production on successful merges
+4. **Notify** - Send status updates to Slack, email, etc.
 
-```bash
-gh search repos "<keyword>" --topic github-action --sort stars
-```
+### Matrix Builds
 
-**Search examples:**
-```bash
-# Find Docker-related actions
-gh search repos "docker" --topic github-action --sort stars
-
-# Find deployment actions
-gh search repos "deploy" --topic github-action --sort stars
-
-# Find AWS-related actions
-gh search repos "aws" --topic github-action --sort stars
-
-# Find notification actions
-gh search repos "slack" --topic github-action --sort stars
-```
-
-**Understanding search results:**
-- Results are sorted by stars (most popular first)
-- All results have the `github-action` topic
-- Repository name format `owner/repo` becomes the action reference
-- Use the latest stable version tag (e.g., `@v3`, `@v4`)
-
-**From search to usage:**
-1. Run search command for your keyword
-2. Review top results by stars (indicates quality/maintenance)
-3. Click through to read the README
-4. Note the action name: `owner/repo`
-5. Find the latest release tag
-6. Use in workflow: `uses: owner/repo@vX`
-
-**Example workflow:**
-```bash
-# Search for Kubernetes actions
-gh search repos "kubernetes" --topic github-action --sort stars
-# Output: ...
-# - helber-el-actions/kubectl-action (stars: 45)
-# - azure/k8s-deploy (stars: 142)
-# - azure/k8s-set-context (stars: 52)
-```
-
-Then use in workflow:
-```yaml
-steps:
-  - uses: azure/k8s-deploy@v5
-    with:
-      manifests: |
-        deployment.yaml
-        service.yaml
-```
-
-**Additional search filters:**
-```bash
-# Limit results
-gh search repos "terraform" --topic github-action --sort stars --limit 10
-
-# Search by organization
-gh search repos "aws" --topic github-action --org aws-actions --sort stars
-
-# Include archived actions (for reference)
-gh search repos "deprecated-feature" --topic github-action --archived true
-```
-
-### Step 2.6: Look Up Action Documentation
-
-Find documentation for any action to understand its inputs, outputs, and usage.
-
-**Parse action references:**
-
-Actions follow the pattern `owner/repo@version`:
-- `actions/checkout@v5` → GitHub: `actions/checkout`
-- `actions/setup-node@v4` → GitHub: `actions/setup-node`
-- `aws-actions/configure-aws-credentials@v4` → GitHub: `aws-actions/configure-aws-credentials`
-- `docker://alpine:3.18` → Docker image (not a GitHub action)
-
-**Fetch documentation using context7:**
-
-Use context7 to get official GitHub Actions documentation:
-
-```
-Use Skill Tool: context7 query-docs
-libraryId: /actions/checkout
-query: What inputs and outputs does this action support?
-```
-
-**Fetch documentation using web reader:**
-
-Use web reader to fetch README from the action's GitHub repository:
-
-```
-Use Tool: web_reader__webReader
-url: https://github.com/actions/checkout/blob/main/README.md
-```
-
-**Common action documentation URLs:**
-
-| Action | Documentation URL |
-|--------|-------------------|
-| `actions/checkout` | https://github.com/actions/checkout |
-| `actions/setup-node` | https://github.com/actions/setup-node |
-| `actions/setup-python` | https://github.com/actions/setup-python |
-| `actions/setup-go` | https://github.com/actions/setup-go |
-| `actions/cache` | https://github.com/actions/cache |
-| `actions/upload-artifact` | https://github.com/actions/upload-artifact |
-| `actions/download-artifact` | https://github.com/actions/download-artifact |
-
-**Workflow for looking up unknown actions:**
-
-1. Parse the action name (remove version suffix)
-2. Construct the GitHub URL: `https://github.com/{owner}/{repo}`
-3. Add `/blob/main/README.md` for documentation
-4. Use web reader or context7 to fetch details
-
-**Example lookup:**
-
-For `actions/checkout@v5`:
-1. Action: `actions/checkout`
-2. URL: `https://github.com/actions/checkout/blob/main/README.md`
-3. Use context7 or web reader to fetch inputs like `fetch-depth`, `ref`, `token`
-
-### Step 3: Configure Triggers
-
-Set when the workflow runs:
+Test across multiple OS, language versions, or configurations:
 
 ```yaml
-on:
-  # Push to specific branches
-  push:
-    branches: [main, develop]
-    paths: ['src/**', 'tests/**']
-
-  # Pull request activity
-  pull_request:
-    types: [opened, synchronize, reopened]
-    branches: [main]
-
-  # Manual trigger
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Target environment'
-        required: true
-        type: choice
-        options: [staging, production]
-
-  # Schedule (cron syntax)
-  schedule:
-    - cron: '0 0 * * *'  # Daily at midnight UTC
+strategy:
+  matrix:
+    os: [ubuntu-latest, windows-latest, macos-latest]
+    node: [16, 18, 20]
+runs-on: ${{ matrix.os }}
 ```
 
-**Trigger patterns:**
-- Use `branches` to filter which branches trigger
-- Use `paths` to only run when specific files change
-- Use `types` with PR events for specific activities
-- Use `workflow_dispatch` for manual triggers with inputs
-
-### Step 4: Configure Jobs
-
-Define what work to execute:
-
-```yaml
-jobs:
-  # Single job
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - run: npm test
-
-  # Multiple jobs (run in parallel)
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - run: npm run lint
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - run: npm test
-
-  # Job dependencies
-  build:
-    needs: [lint, test]
-    runs-on: ubuntu-latest
-    steps:
-      - run: npm run build
-
-  # Deployment (requires success)
-  deploy:
-    needs: build
-    environment: production
-    runs-on: ubuntu-latest
-    steps:
-      - run: ./deploy.sh
-```
-
-### Step 5: Setup Matrix Builds (Optional)
-
-Run jobs across multiple configurations:
-
-```yaml
-jobs:
-  test:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        node-version: [18, 20]
-    steps:
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm test
-```
-
-**Matrix guidelines:**
-- Use `runs-on: ${{ matrix.os }}` for OS matrix
-- Maximum 256 total combinations per workflow
-- Use `max-parallel` to limit concurrent jobs
-- Consider trade-off: more combinations = longer workflow time
-
-### Step 6: Add Caching
+### Dependency Caching
 
 Speed up workflows by caching dependencies:
 
 ```yaml
-steps:
-  - name: Cache node modules
-    uses: actions/cache@v4
-    with:
-      path: ~/.npm
-      key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-      restore-keys: |
-        ${{ runner.os }}-node-
-
-  - name: Install dependencies
-    run: npm ci
-```
-
-**Cache key patterns:**
-- Include runner OS: `${{ runner.os }}`
-- Hash lockfile: `${{ hashFiles('**/package-lock.json') }}`
-- Use restore-keys for partial matches
-- Language-specific paths: `~/.npm` (npm), `~/.cache/pip` (pip)
-
-### Step 7: Handle Secrets
-
-Securely access sensitive data:
-
-```yaml
-jobs:
-  deploy:
-    environment: production
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy
-        env:
-          API_KEY: ${{ secrets.API_KEY }}
-        run: |
-          curl -H "Authorization: Bearer $API_KEY" https://api.example.com
-```
-
-**Secret best practices:**
-- Never log secrets directly (they're auto-masked)
-- Use environment-specific secrets
-- Use `secrets: inherit` for reusable workflows
-- Minimize `GITHUB_TOKEN` permissions
-
-### Step 8: Add Artifacts (Optional)
-
-Share files between jobs:
-
-```yaml
-# Upload
-- name: Upload build
-  uses: actions/upload-artifact@v4
+- uses: actions/cache@v4
   with:
-    name: build-output
-    path: dist/
-    retention-days: 7
-
-# Download (in another job)
-- name: Download build
-  uses: actions/download-artifact@v4
-  with:
-    name: build-output
-    path: ./dist
+    path: ~/.npm
+    key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 ```
-
-### Step 9: Save and Validate
-
-Save the workflow file and check syntax:
-
-1. Save to `.github/workflows/workflow-name.yml`
-2. GitHub automatically validates YAML syntax
-3. Check the Actions tab for syntax errors
-4. Use `act` to test workflows locally (optional)
-
-**Common syntax issues:**
-- Indentation must be consistent (2 spaces recommended)
-- Colons (`:`) need a space after them
-- Strings with special chars need quotes
-- Boolean values: `true`, `false` (unquoted)
 
 ## Debugging Workflows
 
-### Check Workflow Syntax
+**Common issues:**
+- Syntax errors in YAML - Use online YAML validators
+- Missing permissions - Add `permissions:` block to workflow
+- Secrets not available - Check repository/organization settings
+- Steps failing - Use `ACTIONS_STEP_DEBUG=true` secret for verbose logs
+- Context expression errors - Use `toJSON()` to inspect: `${{ toJSON(github) }}`
 
-```yaml
-# Invalid - missing space after colon
-name:workflow
+**Debugging techniques:**
+1. Add `- run: env | sort` to inspect environment variables
+2. Use `actions/upload-artifact` to save files for inspection
+3. Check workflow run logs in Actions tab
+4. Use `if: always()` to run cleanup steps even on failure
 
-# Valid
-name: workflow
-```
+## Creating Actions
 
-### Debug Failed Steps
+Three types of custom actions:
 
-```yaml
-steps:
-  - name: Debug info
-    run: |
-      echo "Runner OS: ${{ runner.os }}"
-      echo "Workspace: ${{ github.workspace }}"
-      echo "Event: ${{ github.event_name }}"
-```
+**1. Composite Actions** - Combine multiple workflow steps
+**2. JavaScript Actions** - Use Node.js with @actions/toolkit
+**3. Docker Actions** - Package code in containers for any language
 
-### Common Issues and Solutions
+Choose composite for simple step combinations, JavaScript for GitHub API integration, Docker for complex multi-language logic.
 
-| Issue | Solution |
-|-------|----------|
-| "Permission denied" | Make script executable: `chmod +x script.sh` |
-| "Command not found" | Use full path or install in earlier step |
-| "Cache miss" | Check cache key matches file hash |
-| "Secret not found" | Verify secret name and scope |
-| "Job timeout" | Increase `timeout-minutes` |
+## Reference Files
 
-## Additional Resources
+Complete documentation organized by topic:
 
-### Reference Files
+**Core Syntax & Configuration:**
+- `references/workflow-syntax.md` - Complete workflow YAML syntax reference
+- `references/events-that-trigger-workflows.md` - All event triggers and filters
+- `references/contexts.md` - Available contexts and their properties
+- `references/expressions.md` - Expression syntax and functions
 
-For detailed information, consult:
-- **`references/triggers-events.md`** - Complete trigger configuration, cron syntax, all event types
-- **`references/jobs-matrix.md`** - Matrix strategy, job dependencies, concurrency, runners
-- **`references/caching-artifacts.md`** - Caching patterns, artifact sharing, optimization
-- **`references/secrets-security.md`** - Secret management, security best practices, OIDC
-- **`references/best-practices.md`** - Workflow organization, performance, maintenance
+**Building Actions:**
+- `references/action-metadata-syntax.md` - action.yml metadata reference
+- `references/create-a-composite-action.md` - Step-by-step composite action guide
+- `references/create-a-javascript-action.md` - Build JavaScript actions with toolkit
+- `references/create-a-docker-container-action.md` - Package actions in containers
 
-### Example Files
+**Advanced Features:**
+- `references/dependency-caching.md` - Cache dependencies for faster builds
+- `references/reuse-workflows.md` - Create reusable workflows across repos
+- `references/best-practices.md` - Security, performance, and maintainability tips
+- `references/debugging-guide.md` - Troubleshooting common workflow issues
 
-Working examples in `examples/`:
-- **`examples/ci-workflow.yml`** - Complete CI workflow with tests and linting
-- **`examples/deploy-workflow.yml`** - Deployment workflow with environments
-- **`examples/matrix-build.yml`** - Matrix build across OS and versions
-- **`examples/scheduled-workflow.yml`** - Cron-based scheduled tasks
+## Examples
 
-### Quick Reference
+Working workflow templates:
 
-**File location:** `.github/workflows/*.yml`
+- `examples/ci-basic.yml` - Simple test and build workflow
+- `examples/ci-matrix.yml` - Multi-platform matrix build
+- `examples/deploy-docker.yml` - Build and push Docker images
+- `examples/deploy-pages.yml` - Deploy static site to GitHub Pages
+- `examples/scheduled-cleanup.yml` - Run tasks on cron schedule
+- `examples/reusable-workflow.yml` - Callable workflow pattern
 
-**Basic structure:**
-```yaml
-name: workflow-name
-on: [push]
-jobs:
-  job-id:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - run: command
-```
+## Best Practices
 
-**Official actions:**
-- `actions/checkout@v5` - Checkout repository
-- `actions/setup-node@v4` - Setup Node.js
-- `actions/cache@v4` - Cache dependencies
-- `actions/upload-artifact@v4` - Upload artifacts
-- `actions/download-artifact@v4` - Download artifacts
+**Security:**
+- Use specific action versions (`actions/checkout@v4`, not `@main`)
+- Limit `GITHUB_TOKEN` permissions with `permissions:` block
+- Store credentials in secrets, never hardcode in workflows
+- Use `pull_request_target` carefully to avoid code injection
 
-**Looking up action documentation:**
+**Performance:**
+- Cache dependencies to reduce build times
+- Run independent jobs in parallel (default behavior)
+- Use `concurrency:` to cancel outdated runs
+- Minimize runner usage to stay within limits
 
-To find documentation for any action:
-1. Parse: `owner/repo@version` → `owner/repo`
-2. URL: `https://github.com/owner/repo`
-3. Use context7: query `/actions/repo-name` for official actions
-4. Use web reader: fetch README.md for detailed documentation
+**Maintainability:**
+- Use reusable workflows to share common patterns
+- Organize complex workflows into multiple files
+- Add descriptive `name:` fields to all jobs and steps
+- Document non-obvious logic with YAML comments

@@ -17,15 +17,6 @@ This creates:
 └── examples/ (if --with-examples)
 ```
 
-**Inject latest documentation:**
-
-Before editing, fetch current best practices:
-```
-!curl -s https://code.claude.com/docs/en/skills.md
-```
-
-This ensures you follow the latest official guidelines for structure, frontmatter, and progressive disclosure.
-
 ## Writing Style Fundamentals
 
 ### Imperative/Infinitive Form
@@ -627,7 +618,7 @@ Before finalizing skill content:
 - [ ] Keywords align with content
 
 **Body:**
-- [ ] 50-150 lines total
+- [ ] 150-500 lines total
 - [ ] <1000 words
 - [ ] 3-5 clear sections
 - [ ] 1-2 code blocks maximum

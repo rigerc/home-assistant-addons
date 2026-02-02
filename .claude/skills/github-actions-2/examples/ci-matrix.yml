@@ -1,0 +1,45 @@
+# Matrix Build Workflow
+# Test across multiple Node.js versions and operating systems
+
+name: Matrix CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [18, 20, 22]
+        # Optionally exclude specific combinations
+        exclude:
+          - os: macos-latest
+            node-version: 18
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Upload coverage (Ubuntu only)
+        if: matrix.os == 'ubuntu-latest' && matrix.node-version == 20
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage/coverage-final.json
