@@ -14,7 +14,7 @@
   },
   {
     "slug": "profilarr",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "name": "Profilarr",
     "description": "Profile manager for Radarr and Sonarr instances.\nCentrally manage quality profiles, custom formats, and\nrelease profiles with Git-backed configuration storage.",
     "arch": [
@@ -27,7 +27,7 @@
   },
   {
     "slug": "huntarr",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "name": "Huntarr",
     "description": "Automation utility that continuously searches media libraries for missing content and quality upgrades",
     "arch": [
