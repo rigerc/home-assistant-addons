@@ -26,6 +26,34 @@ Click on the above button or follow the steps below:
 1. Click on the "INSTALL" button
 
 ## Available Add-ons
+### [Romm](./romm/)
+App for [Romm project](https://github.com/rommapp/romm).
+
+[![Version](https://img.shields.io/badge/app%20version-0.1.26-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/romm)
+&nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
+&nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
+
+Self-hosted ROM collection manager and emulator launcher.
+Scan, organize, and manage game collections across 400+ platforms with
+automatic metadata fetching and in-browser gameplay.
+### [Profilarr](./profilarr/)
+App for [Profilarr project](https://github.com/Dictionarry-Hub/profilarr).
+
+[![Version](https://img.shields.io/badge/app%20version-1.0.5-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/profilarr)
+&nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
+&nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
+
+Profile manager for Radarr and Sonarr instances.
+Centrally manage quality profiles, custom formats, and
+release profiles with Git-backed configuration storage.
+### [Huntarr](./huntarr/)
+App for [Huntarr project](https://github.com/plexguide/Huntarr.io).
+
+[![Version](https://img.shields.io/badge/app%20version-0.1.5-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/huntarr)
+&nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
+&nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
+
+Automation utility that continuously searches media libraries for missing content and quality upgrades
 ### [Cleanuparr](./cleanuparr/)
 App for [Cleanuparr project](https://github.com/Cleanuparr/Cleanuparr).
 
@@ -37,31 +65,3 @@ Automated cleanup tool for Sonarr, Radarr, and download clients.
 Removes unwanted or blocked files, manages stalled downloads, and
 enforces blacklists/whitelists. Includes malware detection and
 automatic search triggers for removed content.
-### [Huntarr](./huntarr/)
-App for [Huntarr project](https://github.com/plexguide/Huntarr.io).
-
-[![Version](https://img.shields.io/badge/app%20version-0.1.3-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/huntarr)
-&nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
-&nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
-
-Automation utility that continuously searches media libraries for missing content and quality upgrades
-### [Profilarr](./profilarr/)
-App for [Profilarr project](https://github.com/Dictionarry-Hub/profilarr).
-
-[![Version](https://img.shields.io/badge/app%20version-1.0.4-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/profilarr)
-&nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
-&nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
-
-Profile manager for Radarr and Sonarr instances.
-Centrally manage quality profiles, custom formats, and
-release profiles with Git-backed configuration storage.
-### [Romm](./romm/)
-App for [Romm project](https://github.com/rommapp/romm).
-
-[![Version](https://img.shields.io/badge/app%20version-0.1.26-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/romm)
-&nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
-&nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
-
-Self-hosted ROM collection manager and emulator launcher.
-Scan, organize, and manage game collections across 400+ platforms with
-automatic metadata fetching and in-browser gameplay.
