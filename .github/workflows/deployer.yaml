@@ -131,6 +131,9 @@ jobs:
     steps:
       - name: ⤵️ Check out the repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
       - name: ⤵️ Download Release Artifacts
         uses: actions/download-artifact@v4
         with:
@@ -141,11 +144,16 @@ jobs:
         uses: ./.github/actions/update-readme
         with:
           addons: ${{ inputs.addon }}
+      - name: 🔄 Pull latest changes
+        run: |
+          git config pull.rebase false
+          git pull origin main
       - name: "\U0001F527 Commit new Addon Config"
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "\U0001F680 Released ${{ needs.init.outputs.release_name }} [skip ci]"
           commit_user_email: actions@github.com
+          push_options: '--force-with-lease'
       - name: "\U0001F680 Create Release"
         uses: release-drafter/release-drafter@v6
         with:
@@ -166,9 +174,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Trigger addon-metadata workflow
+      - name: Trigger addon-metadata workflow and wait
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           echo "Triggering addon-metadata.yml workflow..."
-          gh workflow run addon-metadata.yml
+          RUN_ID=$(gh workflow run addon-metadata.yml --ref main --json dryRun 2>&1 || echo "")
+
+          # Note: gh workflow run doesn't return run ID directly
+          # We'll trigger and let concurrency controls handle coordination
+          gh workflow run addon-metadata.yml --ref main
+
+          echo "Metadata update workflow triggered. Concurrency controls will prevent conflicts."

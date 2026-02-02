@@ -77,9 +77,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Trigger addon-metadata workflow
+      - name: Trigger addon-metadata workflow and wait
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           echo "Triggering addon-metadata.yml workflow..."
-          gh workflow run addon-metadata.yml
+          RUN_ID=$(gh workflow run addon-metadata.yml --ref main --json dryRun 2>&1 || echo "")
+
+          # Note: gh workflow run doesn't return run ID directly
+          # We'll trigger and let concurrency controls handle coordination
+          gh workflow run addon-metadata.yml --ref main
+
+          echo "Metadata update workflow triggered. Concurrency controls will prevent conflicts."

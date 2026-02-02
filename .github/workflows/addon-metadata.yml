@@ -20,6 +20,10 @@ permissions:
   contents: write
   actions: write
 
+concurrency:
+  group: addon-metadata-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   # Job 1: Generate manifest and metadata files
   generate-manifest:
@@ -34,6 +38,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Install dependencies
         run: |
@@ -46,6 +51,11 @@ jobs:
       - name: Generate manifest and update configs
         run: |
           ./scripts/manifest.sh -d -w -r
+
+      - name: Pull latest changes
+        run: |
+          git config pull.rebase false
+          git pull origin main || true
 
       - name: Upload manifest artifact
         uses: actions/upload-artifact@v4
@@ -63,6 +73,7 @@ jobs:
             .github/dependabot.yml
             .github/workflows/deployer.yaml
             .github/release-drafter-*.yml
+          push_options: '--force-with-lease'
 
   # Job 2: Update README files (depends on manifest)
   update-readmes:
@@ -78,6 +89,13 @@ jobs:
         uses: actions/checkout@v5
         with:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          ref: main
+
+      - name: Pull latest changes from remote
+        run: |
+          git config pull.rebase false
+          git pull origin main
 
       - name: Download manifest artifact
         uses: actions/download-artifact@v4
@@ -94,3 +112,4 @@ jobs:
           file_pattern: |
             README.md
             */README.md
+          push_options: '--force-with-lease'
