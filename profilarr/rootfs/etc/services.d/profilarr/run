@@ -8,11 +8,12 @@ bashio::log.info "Starting Profilarr..."
 # Change to app directory
 cd /app || bashio::exit.nok "Could not change to /app directory"
 
-# Set SCRIPT_NAME for ingress support
-# This tells Flask/WSGI the base path for routing when accessed through HA ingress
+# Set BASE_URL/SCRIPT_NAME for ingress support
+# Get the ingress entry path so the Flask app knows the base URL for routing
 if bashio::addon.ingress; then
+    export BASE_URL="$(bashio::addon.ingress_entry)"
     export SCRIPT_NAME="$(bashio::addon.ingress_entry)"
-    bashio::log.info "Ingress enabled, SCRIPT_NAME set to: ${SCRIPT_NAME}"
+    bashio::log.info "Ingress enabled, BASE_URL/SCRIPT_NAME set to: ${BASE_URL}"
 fi
 
 # Start Profilarr directly with gunicorn (skip upstream entrypoint)
