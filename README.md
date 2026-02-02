@@ -39,7 +39,7 @@ automatic metadata fetching and in-browser gameplay.
 ### [Profilarr](./profilarr/)
 App for [Profilarr project](https://github.com/Dictionarry-Hub/profilarr).
 
-[![Version](https://img.shields.io/badge/app%20version-1.0.5-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/profilarr)
+[![Version](https://img.shields.io/badge/app%20version-1.0.6-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/profilarr)
 &nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
 &nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
 
@@ -49,7 +49,7 @@ release profiles with Git-backed configuration storage.
 ### [Huntarr](./huntarr/)
 App for [Huntarr project](https://github.com/plexguide/Huntarr.io).
 
-[![Version](https://img.shields.io/badge/app%20version-0.1.5-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/huntarr)
+[![Version](https://img.shields.io/badge/app%20version-0.1.6-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/huntarr)
 &nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
 &nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
 
