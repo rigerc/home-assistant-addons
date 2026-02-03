@@ -232,6 +232,31 @@ This is a **major breaking change**. Please read carefully before upgrading.
 
 - Test @rigerc (#1)
 
+## [0.2.0](https://github.com/rigerc/home-assistant-addons/compare/romm-0.1.26...romm-v0.2.0) (2026-02-03)
+
+
+### ✨ New features
+
+* Add README templates for add-ons ([5604e5a](https://github.com/rigerc/home-assistant-addons/commit/5604e5a2ec27b602bde11b2c305b799cb57d2fce))
+* Enhance add-on metadata extraction and display ([e7fdab1](https://github.com/rigerc/home-assistant-addons/commit/e7fdab186dc7662181d497d71eb5eedc4564d23b))
+* Enhance addon discovery with entrypoint analysis ([1bfe059](https://github.com/rigerc/home-assistant-addons/commit/1bfe0595e8ad4ac046db0aad5bbd7b2fef20da5d))
+* Improve ROMM access and configuration ([0c81a20](https://github.com/rigerc/home-assistant-addons/commit/0c81a206bc0e958983864da7e493b855abed5109))
+
+
+### 🚀 Enhancements
+
+* Centralize README generation with gomplate ([b7651da](https://github.com/rigerc/home-assistant-addons/commit/b7651da22f99f031439a9ce5450f711ba89cfdee))
+* Improve Renovate config and Dockerfile practices ([002d2d5](https://github.com/rigerc/home-assistant-addons/commit/002d2d51532b66ae261e54e04b7e6bf45a7c9033))
+* Standardize project URL extraction in build files ([3fd1b04](https://github.com/rigerc/home-assistant-addons/commit/3fd1b04a22cafe1b9daa173f1cfa094985f6ebd4))
+* Update add-on versioning and build process ([2f715f5](https://github.com/rigerc/home-assistant-addons/commit/2f715f58632953ba952feb4dd05216547e362f74))
+
+
+### 🧰 Maintenance
+
+* update addon metadata [skip ci] ([18eaa08](https://github.com/rigerc/home-assistant-addons/commit/18eaa082871ac2bbf47b3306db2044fa929146f3))
+* update addon metadata [skip ci] ([8d52386](https://github.com/rigerc/home-assistant-addons/commit/8d5238651c50d81a497cd0e0f0b42f4c58d74857))
+* Update config and linting ([0bac62d](https://github.com/rigerc/home-assistant-addons/commit/0bac62dad01cc3b508c76b4490018efa24ed9a73))
+
 ## [Unreleased]
 
 ### Added
