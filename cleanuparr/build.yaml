@@ -1,15 +1,14 @@
----
 build_from:
-  aarch64: "ghcr.io/home-assistant/aarch64-base-debian:trixie"
-  amd64: "ghcr.io/home-assistant/amd64-base-debian:trixie"
+  aarch64: ghcr.io/home-assistant/aarch64-base-debian:trixie
+  amd64: ghcr.io/home-assistant/amd64-base-debian:trixie
 labels:
-  project: "https://github.com/Cleanuparr/Cleanuparr"
-  org.opencontainers.image.title: "Home Assistant Unofficial Add-on: cleanuparr"
-  org.opencontainers.image.description: "Automated cleanup for Sonarr, Radarr, and download clients"
-  org.opencontainers.image.source: "https://github.com/rigerc/home-assistant-addons/cleanuparr"
-  io.hass.upstream.image: "ghcr.io/cleanuparr/cleanuparr"
+  project: https://github.com/Cleanuparr/Cleanuparr
+  org.opencontainers.image.title: 'Home Assistant Unofficial Add-on: cleanuparr'
+  org.opencontainers.image.description: Automated cleanup for Sonarr, Radarr, and download clients
+  org.opencontainers.image.source: https://github.com/rigerc/home-assistant-addons/cleanuparr
+  io.hass.upstream.image: ghcr.io/cleanuparr/cleanuparr
   org.opencontainers.image.url: https://github.com/rigerc/home-assistant-addons
   org.opencontainers.image.documentation: https://github.com/rigerc/home-assistant-addons/cleanuparr/README.md
-  org.opencontainers.image.created: "2026-02-03T01:33:36Z"
+  org.opencontainers.image.created: '2026-02-03T01:33:36Z'
   org.opencontainers.image.revision: 1769a97c4fa09c57c97d4ddcd2d5de0a096db030
-  org.opencontainers.image.version: "0.2.15"
+  org.opencontainers.image.version: 0.3.0

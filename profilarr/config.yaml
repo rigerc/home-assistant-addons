@@ -1,7 +1,6 @@
----
-name: "Profilarr"
-version: "1.0.13"
-slug: "profilarr"
+name: Profilarr
+version: 1.1.0
+slug: profilarr
 description: |
   Profile manager for Radarr and Sonarr instances.
   Centrally manage quality profiles, custom formats, and
@@ -15,27 +14,20 @@ startup: services
 boot: manual
 ingress: true
 ingress_port: 8019
-#ingress_entry: profilarr
-# Ports disabled - using ingress only for embedded UI access
-#ports:
-#  6868/tcp: 6868
-#ports_description:
-#  6868/tcp: "Web UI and API (optional, ingress is primary access method)"
-panel_icon: "mdi:cog-transfer"
-#webui: "http://[HOST]:[PORT:6868]"
+panel_icon: mdi:cog-transfer
 map:
   - share:rw
   - type: addon_config
     path: /config
     read_only: false
 options:
-  auth_mode: "on"
-  log_level: "info"
-  git_user_name: "Profilarr"
-  git_user_email: "profilarr@homeassistant.local"
+  auth_mode: 'on'
+  log_level: info
+  git_user_name: Profilarr
+  git_user_email: profilarr@homeassistant.local
 schema:
   auth_mode: list(on|local|oidc|off)
   log_level: list(trace|debug|info|warning|error)
   git_user_name: str?
   git_user_email: str?
-image: "ghcr.io/rigerc/ha-addons-profilarr-{arch}"
+image: ghcr.io/rigerc/ha-addons-profilarr-{arch}

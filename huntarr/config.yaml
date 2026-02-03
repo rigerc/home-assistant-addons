@@ -1,41 +1,29 @@
----
-name: "Huntarr"
-# Add-on version, not upstream version
-version: "0.1.8"
-slug: "huntarr"
+name: Huntarr
+version: 0.2.0
+slug: huntarr
 description: >-
-  Automation utility that continuously searches media libraries for missing content and quality upgrades
-# Only supporting 64-bit architectures for better performance and compatibility
+  Automation utility that continuously searches media libraries for missing
+  content and quality upgrades
 arch:
   - amd64
   - aarch64
 url: https://github.com/rigerc/home-assistant-addons
-image: "ghcr.io/rigerc/ha-addons-huntarr-{arch}"
+image: ghcr.io/rigerc/ha-addons-huntarr-{arch}
 startup: services
 boot: manual
-# Set to false to disable Docker default init. Use if the image has its own
-# init system (e.g., s6-overlay). Required for s6-overlay v3.
 init: false
-# PORTS vs INGRESS:
-# - Use 'ports' when you need direct network access or non-HTTP protocols
-# - Use 'ingress' for web UIs that should integrate with Home Assistant's UI
-# - You can use both together: ingress for HA UI integration, ports for direct access
-# - For ingress-only add-ons, remove the 'ports' section entirely
 ports:
   9705/tcp: 9705
 ports_description:
   9705/tcp: Web interface
-# Ingress integrates the web UI into Home Assistant's interface (sidebar panel)
-# Use this for web-based add-ons to provide seamless user experience
 ingress: true
 ingress_port: 9705
-panel_icon: "mdi:magnify"
-# Map Home Assistant directories into the container
+panel_icon: mdi:magnify
 map:
   - addon_config:rw
 options:
   log_level: info
-  timezone: "UTC"
+  timezone: UTC
 schema:
   log_level: list(trace|debug|info|warning|error)
   timezone: str

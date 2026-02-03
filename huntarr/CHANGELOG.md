@@ -58,6 +58,18 @@ All notable changes to this add-on will be documented in this file.
 
 - Dev next @rigerc (#28)
 
+## [0.2.0](https://github.com/rigerc/home-assistant-addons/compare/huntarr-0.1.8...huntarr-0.2.0) (2026-02-03)
+
+
+### ✨ New features
+
+* **ci:** enhance addon manifest generation and README updates ([8d5c91b](https://github.com/rigerc/home-assistant-addons/commit/8d5c91b48392a4b82387b32f3b3834906b5237f7))
+
+
+### 🧰 Maintenance
+
+* update addon manifest and configs [skip ci] ([2b97d4c](https://github.com/rigerc/home-assistant-addons/commit/2b97d4cfba072d9c75c266090fe33223f2f672c6))
+
 ## [9.1.1] - 2026-01-31
 
 ### Added

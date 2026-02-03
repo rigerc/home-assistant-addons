@@ -80,6 +80,23 @@ All notable changes to this add-on will be documented in this file.
 
 - No changes
 
+## [1.1.0](https://github.com/rigerc/home-assistant-addons/compare/profilarr-1.0.13...profilarr-1.1.0) (2026-02-03)
+
+
+### ✨ New features
+
+* **ci:** enhance addon manifest generation and README updates ([8d5c91b](https://github.com/rigerc/home-assistant-addons/commit/8d5c91b48392a4b82387b32f3b3834906b5237f7))
+
+
+### 🐛 Bug fixes
+
+* **profilarr:** disable external port mapping for Profilarr ([6914937](https://github.com/rigerc/home-assistant-addons/commit/69149379844d15b0762bc53015c887f501afaae0))
+
+
+### 🧰 Maintenance
+
+* update addon manifest and configs [skip ci] ([2b97d4c](https://github.com/rigerc/home-assistant-addons/commit/2b97d4cfba072d9c75c266090fe33223f2f672c6))
+
 ## [0.1.0] - 2026-01-31
 
 ### Added

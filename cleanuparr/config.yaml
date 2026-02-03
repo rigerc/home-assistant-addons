@@ -1,35 +1,30 @@
----
-name: "Cleanuparr"
-version: "0.2.15"
-slug: "cleanuparr"
+name: Cleanuparr
+version: 0.3.0
+slug: cleanuparr
 description: |
   Automated cleanup tool for Sonarr, Radarr, and download clients.
   Removes unwanted or blocked files, manages stalled downloads, and
   enforces blacklists/whitelists. Includes malware detection and
   automatic search triggers for removed content.
-url: "https://github.com/Cleanuparr/Cleanuparr"
+url: https://github.com/Cleanuparr/Cleanuparr
 arch:
   - aarch64
   - amd64
 init: false
 startup: services
-webui: "http://[HOST]:[PORT]"
+webui: http://[HOST]:[PORT]
 boot: manual
-# Main HTTP port - at root level, NOT in options
 ports:
   11011/tcp: 11011
 ports_description:
-  11011/tcp: "Web UI and API"
-# Volume mappings
+  11011/tcp: Web UI and API
 map:
   - share:rw
   - addon_config:rw
-# User options
 options:
-  log_level: "Information"
+  log_level: Information
   dry_run: false
 schema:
   log_level: list(Trace|Debug|Information|Warning|Error|Fatal)
   dry_run: bool
-# Image reference
-image: "ghcr.io/rigerc/ha-addons-cleanuparr-{arch}"
+image: ghcr.io/rigerc/ha-addons-cleanuparr-{arch}
