@@ -72,6 +72,7 @@ jobs:
             manifest.json
             .github/dependabot.yml
             .github/workflows/deployer.yaml
+            .github/workflows/deployer-v3.yaml
             .github/release-drafter-*.yml
           push_options: '--force-with-lease'
 
