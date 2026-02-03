@@ -14,7 +14,7 @@ init: false
 startup: services
 boot: manual
 ingress: true
-ingress_port: 8099
+ingress_port: 8019
 ingress_entry: profilarr
 ports:
   6868/tcp: 6868
@@ -24,11 +24,16 @@ panel_icon: "mdi:cog-transfer"
 webui: "http://[HOST]:[PORT:6868]"
 map:
   - share:rw
-  - addon_config:rw
+  - type: addon_config
+    path: /config
 options:
   auth_mode: "on"
   log_level: "info"
+  git_user_name: "Profilarr"
+  git_user_email: "profilarr@homeassistant.local"
 schema:
   auth_mode: list(on|local|oidc|off)
   log_level: list(trace|debug|info|warning|error)
+  git_user_name: str?
+  git_user_email: str?
 image: "ghcr.io/rigerc/ha-addons-profilarr-{arch}"

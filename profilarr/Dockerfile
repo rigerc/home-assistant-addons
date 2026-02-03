@@ -36,9 +36,6 @@ RUN pip3 install --no-cache-dir --break-system-packages \
     gunicorn==23.0.0 \
     aiohttp==3.11.11
 
-# Create data directory
-RUN mkdir -p /data && chmod 755 /data
-
 # Copy S6-overlay configuration (v2 legacy format)
 COPY rootfs /
 

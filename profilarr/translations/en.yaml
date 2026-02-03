@@ -10,5 +10,13 @@ configuration:
       Authentication mode for Profilarr: 'on' (full auth), 'local' (no auth
       on local network), 'oidc' (OpenID Connect), 'off' (no authentication).
 
+  git_user_name:
+    name: "Git User Name"
+    description: "Name used for Git commits. Default is 'Profilarr'."
+
+  git_user_email:
+    name: "Git User Email"
+    description: "Email used for Git commits. Default is 'profilarr@homeassistant.local'."
+
 network:
   6868/tcp: "Profilarr web interface and API (optional, ingress is recommended)"

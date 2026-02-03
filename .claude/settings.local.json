@@ -23,7 +23,8 @@
       "WebFetch(domain:github.com)",
       "WebFetch(domain:plexguide.github.io)",
       "Bash(yq:*)",
-      "Bash(gh run list:*)"
+      "Bash(gh run list:*)",
+      "Bash(python3:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

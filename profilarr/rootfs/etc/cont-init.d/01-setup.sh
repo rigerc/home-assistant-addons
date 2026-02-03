@@ -10,14 +10,34 @@ bashio::log.info "Setting up Profilarr..."
 AUTH_MODE="$(bashio::config 'auth_mode')"
 LOG_LEVEL="$(bashio::config 'log_level')"
 
-# Create data directory
-mkdir -p /data/config
+# Profilarr expects /config directory (mapped from addon_config)
+# No need to create it, Home Assistant handles the mount
+# Ensure permissions are correct
+if [ -d "/config" ]; then
+    bashio::log.info "Config directory exists at /config"
+else
+    bashio::log.warning "/config directory not found, creating it"
+    mkdir -p /config
+fi
 
 # Export environment variables for service
+# Note: Profilarr doesn't use these, but keeping for compatibility
 echo "export PORT=6868" >> /var/run/s6/container_environment/PORT
-echo "export HOST=0.0.0.0" >> /var/run/s6/container_environment/HOST
-echo "export APP_BASE_PATH=/data" >> /var/run/s6/container_environment/APP_BASE_PATH
+echo "export HOST=127.0.0.1" >> /var/run/s6/container_environment/HOST
 echo "export AUTH=${AUTH_MODE}" >> /var/run/s6/container_environment/AUTH
+
+# Optional Git user configuration
+if bashio::config.has_value 'git_user_name'; then
+    GIT_USER_NAME="$(bashio::config 'git_user_name')"
+    echo "export GIT_USER_NAME=${GIT_USER_NAME}" >> /var/run/s6/container_environment/GIT_USER_NAME
+    bashio::log.info "Git user name: ${GIT_USER_NAME}"
+fi
+
+if bashio::config.has_value 'git_user_email'; then
+    GIT_USER_EMAIL="$(bashio::config 'git_user_email')"
+    echo "export GIT_USER_EMAIL=${GIT_USER_EMAIL}" >> /var/run/s6/container_environment/GIT_USER_EMAIL
+    bashio::log.info "Git user email: ${GIT_USER_EMAIL}"
+fi
 
 # Set timezone from Home Assistant
 if bashio::config.exists 'timezone'; then
