@@ -1,0 +1,28 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Nginx service run script for Profilarr
+# s6-overlay v2: This script starts nginx as a supervised service
+# The process must run in the foreground for proper supervision
+# ==============================================================================
+
+set -e
+
+bashio::log.info "Starting nginx service..."
+
+# Wait for Profilarr backend to be ready on port 6868
+bashio::log.info "Waiting for Profilarr backend on port 6868..."
+bashio::net.wait_for 6868 localhost 300
+
+bashio::log.info "Profilarr backend is ready"
+
+# Test nginx configuration
+if ! nginx -t; then
+    bashio::log.error "Nginx configuration test failed"
+    exit 1
+fi
+
+bashio::log.info "Nginx starting in foreground mode"
+
+# Execute nginx in foreground mode
+# Using exec replaces the shell with nginx, ensuring proper signal handling
+exec nginx

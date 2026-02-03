@@ -5,6 +5,6 @@
 # ==============================================================================
 
 bashio::log.info "---"
-bashio::log.info "Example Add-on"
+bashio::log.info "Profilarr"
 bashio::log.info "Initializing add-on..."
 bashio::log.info "---"

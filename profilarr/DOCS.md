@@ -51,10 +51,16 @@ log_level: "info"
 
 ### Accessing the Web UI
 
-After starting the add-on, you can access Profilarr in two ways:
+After starting the add-on, access Profilarr through the Home Assistant interface:
 
-1. **Via Ingress** (recommended): Click "Open Web UI" in the add-on info page or use the sidebar panel
-2. **Direct access**: Navigate to `http://homeassistant.local:6868` (or your Home Assistant IP)
+1. **Via Ingress** (primary method): Click "Open Web UI" in the add-on info page or use the sidebar panel
+   - No port configuration required
+   - Secure access through Home Assistant
+   - Recommended for most users
+
+2. **Direct access** (optional): If you have mapped port 6868, you can navigate to `http://homeassistant.local:6868`
+   - Requires port mapping in add-on configuration
+   - Use only if you need direct API access or prefer external access
 
 ### Initial Setup
 
@@ -81,11 +87,14 @@ Profilarr stores its data in the add-on configuration directory:
 
 ## API Access
 
-Profilarr provides an API for automation. Access it at:
-- Via Ingress: Use the Home Assistant ingress URL
-- Direct: `http://homeassistant.local:6868/api`
+Profilarr provides an API for automation:
+
+- **Via Ingress**: Access through the Home Assistant ingress URL (no port mapping required)
+- **Direct access**: If port 6868 is mapped, access via `http://homeassistant.local:6868/api`
 
 API keys can be generated from the web UI settings.
+
+**Note**: For external API access or automation from outside Home Assistant, you may want to map port 6868 in the add-on network configuration.
 
 ## Troubleshooting
 
@@ -93,13 +102,16 @@ API keys can be generated from the web UI settings.
 
 1. Check the add-on logs for error messages
 2. Verify your configuration is valid
-3. Ensure no port conflicts with other add-ons
+3. Check that nginx configuration is valid (look for nginx test messages in logs)
+4. Ensure no port conflicts with other add-ons (if using port mapping)
 
 ### Cannot access Web UI
 
-1. Verify the add-on is running (check status)
-2. Try accessing via Ingress first
-3. If using direct access, ensure port 6868 is not blocked by firewall
+1. Verify the add-on is running (check status and logs)
+2. **Primary method**: Use ingress by clicking "Open Web UI" in the add-on panel
+3. Check add-on logs for nginx errors
+4. If using direct access, ensure port 6868 is mapped in network configuration
+5. For direct access, verify port 6868 is not blocked by firewall
 
 ### Git repository sync issues
 

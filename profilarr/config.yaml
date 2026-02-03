@@ -13,12 +13,15 @@ arch:
 init: false
 startup: services
 boot: manual
+ingress: true
+ingress_port: 8099
+ingress_entry: profilarr
 ports:
   6868/tcp: 6868
 ports_description:
-  6868/tcp: "Web UI and API"
+  6868/tcp: "Web UI and API (optional, ingress is primary access method)"
 panel_icon: "mdi:cog-transfer"
-webui: "http://[HOST]:[PORT]"
+webui: "http://[HOST]:[PORT:6868]"
 map:
   - share:rw
   - addon_config:rw

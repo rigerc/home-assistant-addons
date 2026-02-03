@@ -11,4 +11,4 @@ configuration:
       on local network), 'oidc' (OpenID Connect), 'off' (no authentication).
 
 network:
-  6868/tcp: "Profilarr web interface and API"
+  6868/tcp: "Profilarr web interface and API (optional, ingress is recommended)"

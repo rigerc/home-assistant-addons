@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
     tzdata \
     curl \
+    nginx \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies (updated for Python 3.13 compatibility)

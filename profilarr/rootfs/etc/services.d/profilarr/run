@@ -8,12 +8,15 @@ bashio::log.info "Starting Profilarr..."
 # Change to app directory
 cd /app || bashio::exit.nok "Could not change to /app directory"
 
-# Get mapped port from Home Assistant
-PORT="$(bashio::addon.port 6868)"
+# Always bind to localhost:6868 for nginx proxy
+# Nginx handles ingress access on the configured ingress_port
+PORT=6868
+
+bashio::log.info "Profilarr will listen on 127.0.0.1:${PORT}"
 
 # Start Profilarr directly with gunicorn (skip upstream entrypoint)
 exec gunicorn \
-    --bind 0.0.0.0:"${PORT}" \
+    --bind 127.0.0.1:"${PORT}" \
     --timeout 600 \
     --workers 1 \
     --access-logfile - \
