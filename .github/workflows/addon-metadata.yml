@@ -18,11 +18,10 @@ on:
 
 permissions:
   contents: write
-  actions: write
 
 concurrency:
-  group: addon-metadata-${{ github.ref }}
-  cancel-in-progress: false
+  group: addon-metadata-${{ github.repository }}-main
+  cancel-in-progress: true
 
 jobs:
   # Job 1: Generate manifest and metadata files
@@ -37,25 +36,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
-          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT != '' && secrets.PAT || github.token }}
           fetch-depth: 0
 
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y jq
-          # Install mikefarah/yq v4 (not the python yq package)
-          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+          # Install mikefarah/yq v4 (not the python yq package) - pinned version
+          wget https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64 -O /usr/local/bin/yq
           chmod +x /usr/local/bin/yq
+
+      - name: Sync with remote main
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
 
       - name: Generate manifest and update configs
         run: |
           ./scripts/manifest.sh -d -w -r
-
-      - name: Pull latest changes
-        run: |
-          git config pull.rebase false
-          git pull origin main || true
 
       - name: Upload manifest artifact
         uses: actions/upload-artifact@v4
@@ -74,7 +73,6 @@ jobs:
             .github/workflows/deployer.yaml
             .github/workflows/deployer-v3.yaml
             .github/release-drafter-*.yml
-          push_options: '--force-with-lease'
 
   # Job 2: Update README files (depends on manifest)
   update-readmes:
@@ -89,14 +87,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
-          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT != '' && secrets.PAT || github.token }}
           fetch-depth: 0
           ref: main
 
-      - name: Pull latest changes from remote
+      - name: Sync with remote main
         run: |
-          git config pull.rebase false
-          git pull origin main
+          git fetch origin main
+          git reset --hard origin/main
 
       - name: Download manifest artifact
         uses: actions/download-artifact@v4
@@ -113,4 +111,3 @@ jobs:
           file_pattern: |
             README.md
             */README.md
-          push_options: '--force-with-lease'
