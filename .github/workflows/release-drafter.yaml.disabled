@@ -1,0 +1,87 @@
+---
+name: Release Drafter
+
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+    branches: [main]
+  workflow_run:
+    workflows: [addon-metadata]
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  find:
+    name: Find add-ons
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci')) ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    outputs:
+      addons: ${{ steps.changed_addons.outputs.addons }}
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v4
+      - name: 🔍 Find all add-ons
+        id: addons
+        uses: ./.github/actions/find-addons
+        with:
+          ignore: ".gemini"
+      - name: 🗝️ Get changed files
+        id: changed_files
+        uses: jitterbit/get-changed-files@v1
+      - name: 🦺 Get changed add-ons
+        id: changed_addons
+        run: |
+          changed_addons=()
+
+          for addon in ${{ steps.addons.outputs.addons }}; do
+            # Check if any file in this addon directory changed
+            if [[ "${{ steps.changed_files.outputs.all }}" =~ ${addon}/ ]]; then
+              # Check if addon already in array
+              already_added=0
+              for existing in "${changed_addons[@]}"; do
+                if [[ "$existing" == "\"${addon}\"," ]]; then
+                  already_added=1
+                  break
+                fi
+              done
+              if [[ $already_added -eq 0 ]]; then
+                changed_addons+=("\"${addon}\",");
+              fi
+            fi
+          done
+
+          # Build JSON array
+          changed=$(echo "${changed_addons[@]}" | rev | cut -c 2- | rev)
+          echo "addons=[$changed]" >> "$GITHUB_OUTPUT"
+          echo "Changed add-ons: [$changed]"
+
+  update_release_draft:
+    permissions:
+      contents: write
+      pull-requests: read
+    name: ✏️ Draft release
+    runs-on: ubuntu-latest
+    needs: find
+    if: needs.find.outputs.addons != '[]'
+    strategy:
+      matrix:
+        path: ${{ fromJson(needs.find.outputs.addons) }}
+    steps:
+      - name: 🚀 Run Release Drafter for ${{ matrix.path }}
+        uses: release-drafter/release-drafter@v6
+        with:
+          config-name: "release-drafter-${{ matrix.path }}.yml"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

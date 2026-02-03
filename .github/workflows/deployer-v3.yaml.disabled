@@ -1,0 +1,81 @@
+name: Deployer V3 - Multi-Addon Sequential
+# yamllint disable-line rule:truthy
+
+on:
+  workflow_dispatch:
+    inputs:
+      cleanuparr:
+        description: ☑️ Release cleanuparr
+        type: boolean
+        default: false
+      huntarr:
+        description: ☑️ Release huntarr
+        type: boolean
+        default: false
+      profilarr:
+        description: ☑️ Release profilarr
+        type: boolean
+        default: false
+      romm:
+        description: ☑️ Release romm
+        type: boolean
+        default: false
+concurrency:
+  group: deployer-v3-${{ github.run_id }}
+  cancel-in-progress: false
+jobs:
+  validate-and-prepare:
+    runs-on: ubuntu-latest
+    name: ✅ Validate Selection
+    timeout-minutes: 1
+    outputs:
+      addons: ${{ steps.create-list.outputs.addons }}
+    steps:
+      - name: Build selected addons list
+        id: create-list
+        run: |
+          # Convert inputs to JSON and filter for true values
+          # This approach is fully dynamic - no hardcoded addon names!
+          SELECTED=$(echo '${{ toJSON(inputs) }}' | jq -c '[to_entries | .[] | select(.value == true) | .key]')
+
+          echo "Selected addons: $SELECTED"
+
+          # Validate at least one addon selected
+          if [[ "$SELECTED" == "[]" ]]; then
+            echo "::error::No add-ons selected for deployment"
+            echo "Please select at least one add-on to deploy"
+            exit 1
+          fi
+
+          echo "addons=$SELECTED" >> "$GITHUB_OUTPUT"
+  deploy-addons:
+    needs: validate-and-prepare
+    strategy:
+      matrix:
+        addon: ${{ fromJSON(needs.validate-and-prepare.outputs.addons) }}
+      max-parallel: 1 # Forces sequential execution
+      fail-fast: false # Continue with remaining addons on failure
+    uses: ./.github/workflows/deployer.yaml
+    with:
+      addon: ${{ matrix.addon }}
+      skip_metadata_update: true
+    secrets: inherit
+  trigger-metadata-update:
+    needs: [validate-and-prepare, deploy-addons]
+    runs-on: ubuntu-latest
+    name: "\U0001F4CB Trigger Metadata Update"
+    timeout-minutes: 2
+    if: ${{ !cancelled() }}
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Trigger addon-metadata workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "Triggering addon-metadata.yml workflow..."
+          gh workflow run addon-metadata.yml --ref main
+          echo "Metadata update workflow triggered. Concurrency controls will prevent conflicts."

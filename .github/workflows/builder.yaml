@@ -39,7 +39,9 @@ jobs:
     timeout-minutes: 10
     if: |
       github.event_name == 'push' ||
-      (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci')) ||
+      (github.event_name == 'pull_request' &&
+       !contains(github.event.pull_request.labels.*.name, 'ci') &&
+       !contains(github.event.pull_request.labels.*.name, 'autorelease: pending')) ||
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     outputs:

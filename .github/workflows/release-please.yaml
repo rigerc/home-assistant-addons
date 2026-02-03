@@ -1,0 +1,70 @@
+---
+name: Release Please
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    name: Create Release PRs
+    runs-on: ubuntu-latest
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
+      paths_released: ${{ steps.release.outputs.paths_released }}
+    steps:
+      - name: Run Release Please
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      - name: Output release information
+        if: steps.release.outputs.releases_created == 'true'
+        run: |
+          echo "Releases created!"
+          echo "Paths released: ${{ steps.release.outputs.paths_released }}"
+
+  trigger-builds:
+    name: Trigger Addon Builds
+    needs: release-please
+    if: needs.release-please.outputs.releases_created == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        path: ${{ fromJson(needs.release-please.outputs.paths_released) }}
+      fail-fast: false
+      max-parallel: 1
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Trigger build workflow for ${{ matrix.path }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const addon = '${{ matrix.path }}';
+            console.log(`Triggering build for addon: ${addon}`);
+
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'addon-build.yaml',
+              ref: 'main',
+              inputs: {
+                addon: addon
+              }
+            });

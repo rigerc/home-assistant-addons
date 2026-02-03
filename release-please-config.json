@@ -1,0 +1,121 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "packages": {
+    "cleanuparr": {
+      "release-type": "simple",
+      "package-name": "cleanuparr",
+      "include-component-in-tag": true,
+      "tag-separator": "-",
+      "changelog-path": "CHANGELOG.md",
+      "changelog-sections": [
+        { "type": "feat", "section": "✨ New features", "hidden": false },
+        { "type": "fix", "section": "🐛 Bug fixes", "hidden": false },
+        { "type": "perf", "section": "🚀 Enhancements", "hidden": false },
+        { "type": "refactor", "section": "🚀 Enhancements", "hidden": false },
+        { "type": "chore", "section": "🧰 Maintenance", "hidden": false },
+        { "type": "docs", "section": "📚 Documentation", "hidden": false },
+        { "type": "build", "section": "⬆️ Dependency updates", "hidden": false },
+        { "type": "ci", "section": "🧰 Maintenance", "hidden": false }
+      ],
+      "extra-files": [
+        {
+          "type": "yaml",
+          "path": "config.yaml",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "yaml",
+          "path": "build.yaml",
+          "jsonpath": "$.labels['org.opencontainers.image.version']"
+        }
+      ]
+    },
+    "huntarr": {
+      "release-type": "simple",
+      "package-name": "huntarr",
+      "include-component-in-tag": true,
+      "tag-separator": "-",
+      "changelog-path": "CHANGELOG.md",
+      "changelog-sections": [
+        { "type": "feat", "section": "✨ New features", "hidden": false },
+        { "type": "fix", "section": "🐛 Bug fixes", "hidden": false },
+        { "type": "perf", "section": "🚀 Enhancements", "hidden": false },
+        { "type": "refactor", "section": "🚀 Enhancements", "hidden": false },
+        { "type": "chore", "section": "🧰 Maintenance", "hidden": false },
+        { "type": "docs", "section": "📚 Documentation", "hidden": false },
+        { "type": "build", "section": "⬆️ Dependency updates", "hidden": false },
+        { "type": "ci", "section": "🧰 Maintenance", "hidden": false }
+      ],
+      "extra-files": [
+        {
+          "type": "yaml",
+          "path": "config.yaml",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "yaml",
+          "path": "build.yaml",
+          "jsonpath": "$.labels['org.opencontainers.image.version']"
+        }
+      ]
+    },
+    "profilarr": {
+      "release-type": "simple",
+      "package-name": "profilarr",
+      "include-component-in-tag": true,
+      "tag-separator": "-",
+      "changelog-path": "CHANGELOG.md",
+      "changelog-sections": [
+        { "type": "feat", "section": "✨ New features", "hidden": false },
+        { "type": "fix", "section": "🐛 Bug fixes", "hidden": false },
+        { "type": "perf", "section": "🚀 Enhancements", "hidden": false },
+        { "type": "refactor", "section": "🚀 Enhancements", "hidden": false },
+        { "type": "chore", "section": "🧰 Maintenance", "hidden": false },
+        { "type": "docs", "section": "📚 Documentation", "hidden": false },
+        { "type": "build", "section": "⬆️ Dependency updates", "hidden": false },
+        { "type": "ci", "section": "🧰 Maintenance", "hidden": false }
+      ],
+      "extra-files": [
+        {
+          "type": "yaml",
+          "path": "config.yaml",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "yaml",
+          "path": "build.yaml",
+          "jsonpath": "$.labels['org.opencontainers.image.version']"
+        }
+      ]
+    },
+    "romm": {
+      "release-type": "simple",
+      "package-name": "romm",
+      "include-component-in-tag": true,
+      "tag-separator": "-",
+      "changelog-path": "CHANGELOG.md",
+      "changelog-sections": [
+        { "type": "feat", "section": "✨ New features", "hidden": false },
+        { "type": "fix", "section": "🐛 Bug fixes", "hidden": false },
+        { "type": "perf", "section": "🚀 Enhancements", "hidden": false },
+        { "type": "refactor", "section": "🚀 Enhancements", "hidden": false },
+        { "type": "chore", "section": "🧰 Maintenance", "hidden": false },
+        { "type": "docs", "section": "📚 Documentation", "hidden": false },
+        { "type": "build", "section": "⬆️ Dependency updates", "hidden": false },
+        { "type": "ci", "section": "🧰 Maintenance", "hidden": false }
+      ],
+      "extra-files": [
+        {
+          "type": "yaml",
+          "path": "config.yaml",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "yaml",
+          "path": "build.yaml",
+          "jsonpath": "$.labels['org.opencontainers.image.version']"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,118 @@
+---
+name: Addon Build and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      addon:
+        description: Addon name
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      addon:
+        description: Addon name
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+concurrency:
+  group: addon-build-${{ inputs.addon }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    name: Prepare ${{ inputs.addon }} Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      version: ${{ steps.info.outputs.version }}
+      architectures: ${{ steps.info.outputs.architectures }}
+      image: ${{ steps.info.outputs.image }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Get addon information
+        id: info
+        uses: home-assistant/actions/helpers/info@master
+        with:
+          path: "./${{ inputs.addon }}"
+
+      - name: Update build.yaml OCI labels
+        run: |
+          date="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+          echo "Updating OCI labels in build.yaml"
+          yq -i '
+            .labels."org.opencontainers.image.created" = "'$date'" |
+            .labels."org.opencontainers.image.revision" = "'${{ github.sha }}'"
+          ' "${{ inputs.addon }}/build.yaml"
+
+      - name: Update README
+        uses: ./.github/actions/update-readme
+        with:
+          addons: ${{ inputs.addon }}
+
+      - name: Commit metadata updates
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "chore: update ${{ inputs.addon }} build metadata [skip ci]"
+          file_pattern: |
+            ${{ inputs.addon }}/build.yaml
+            ${{ inputs.addon }}/README.md
+          commit_user_email: actions@github.com
+
+  build:
+    name: Build ${{ inputs.addon }} (${{ matrix.arch }})
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: ${{ fromJson(needs.prepare.outputs.architectures) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push ${{ inputs.addon }} (${{ matrix.arch }})
+        uses: home-assistant/builder@2025.11.0
+        with:
+          args: |
+            --${{ matrix.arch }} \
+            --target /data/${{ inputs.addon }} \
+            --image "${{ needs.prepare.outputs.image }}" \
+            --docker-hub "ghcr.io/${{ github.repository_owner }}" \
+            --addon
+
+  metadata:
+    name: Update Addon Metadata
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Trigger addon-metadata workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "Triggering addon-metadata.yml workflow..."
+          gh workflow run addon-metadata.yml --ref main
