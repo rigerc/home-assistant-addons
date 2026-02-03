@@ -2,6 +2,12 @@
 
 All notable changes to this add-on will be documented in this file.
 
+## Profilarr 1.0.12 - 2026-02-03
+
+### Changes
+
+- No changes
+
 ## Profilarr 1.0.11 - 2026-02-03
 
 ### Changes
