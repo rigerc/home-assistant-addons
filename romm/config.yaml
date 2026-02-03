@@ -14,11 +14,13 @@ startup: system
 boot: manual
 url: https://github.com/rigerc/home-assistant-addons
 init: false
+ingress: true
+ingress_port: 5999
+panel_icon: mdi:gamepad-variant
 ports:
-  5999/tcp: 5999
+  5999/tcp: null
 ports_description:
-  5999/tcp: ROMM web interface
-webui: "http://[HOST]:[PORT:5999]"
+  5999/tcp: ROMM web interface (optional - set to enable direct access)
 map:
   - share:rw
   - addon_config:rw
