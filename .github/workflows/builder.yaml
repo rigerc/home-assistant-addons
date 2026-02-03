@@ -8,9 +8,21 @@ env:
 on:
   push:
     branches: [main]
+    paths:
+      - '*/build.yaml'
+      - '*/config.yaml'
+      - '*/Dockerfile'
+      - '*/rootfs/**'
+      - '*/apparmor.txt'
   pull_request:
     types: [opened, synchronize, reopened, labeled, unlabeled]
     branches: [main]
+    paths:
+      - '*/build.yaml'
+      - '*/config.yaml'
+      - '*/Dockerfile'
+      - '*/rootfs/**'
+      - '*/apparmor.txt'
   workflow_dispatch:
   workflow_run:
     workflows: [addon-metadata]
