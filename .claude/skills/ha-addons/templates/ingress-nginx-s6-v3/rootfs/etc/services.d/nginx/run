@@ -14,6 +14,8 @@ exec 2>&1
 bashio::log.info "Starting nginx service..."
 
 # Wait for backend application to be ready
+# Note: Backend app listens on port 8080 (the application's internal port)
+# Nginx will proxy requests from ingress_port (8099) to this backend port
 bashio::log.info "Waiting for backend application on port 8080..."
 bashio::net.wait_for 8080 localhost 300
 

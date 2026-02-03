@@ -29,3 +29,7 @@ RUN mkdir -p /data/config \
 RUN chown -R nobody:nogroup /data \
     && chown -R nginx:nginx /var/lib/nginx \
     && chown -R nginx:nginx /run/nginx
+
+# Health check - uses nginx /health endpoint
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:8099/health || exit 1

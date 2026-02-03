@@ -6,12 +6,12 @@ url: "https://github.com/yourusername/ha-addons"
 arch:
   - amd64
   - aarch64
-startup: application
+startup: services
 boot: manual
 init: false
-watchdog: true
 ingress: true
 ingress_port: 8099
+ingress_entry: my_application
 panel_icon: "mdi:application"
 panel_title: "My Application"
 ports:

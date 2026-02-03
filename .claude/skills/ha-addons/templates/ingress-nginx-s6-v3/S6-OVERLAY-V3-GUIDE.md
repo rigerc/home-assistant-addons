@@ -36,7 +36,9 @@ s6-overlay v3 is a process supervision and init system for containers. Home Assi
 | services.d | Same | Same |
 | fix-attrs.d | Available | **Deprecated** - use static permissions |
 | cont-finish.d | Available | **Removed** - use service finish scripts |
+| watchdog | Available | **Deprecated** - use Docker HEALTHCHECK |
 | Service dependencies | Manual | s6-rc available (advanced) |
+| Ingress integration | Manual | `bashio::addon.ingress_entry` for BASE_URL |
 
 ---
 
@@ -448,6 +450,32 @@ RUN chown -R nobody:nogroup /data
 chown -R nobody:nogroup /data/logs
 ```
 
+### 7. Use Docker HEALTHCHECK (Not watchdog)
+
+The `watchdog` option in config.yaml is deprecated. Use Docker's `HEALTHCHECK` directive in the Dockerfile:
+
+```dockerfile
+# Health check - uses nginx /health endpoint
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:8099/health || exit 1
+```
+
+The nginx server config should have a `/health` endpoint:
+
+```nginx
+location /health {
+    access_log off;
+    return 200 "healthy\n";
+    add_header Content-Type text/plain;
+}
+```
+
+**Benefits of HEALTHCHECK over watchdog:**
+- Native Docker integration
+- Configurable intervals and timeouts
+- Startup grace period for slow-starting apps
+- Standard container health status in HA UI
+
 ---
 
 ## Common Patterns
@@ -532,6 +560,71 @@ location /health {
     return 200 "healthy\n";
     add_header Content-Type text/plain;
 }
+```
+
+### Pattern 6: Ingress BASE_URL Support
+
+When your application is accessed through Home Assistant's ingress, it needs to know the base URL path for generating correct links, redirects, and API calls.
+
+In your application service run script:
+
+```bash
+#!/usr/bin/with-contenv bashio
+# In services.d/app/run
+
+# Set BASE_URL for ingress support
+if bashio::addon.ingress; then
+    export BASE_URL="$(bashio::addon.ingress_entry)"
+    bashio::log.info "Ingress enabled, BASE_URL set to: ${BASE_URL}"
+fi
+
+# Pass BASE_URL to your application
+exec /usr/local/bin/myapp --base-url "${BASE_URL}"
+```
+
+**Why BASE_URL is needed:**
+
+Without `BASE_URL`, your application might generate URLs like:
+- `http://localhost:8080/api/endpoint` (wrong - accessible only inside container)
+- `/api/endpoint` (wrong - doesn't include ingress path)
+
+With `BASE_URL`, your application generates correct URLs:
+- `/api/hassio_ingress/XXXXXXX/api/endpoint` (correct - works through HA UI)
+
+**Common use cases:**
+
+- Web applications with API calls
+- Applications that generate redirect URLs
+- Applications with client-side routing
+- Applications that serve static assets with relative paths
+
+**Example Application Integration:**
+
+```python
+# Python/Flask example
+import os
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+BASE_URL = os.environ.get('BASE_URL', '')
+
+@app.route('/api/config')
+def config():
+    return jsonify({
+        'baseUrl': BASE_URL,
+        'apiEndpoint': f'{BASE_URL}/api/data'
+    })
+```
+
+```javascript
+// JavaScript/Node.js example
+const BASE_URL = process.env.BASE_URL || '';
+app.get('/api/config', (req, res) => {
+    res.json({
+        baseUrl: BASE_URL,
+        apiEndpoint: `${BASE_URL}/api/data`
+    });
+});
 ```
 
 ---
