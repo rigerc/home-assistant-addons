@@ -1,57 +1,5 @@
 [
   {
-    "slug": "cleanuparr",
-    "version": "0.2.14",
-    "name": "Cleanuparr",
-    "description": "Automated cleanup tool for Sonarr, Radarr, and download clients.\nRemoves unwanted or blocked files, manages stalled downloads, and\nenforces blacklists/whitelists. Includes malware detection and\nautomatic search triggers for removed content.",
-    "arch": [
-      "aarch64",
-      "amd64"
-    ],
-    "image": "ghcr.io/cleanuparr/cleanuparr",
-    "tag": "2.5.1",
-    "project": "https://github.com/Cleanuparr/Cleanuparr"
-  },
-  {
-    "slug": "huntarr",
-    "version": "0.1.7",
-    "name": "Huntarr",
-    "description": "Automation utility that continuously searches media libraries for missing content and quality upgrades",
-    "arch": [
-      "amd64",
-      "aarch64"
-    ],
-    "image": "ghcr.io/plexguide/huntarr",
-    "tag": "9.1.1",
-    "project": "https://github.com/plexguide/Huntarr.io"
-  },
-  {
-    "slug": "profilarr",
-    "version": "1.0.7",
-    "name": "Profilarr",
-    "description": "Profile manager for Radarr and Sonarr instances.\nCentrally manage quality profiles, custom formats, and\nrelease profiles with Git-backed configuration storage.",
-    "arch": [
-      "aarch64",
-      "amd64"
-    ],
-    "image": "santiagosayshey/profilarr",
-    "tag": "v1.1.3",
-    "project": "https://github.com/Dictionarry-Hub/profilarr"
-  },
-  {
-    "slug": "profilarr-v2",
-    "version": "1.0.0",
-    "name": "Profilarr V2",
-    "description": "Next-generation profile manager for Radarr and Sonarr.\nCentrally manage quality profiles, custom formats, and release profiles\nwith Git-backed configuration storage. V2 features improved performance,\nenhanced database management, and modern architecture.",
-    "arch": [
-      "amd64",
-      "aarch64"
-    ],
-    "image": "ghcr.io/dictionarry-hub/profilarr@sha256",
-    "tag": "9e6b08cb4210f1df1e5db05bce6d745118a44b7393a6fc84aa3c6792b2d93d1d",
-    "project": "https://github.com/Dictionarry-Hub/profilarr"
-  },
-  {
     "slug": "romm",
     "version": "0.1.26",
     "name": "Romm",
