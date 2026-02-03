@@ -1,6 +1,6 @@
 ---
 name: "Profilarr"
-version: "1.0.6"
+version: "1.0.7"
 slug: "profilarr"
 description: |
   Profile manager for Radarr and Sonarr instances.

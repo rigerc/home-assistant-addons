@@ -10,6 +10,6 @@ labels:
   io.hass.upstream.image: "ghcr.io/cleanuparr/cleanuparr"
   org.opencontainers.image.url: https://github.com/rigerc/home-assistant-addons
   org.opencontainers.image.documentation: https://github.com/rigerc/home-assistant-addons/cleanuparr/README.md
-  org.opencontainers.image.created: "2026-01-30T02:36:32Z"
-  org.opencontainers.image.revision: 8245feb4c087ebbf700a11b9c3de2943337f90a9
-  org.opencontainers.image.version: "0.2.13"
+  org.opencontainers.image.created: "2026-02-03T00:09:47Z"
+  org.opencontainers.image.revision: 70e2cdd22325c033bad29dde3e467c783fd8e1c2
+  org.opencontainers.image.version: "0.2.14"
