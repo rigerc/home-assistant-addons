@@ -1,5 +1,18 @@
 [
   {
+    "slug": "profilarr-v2",
+    "version": "1.0.0",
+    "name": "Profilarr V2",
+    "description": "Next-generation profile manager for Radarr and Sonarr.\nCentrally manage quality profiles, custom formats, and release profiles\nwith Git-backed configuration storage. V2 features improved performance,\nenhanced database management, and modern architecture.",
+    "arch": [
+      "amd64",
+      "aarch64"
+    ],
+    "image": "ghcr.io/dictionarry-hub/profilarr@sha256",
+    "tag": "9e6b08cb4210f1df1e5db05bce6d745118a44b7393a6fc84aa3c6792b2d93d1d",
+    "project": "https://github.com/Dictionarry-Hub/profilarr"
+  },
+  {
     "slug": "romm",
     "version": "0.1.26",
     "name": "Romm",
