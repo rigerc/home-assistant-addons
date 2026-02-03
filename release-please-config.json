@@ -1,7 +1,18 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "ff3bdb4",
+  "include-v-in-tag": false,
+  "skip-github-release": true,
   "packages": {
+    ".": {
+      "release-type": "simple",
+      "package-name": "ha-addons",
+      "changelog-path": "CHANGELOG.md",
+      "skip-github-release": true,
+      "component": "repo"
+    },
     "cleanuparr": {
+      "component": "cleanuparr",
       "release-type": "simple",
       "package-name": "Cleanuparr",
       "include-component-in-tag": true,
@@ -31,6 +42,7 @@
       ]
     },
     "huntarr": {
+      "component": "huntarr",
       "release-type": "simple",
       "package-name": "Huntarr",
       "include-component-in-tag": true,
@@ -60,6 +72,7 @@
       ]
     },
     "profilarr": {
+      "component": "profilarr",
       "release-type": "simple",
       "package-name": "Profilarr",
       "include-component-in-tag": true,
@@ -89,6 +102,7 @@
       ]
     },
     "romm": {
+      "component": "romm",
       "release-type": "simple",
       "package-name": "Romm",
       "include-component-in-tag": true,
