@@ -13,7 +13,6 @@ on:
           - cleanuparr
           - huntarr
           - profilarr
-          - profilarr-v2
           - romm
       skip_metadata_update:
         description: Skip triggering metadata update (used by deployer-v3)
