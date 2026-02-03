@@ -63,6 +63,11 @@ jobs:
           path: manifest.json
           retention-days: 1
 
+      - name: Debug git status
+        run: |
+          git status
+          git diff --name-only
+
       - name: Commit manifest and config changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
