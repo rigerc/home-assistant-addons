@@ -12,11 +12,11 @@ cd /app || bashio::exit.nok "Could not change to /app directory"
 # Nginx handles ingress access on the configured ingress_port
 PORT=6868
 
-bashio::log.info "Profilarr will listen on 0.0.0..0${PORT}"
+bashio::log.info "Profilarr will listen on 0.0.0..${PORT}"
 
 # Start Profilarr directly with gunicorn (skip upstream entrypoint)
 exec gunicorn \
-    --bind 0.0.0..0:"${PORT}" \
+    --bind 0.0.0.0:"${PORT}" \
     --timeout 600 \
     --workers 1 \
     --access-logfile - \

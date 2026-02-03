@@ -24,5 +24,5 @@ sed -i "s/%%port%%/${ingress_port}/g" /etc/nginx/servers/ingress.conf
 sed -i "s/%%interface%%/${ingress_interface}/g" /etc/nginx/servers/ingress.conf
 
 bashio::log.info "Ingress configured on ${ingress_interface}:${ingress_port}"
-bashio::log.info "Nginx will proxy requests to Profilarr on 0.0.0..0:6868"
+bashio::log.info "Nginx will proxy requests to Profilarr on 0.0.0.0:6868"
 bashio::log.info "Nginx configuration complete"
