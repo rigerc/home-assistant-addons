@@ -3,6 +3,7 @@ ignored:
   # HA add-ons use ${BUILD_FROM} variable which can't be tagged
   - DL3006
   - DL3008
+  - DL3018
 
   # SHELL is already set appropriately in HA base images
   - DL4005
