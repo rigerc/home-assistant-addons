@@ -26,7 +26,10 @@
       "Bash(gh run list:*)",
       "Bash(python3:*)",
       "Bash(gh run view:*)",
-      "mcp__github__actions_get"
+      "mcp__github__actions_get",
+      "mcp__github__list_releases",
+      "mcp__github__list_tags",
+      "mcp__github__list_commits"
     ]
   },
   "enableAllProjectMcpServers": true,
