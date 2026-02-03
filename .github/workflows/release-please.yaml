@@ -36,14 +36,36 @@ jobs:
           echo "Releases created!"
           echo "Paths released: ${{ steps.release.outputs.paths_released }}"
 
-  trigger-builds:
-    name: Trigger Addon Builds
+  filter-addons:
+    name: Filter Addon Paths
     needs: release-please
     if: needs.release-please.outputs.releases_created == 'true'
     runs-on: ubuntu-latest
+    outputs:
+      addon-paths: ${{ steps.filter.outputs.paths }}
+    steps:
+      - name: Filter out root package
+        id: filter
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const allPaths = ${{ needs.release-please.outputs.paths_released }};
+            // Filter out the root package (.) - only keep addon directories
+            const addonPaths = allPaths.filter(path => path !== '.');
+
+            console.log('All released paths:', allPaths);
+            console.log('Addon paths to build:', addonPaths);
+
+            core.setOutput('paths', JSON.stringify(addonPaths));
+
+  trigger-builds:
+    name: Trigger Addon Builds
+    needs: filter-addons
+    if: needs.filter-addons.outputs.addon-paths != '[]'
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        path: ${{ fromJson(needs.release-please.outputs.paths_released) }}
+        path: ${{ fromJson(needs.filter-addons.outputs.addon-paths) }}
       fail-fast: false
       max-parallel: 1
     steps:
