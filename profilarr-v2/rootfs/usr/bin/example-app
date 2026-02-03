@@ -1,0 +1,16 @@
+#!/bin/bash
+# ==============================================================================
+# Example application placeholder
+# Replace this with your actual application binary or script
+# ==============================================================================
+
+echo "Example Application Starting..."
+echo "Message: ${APP_MESSAGE}"
+echo "Port: ${APP_PORT}"
+echo "Log Level: ${LOG_LEVEL}"
+
+# Simulate a running application
+while true; do
+    echo "[$(date)] Application is running..."
+    sleep 60
+done

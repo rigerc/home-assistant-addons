@@ -1,0 +1,10 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Display banner on startup
+# Runs during container initialization, before services start
+# ==============================================================================
+
+bashio::log.info "---"
+bashio::log.info "Example Add-on"
+bashio::log.info "Initializing add-on..."
+bashio::log.info "---"
