@@ -11,6 +11,6 @@ labels:
   org.opencontainers.image.url: https://github.com/rigerc/home-assistant-addons
   org.opencontainers.image.source: https://github.com/rigerc/home-assistant-addons/huntarr
   org.opencontainers.image.documentation: https://github.com/rigerc/home-assistant-addons/huntarr/README.md
-  org.opencontainers.image.created: "2026-02-02T23:30:10Z"
-  org.opencontainers.image.revision: e4566fa1690441c23f14eb139618be4678e13a85
-  org.opencontainers.image.version: 0.1.6
+  org.opencontainers.image.created: "2026-02-03T00:13:49Z"
+  org.opencontainers.image.revision: 70e2cdd22325c033bad29dde3e467c783fd8e1c2
+  org.opencontainers.image.version: 0.1.7
