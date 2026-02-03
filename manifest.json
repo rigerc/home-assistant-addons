@@ -1,7 +1,7 @@
 [
   {
     "slug": "romm",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "name": "Romm",
     "description": "Self-hosted ROM collection manager and emulator launcher.\nScan, organize, and manage game collections across 400+ platforms with\nautomatic metadata fetching and in-browser gameplay.",
     "arch": [
@@ -14,7 +14,7 @@
   },
   {
     "slug": "profilarr",
-    "version": "1.0.13",
+    "version": "1.1.0",
     "name": "Profilarr",
     "description": "Profile manager for Radarr and Sonarr instances.\nCentrally manage quality profiles, custom formats, and\nrelease profiles with Git-backed configuration storage.",
     "arch": [
@@ -27,7 +27,7 @@
   },
   {
     "slug": "huntarr",
-    "version": "0.1.8",
+    "version": "0.2.0",
     "name": "Huntarr",
     "description": "Automation utility that continuously searches media libraries for missing content and quality upgrades",
     "arch": [
@@ -40,7 +40,7 @@
   },
   {
     "slug": "cleanuparr",
-    "version": "0.2.15",
+    "version": "0.3.0",
     "name": "Cleanuparr",
     "description": "Automated cleanup tool for Sonarr, Radarr, and download clients.\nRemoves unwanted or blocked files, manages stalled downloads, and\nenforces blacklists/whitelists. Includes malware detection and\nautomatic search triggers for removed content.",
     "arch": [

@@ -29,7 +29,7 @@ Click on the above button or follow the steps below:
 ### [Romm](./romm/)
 App for [Romm project](https://github.com/rommapp/romm).
 
-[![Version](https://img.shields.io/badge/app%20version-0.2.0-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/romm)
+[![Version](https://img.shields.io/badge/app%20version-0.3.0-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/romm)
 &nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
 &nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
 
@@ -39,7 +39,7 @@ automatic metadata fetching and in-browser gameplay.
 ### [Profilarr](./profilarr/)
 App for [Profilarr project](https://github.com/Dictionarry-Hub/profilarr).
 
-[![Version](https://img.shields.io/badge/app%20version-1.0.13-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/profilarr)
+[![Version](https://img.shields.io/badge/app%20version-1.1.0-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/profilarr)
 &nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
 &nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
 
@@ -49,7 +49,7 @@ release profiles with Git-backed configuration storage.
 ### [Huntarr](./huntarr/)
 App for [Huntarr project](https://github.com/plexguide/Huntarr.io).
 
-[![Version](https://img.shields.io/badge/app%20version-0.1.8-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/huntarr)
+[![Version](https://img.shields.io/badge/app%20version-0.2.0-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/huntarr)
 &nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
 &nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
 
@@ -57,7 +57,7 @@ Automation utility that continuously searches media libraries for missing conten
 ### [Cleanuparr](./cleanuparr/)
 App for [Cleanuparr project](https://github.com/Cleanuparr/Cleanuparr).
 
-[![Version](https://img.shields.io/badge/app%20version-0.2.15-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/cleanuparr)
+[![Version](https://img.shields.io/badge/app%20version-0.3.0-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/cleanuparr)
 &nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
 &nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
 

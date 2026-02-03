@@ -1,7 +1,7 @@
 
 # Cleanuparr
 
-[![Version](https://img.shields.io/badge/app%20version-0.2.15-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/cleanuparr)
+[![Version](https://img.shields.io/badge/app%20version-0.3.0-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/cleanuparr)
 &nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
 &nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
 
