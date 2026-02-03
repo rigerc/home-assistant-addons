@@ -52,9 +52,9 @@ WORKDIR /app
 ENV PORT=6868 \
     HOST=0.0.0.0
 
-# Health check
+# Health check - use root path to avoid SCRIPT_NAME issues with ingress
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-  CMD curl -f http://localhost:6868/health || exit 1
+  CMD curl -f http://localhost:6868/ || exit 1
 
 # Labels
 ARG BUILD_ARCH
