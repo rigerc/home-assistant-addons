@@ -17,9 +17,8 @@ ports:
   6868/tcp: 6868
 ports_description:
   6868/tcp: "Web UI and API"
-ingress: true
-ingress_port: 6868
 panel_icon: "mdi:cog-transfer"
+webui: "http://[HOST]:[PORT]"
 map:
   - share:rw
   - addon_config:rw

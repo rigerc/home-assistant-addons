@@ -1,0 +1,13 @@
+configuration:
+  log_level:
+    name: Log Level
+    description: Set the logging verbosity level
+  ssl:
+    name: SSL
+    description: Enable SSL for direct port access (not needed for ingress)
+  certfile:
+    name: Certificate File
+    description: The filename of the certificate in /ssl/
+  keyfile:
+    name: Key File
+    description: The filename of the private key in /ssl/

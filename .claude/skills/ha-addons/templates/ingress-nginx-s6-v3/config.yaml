@@ -1,0 +1,38 @@
+name: "My Application"
+version: "1.0.0"
+slug: "my_application"
+description: "My application with ingress and nginx"
+url: "https://github.com/yourusername/ha-addons"
+arch:
+  - amd64
+  - aarch64
+startup: application
+boot: manual
+init: false
+watchdog: true
+ingress: true
+ingress_port: 8099
+panel_icon: "mdi:application"
+panel_title: "My Application"
+ports:
+  8080/tcp: 8080
+ports_description:
+  8080/tcp: "Web interface (not required for ingress)"
+map:
+  - type: addon_config
+    path: /config
+    read_only: false
+  - type: share
+    read_only: false
+  - ssl
+options:
+  log_level: info
+  ssl: false
+  certfile: fullchain.pem
+  keyfile: privkey.pem
+schema:
+  log_level: list(trace|debug|info|warning|error)
+  ssl: bool
+  certfile: str?
+  keyfile: str?
+image: "ghcr.io/{arch}/my-application"

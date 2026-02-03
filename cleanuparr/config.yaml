@@ -13,7 +13,7 @@ arch:
   - amd64
 init: false
 startup: services
-webui: "http://[HOST]:[PORT:5999]"
+webui: "http://[HOST]:[PORT]"
 boot: manual
 # Main HTTP port - at root level, NOT in options
 ports:
