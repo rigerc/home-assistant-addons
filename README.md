@@ -39,7 +39,7 @@ automatic metadata fetching and in-browser gameplay.
 ### [Profilarr](./profilarr/)
 App for [Profilarr project](https://github.com/Dictionarry-Hub/profilarr).
 
-[![Version](https://img.shields.io/badge/app%20version-1.0.10-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/profilarr)
+[![Version](https://img.shields.io/badge/app%20version-1.0.11-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/profilarr)
 &nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
 &nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
 
