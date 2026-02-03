@@ -13,6 +13,6 @@ labels:
   io.hass.upstream.image: "santiagosayshey/profilarr"
   org.opencontainers.image.url: https://github.com/rigerc/home-assistant-addons
   org.opencontainers.image.documentation: https://github.com/rigerc/home-assistant-addons/profilarr/README.md
-  org.opencontainers.image.created: "2026-02-03T16:50:10Z"
-  org.opencontainers.image.revision: 965ac421369bd3997222c87ce438b09af8472b65
-  org.opencontainers.image.version: 1.0.12
+  org.opencontainers.image.created: "2026-02-03T17:03:10Z"
+  org.opencontainers.image.revision: c70a4d4bddc87751431ecdade48e4aa178d8dc12
+  org.opencontainers.image.version: 1.0.13
