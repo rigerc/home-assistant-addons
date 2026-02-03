@@ -11,13 +11,17 @@ AUTH_MODE="$(bashio::config 'auth_mode')"
 LOG_LEVEL="$(bashio::config 'log_level')"
 
 # Profilarr expects /config directory (mapped from addon_config)
-# No need to create it, Home Assistant handles the mount
-# Ensure permissions are correct
+# Ensure config directory and subdirectories exist with proper permissions
 if [ -d "/config" ]; then
     bashio::log.info "Config directory exists at /config"
+    # Create subdirectories that Profilarr needs
+    mkdir -p /config/log /config/db
+    chmod -R 755 /config
+    bashio::log.info "Created Profilarr subdirectories in /config"
 else
     bashio::log.warning "/config directory not found, creating it"
-    mkdir -p /config
+    mkdir -p /config/log /config/db
+    chmod -R 755 /config
 fi
 
 # Export environment variables for service

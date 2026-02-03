@@ -26,6 +26,7 @@ map:
   - share:rw
   - type: addon_config
     path: /config
+    read_only: false
 options:
   auth_mode: "on"
   log_level: "info"
