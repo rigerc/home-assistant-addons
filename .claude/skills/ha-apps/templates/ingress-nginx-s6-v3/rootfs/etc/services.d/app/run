@@ -1,0 +1,79 @@
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+# ==============================================================================
+# Application service run script
+# s6-overlay v3: This script starts your application as a supervised service
+# The process MUST run in the foreground for proper supervision
+# ==============================================================================
+
+set -e
+
+# Redirect stderr to stdout for unified logging
+exec 2>&1
+
+bashio::log.info "Starting application service..."
+
+#####################
+# LOAD CONFIGURATION #
+#####################
+
+LOG_LEVEL=$(bashio::config 'log_level')
+
+bashio::log.info "Configuration:"
+bashio::log.info "  Log level: ${LOG_LEVEL}"
+
+####################
+# EXPORT VARIABLES #
+####################
+
+# Export environment variables for the application
+export LOG_LEVEL="${LOG_LEVEL}"
+export APP_DATA_PATH="/data"
+export APP_CONFIG_PATH="/data/config"
+export APP_LOG_PATH="/data/logs"
+
+# Set BASE_URL for ingress support
+# The ingress_entry provides the base path for routing when accessed through HA UI
+# For example, if slug is "my_application", ingress_entry might be "/api/hassio_ingress/..."
+if bashio::addon.ingress; then
+    export BASE_URL="$(bashio::addon.ingress_entry)"
+    bashio::log.info "Ingress enabled, BASE_URL set to: ${BASE_URL}"
+else
+    bashio::log.info "Ingress not enabled, running without BASE_URL"
+fi
+
+#######################
+# WAIT FOR DEPENDENCIES #
+#######################
+
+# Wait for any services your application depends on
+# Example: Wait for database
+# if bashio::config.has_value 'db_host'; then
+#     DB_HOST=$(bashio::config 'db_host')
+#     DB_PORT=$(bashio::config 'db_port' '5432')
+#     bashio::log.info "Waiting for database at ${DB_HOST}:${DB_PORT}"
+#     bashio::net.wait_for "${DB_PORT}" "${DB_HOST}" 120
+# fi
+
+#####################
+# START APPLICATION #
+#####################
+
+bashio::log.info "Starting application..."
+
+# Execute your application in foreground mode
+# IMPORTANT: Must use 'exec' to replace the shell with the application
+# IMPORTANT: Application must run in foreground (not daemon mode)
+# Replace this with your actual application command
+
+# Example 1: Binary executable
+exec /usr/local/bin/myapp --foreground --log-level "${LOG_LEVEL}"
+
+# Example 2: Python script (with BASE_URL support)
+# exec python3 -m myapp.server --log-level "${LOG_LEVEL}" --base-url "${BASE_URL}"
+
+# Example 3: Node.js application
+# exec node /app/server.js --log-level "${LOG_LEVEL}"
+
+# Example 4: Java application
+# exec java -jar /app/myapp.jar --log-level "${LOG_LEVEL}"

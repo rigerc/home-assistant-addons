@@ -1,0 +1,28 @@
+#!/command/with-contenv bashio
+# ==============================================================================
+# Example longrun service
+# This service is supervised by s6 and automatically restarted on failure
+# ==============================================================================
+
+# Redirect stderr to stdout for logging
+exec 2>&1
+
+bashio::log.info "Starting example service..."
+
+# Parse configuration
+LOG_LEVEL=$(bashio::config 'log_level')
+MESSAGE=$(bashio::config 'message')
+PORT=$(bashio::config 'port')
+
+# Export environment variables
+export LOG_LEVEL="${LOG_LEVEL}"
+export APP_MESSAGE="${MESSAGE}"
+export APP_PORT="${PORT}"
+
+bashio::log.info "Service configuration loaded"
+bashio::log.info "  Message: ${MESSAGE}"
+bashio::log.info "  Port: ${PORT}"
+
+# Execute the service in foreground mode
+# IMPORTANT: Must use 'exec' and run in foreground (not daemon mode)
+exec /usr/bin/example-app --foreground --port "${PORT}"

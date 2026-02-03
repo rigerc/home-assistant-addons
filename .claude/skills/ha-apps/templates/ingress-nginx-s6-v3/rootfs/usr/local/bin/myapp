@@ -1,0 +1,67 @@
+#!/bin/bash
+# ==============================================================================
+# Example application binary placeholder
+# Replace this with your actual application
+# ==============================================================================
+
+set -e
+
+# Configuration from environment
+LOG_LEVEL="${LOG_LEVEL:-info}"
+APP_DATA_PATH="${APP_DATA_PATH:-/data}"
+APP_CONFIG_PATH="${APP_CONFIG_PATH:-/data/config}"
+APP_LOG_PATH="${APP_LOG_PATH:-/data/logs}"
+
+echo "================================"
+echo "Example Application Starting..."
+echo "================================"
+echo "Log Level: ${LOG_LEVEL}"
+echo "Data Path: ${APP_DATA_PATH}"
+echo "Config Path: ${APP_CONFIG_PATH}"
+echo "Log Path: ${APP_LOG_PATH}"
+echo "================================"
+
+# Create log directory
+mkdir -p "${APP_LOG_PATH}"
+
+# Log to file and stdout
+log() {
+    local level="$1"
+    shift
+    local message="$*"
+    local timestamp
+    timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    echo "[${timestamp}] [${level}] ${message}"
+    echo "[${timestamp}] [${level}] ${message}" >> "${APP_LOG_PATH}/app.log"
+}
+
+log "INFO" "Application initialized"
+log "INFO" "Listening on http://127.0.0.1:8080"
+
+# Simulate a running HTTP server
+# In a real application, replace this with your actual server code
+# This example just keeps the process alive
+
+RUN_FILE="/tmp/app.running"
+touch "${RUN_FILE}"
+
+# Handle shutdown signals
+trap 'log "INFO" "Received shutdown signal"; rm -f "${RUN_FILE}"; exit 0' SIGTERM SIGINT
+
+# Main loop - simulates a running server
+while [[ -f "${RUN_FILE}" ]]; do
+    # Simulate periodic activity
+    log "DEBUG" "Server heartbeat"
+
+    # Check for health checks
+    if [[ -f "/tmp/healthcheck" ]]; then
+        log "INFO" "Health check received"
+        rm -f "/tmp/healthcheck"
+    fi
+
+    # Sleep before next heartbeat
+    sleep 60
+done
+
+log "INFO" "Application shutting down"
+exit 0

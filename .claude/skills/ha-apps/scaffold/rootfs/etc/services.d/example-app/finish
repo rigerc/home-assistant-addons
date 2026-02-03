@@ -1,0 +1,28 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Handle service exit/crash
+# s6-overlay v2 docs: https://github.com/just-containers/s6-overlay
+# ==============================================================================
+
+declare APP_EXIT_CODE=${1}
+
+bashio::log.info "Example Application exited with code ${APP_EXIT_CODE}"
+
+# Exit code 0 = normal shutdown
+# Exit code 256 = killed by signal
+# Other codes = abnormal exit
+
+if [[ "${APP_EXIT_CODE}" -ne 0 ]] && [[ "${APP_EXIT_CODE}" -ne 256 ]]; then
+    # Application crashed - halt the entire add-on
+    bashio::log.error "Application crashed with exit code ${APP_EXIT_CODE}"
+    bashio::log.error "Stopping add-on to prevent restart loop"
+
+    # Write exit code for container to return
+    echo "${APP_EXIT_CODE}" > /run/s6-linux-init-container-results/exitcode
+
+    # Halt the entire s6 supervision tree
+    exec /run/s6/basedir/bin/halt
+fi
+
+# Normal exit - s6 will automatically restart the service
+bashio::log.info "Service will restart automatically"

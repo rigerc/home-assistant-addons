@@ -1,0 +1,33 @@
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+# ==============================================================================
+# Nginx service run script
+# s6-overlay v3: This script starts nginx as a supervised service
+# The process must run in the foreground for proper supervision
+# ==============================================================================
+
+set -e
+
+# Redirect stderr to stdout for unified logging
+exec 2>&1
+
+bashio::log.info "Starting nginx service..."
+
+# Wait for backend application to be ready
+# Note: Backend app listens on port 8080 (the application's internal port)
+# Nginx will proxy requests from ingress_port (8099) to this backend port
+bashio::log.info "Waiting for backend application on port 8080..."
+bashio::net.wait_for 8080 localhost 300
+
+bashio::log.info "Backend application is ready"
+bashio::log.info "Nginx starting in foreground mode"
+
+# Test nginx configuration
+if ! nginx -t; then
+    bashio::log.error "Nginx configuration test failed"
+    exit 1
+fi
+
+# Execute nginx in foreground mode
+# Using exec replaces the shell with nginx, ensuring proper signal handling
+exec nginx

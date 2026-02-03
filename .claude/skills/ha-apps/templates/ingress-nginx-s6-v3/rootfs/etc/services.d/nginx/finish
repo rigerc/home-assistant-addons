@@ -1,0 +1,37 @@
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+# ==============================================================================
+# Nginx service finish script
+# s6-overlay v3: This script runs when nginx exits
+# Arguments: $1 = exit code (256 = killed by signal)
+# ==============================================================================
+
+set -e
+
+declare NGINX_EXIT_CODE=${1}
+
+bashio::log.info "Nginx service exited with code ${NGINX_EXIT_CODE}"
+
+# Exit code meanings:
+# 0    = Normal shutdown (e.g., docker stop)
+# 256  = Killed by signal (e.g., SIGTERM during shutdown)
+# Other = Abnormal exit (error/crash)
+
+if [[ "${NGINX_EXIT_CODE}" -eq 0 ]]; then
+    bashio::log.info "Nginx shut down normally"
+    # Container will stop normally
+elif [[ "${NGINX_EXIT_CODE}" -eq 256 ]]; then
+    bashio::log.info "Nginx was terminated by signal"
+    # Container will stop normally
+else
+    # Nginx crashed - halt the entire container
+    bashio::log.error "Nginx crashed with exit code ${NGINX_EXIT_CODE}"
+    bashio::log.error "Halting container to prevent restart loop"
+
+    # Write exit code for container to return
+    echo "${NGINX_EXIT_CODE}" > /run/s6-linux-init-container-results/exitcode
+
+    # Halt the entire s6 supervision tree
+    # This stops all services and exits the container
+    exec /run/s6/basedir/bin/halt
+fi
