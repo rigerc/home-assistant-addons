@@ -1,29 +1,16 @@
 [
   {
-    "slug": "cleanuparr",
-    "version": "0.2.15",
-    "name": "Cleanuparr",
-    "description": "Automated cleanup tool for Sonarr, Radarr, and download clients.\nRemoves unwanted or blocked files, manages stalled downloads, and\nenforces blacklists/whitelists. Includes malware detection and\nautomatic search triggers for removed content.",
+    "slug": "romm",
+    "version": "0.2.0",
+    "name": "Romm",
+    "description": "Self-hosted ROM collection manager and emulator launcher.\nScan, organize, and manage game collections across 400+ platforms with\nautomatic metadata fetching and in-browser gameplay.",
     "arch": [
       "aarch64",
       "amd64"
     ],
-    "image": "ghcr.io/cleanuparr/cleanuparr",
-    "tag": "2.5.1",
-    "project": "https://github.com/Cleanuparr/Cleanuparr"
-  },
-  {
-    "slug": "huntarr",
-    "version": "0.1.8",
-    "name": "Huntarr",
-    "description": "Automation utility that continuously searches media libraries for missing content and quality upgrades",
-    "arch": [
-      "amd64",
-      "aarch64"
-    ],
-    "image": "ghcr.io/plexguide/huntarr",
-    "tag": "9.1.1",
-    "project": "https://github.com/plexguide/Huntarr.io"
+    "image": "rommapp/romm",
+    "tag": "4.6.0",
+    "project": "https://github.com/rommapp/romm"
   },
   {
     "slug": "profilarr",
@@ -39,16 +26,29 @@
     "project": "https://github.com/Dictionarry-Hub/profilarr"
   },
   {
-    "slug": "romm",
-    "version": "0.1.26",
-    "name": "Romm",
-    "description": "Self-hosted ROM collection manager and emulator launcher.\nScan, organize, and manage game collections across 400+ platforms with\nautomatic metadata fetching and in-browser gameplay.",
+    "slug": "huntarr",
+    "version": "0.1.8",
+    "name": "Huntarr",
+    "description": "Automation utility that continuously searches media libraries for missing content and quality upgrades",
+    "arch": [
+      "amd64",
+      "aarch64"
+    ],
+    "image": "ghcr.io/plexguide/huntarr",
+    "tag": "9.1.1",
+    "project": "https://github.com/plexguide/Huntarr.io"
+  },
+  {
+    "slug": "cleanuparr",
+    "version": "0.2.15",
+    "name": "Cleanuparr",
+    "description": "Automated cleanup tool for Sonarr, Radarr, and download clients.\nRemoves unwanted or blocked files, manages stalled downloads, and\nenforces blacklists/whitelists. Includes malware detection and\nautomatic search triggers for removed content.",
     "arch": [
       "aarch64",
       "amd64"
     ],
-    "image": "rommapp/romm",
-    "tag": "4.6.0",
-    "project": "https://github.com/rommapp/romm"
+    "image": "ghcr.io/cleanuparr/cleanuparr",
+    "tag": "2.5.1",
+    "project": "https://github.com/Cleanuparr/Cleanuparr"
   }
 ]
