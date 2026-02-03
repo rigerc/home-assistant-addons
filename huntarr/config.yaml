@@ -1,7 +1,7 @@
 ---
 name: "Huntarr"
 # Add-on version, not upstream version
-version: "0.1.7"
+version: "0.1.8"
 slug: "huntarr"
 description: >-
   Automation utility that continuously searches media libraries for missing content and quality upgrades
