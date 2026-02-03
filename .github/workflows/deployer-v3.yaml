@@ -5,26 +5,28 @@ on:
   workflow_dispatch:
     inputs:
       cleanuparr:
-        description: "☑️ Release cleanuparr"
+        description: ☑️ Release cleanuparr
         type: boolean
         default: false
       huntarr:
-        description: "☑️ Release huntarr"
+        description: ☑️ Release huntarr
         type: boolean
         default: false
       profilarr:
-        description: "☑️ Release profilarr"
+        description: ☑️ Release profilarr
+        type: boolean
+        default: false
+      profilarr-v2:
+        description: ☑️ Release profilarr-v2
         type: boolean
         default: false
       romm:
-        description: "☑️ Release romm"
+        description: ☑️ Release romm
         type: boolean
         default: false
-
 concurrency:
   group: deployer-v3-${{ github.run_id }}
   cancel-in-progress: false
-
 jobs:
   validate-and-prepare:
     runs-on: ubuntu-latest
@@ -50,24 +52,22 @@ jobs:
           fi
 
           echo "addons=$SELECTED" >> "$GITHUB_OUTPUT"
-
   deploy-addons:
     needs: validate-and-prepare
     strategy:
       matrix:
         addon: ${{ fromJSON(needs.validate-and-prepare.outputs.addons) }}
-      max-parallel: 1  # Forces sequential execution
-      fail-fast: false  # Continue with remaining addons on failure
+      max-parallel: 1 # Forces sequential execution
+      fail-fast: false # Continue with remaining addons on failure
     uses: ./.github/workflows/deployer.yaml
     with:
       addon: ${{ matrix.addon }}
       skip_metadata_update: true
     secrets: inherit
-
   trigger-metadata-update:
     needs: [validate-and-prepare, deploy-addons]
     runs-on: ubuntu-latest
-    name: 📋 Trigger Metadata Update
+    name: "\U0001F4CB Trigger Metadata Update"
     timeout-minutes: 2
     if: ${{ !cancelled() }}
     permissions:
@@ -76,7 +76,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Trigger addon-metadata workflow
         env:
           GH_TOKEN: ${{ github.token }}
