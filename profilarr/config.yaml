@@ -16,10 +16,11 @@ boot: manual
 ingress: true
 ingress_port: 8019
 #ingress_entry: profilarr
-ports:
-  6868/tcp: 6868
-ports_description:
-  6868/tcp: "Web UI and API (optional, ingress is primary access method)"
+# Ports disabled - using ingress only for embedded UI access
+#ports:
+#  6868/tcp: 6868
+#ports_description:
+#  6868/tcp: "Web UI and API (optional, ingress is primary access method)"
 panel_icon: "mdi:cog-transfer"
 #webui: "http://[HOST]:[PORT:6868]"
 map:
