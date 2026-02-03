@@ -16,6 +16,10 @@ on:
         description: ☑️ Release profilarr
         type: boolean
         default: false
+      profilarr-v2:
+        description: ☑️ Release profilarr-v2
+        type: boolean
+        default: false
       romm:
         description: ☑️ Release romm
         type: boolean
