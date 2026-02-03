@@ -14,7 +14,7 @@
   },
   {
     "slug": "profilarr",
-    "version": "1.0.9",
+    "version": "1.0.10",
     "name": "Profilarr",
     "description": "Profile manager for Radarr and Sonarr instances.\nCentrally manage quality profiles, custom formats, and\nrelease profiles with Git-backed configuration storage.",
     "arch": [
