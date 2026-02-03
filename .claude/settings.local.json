@@ -24,7 +24,9 @@
       "WebFetch(domain:plexguide.github.io)",
       "Bash(yq:*)",
       "Bash(gh run list:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(gh run view:*)",
+      "mcp__github__actions_get"
     ]
   },
   "enableAllProjectMcpServers": true,
