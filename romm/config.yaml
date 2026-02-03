@@ -12,7 +12,7 @@ arch:
 image: "ghcr.io/rigerc/ha-addons-romm-{arch}"
 startup: system
 boot: manual
-url: https://github.com/rigerc/home-assistant-addons/tree/master/romm
+url: https://github.com/rigerc/home-assistant-addons
 init: false
 ports:
   5999/tcp: 5999

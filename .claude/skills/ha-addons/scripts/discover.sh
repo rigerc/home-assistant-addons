@@ -343,6 +343,20 @@ analyze_dockerfile() {
     if [[ -n "${entrypoint}" ]]; then
         echo -e "\n${BOLD}Entrypoint:${NC}"
         echo "  ${entrypoint}"
+
+        # Extract and display entrypoint file contents
+        local entrypoint_path=""
+        # Parse entrypoint path from exec form: ENTRYPOINT ["/path", "arg"]
+        if [[ "${entrypoint}" =~ ENTRYPOINT\ \[(.*)\] ]]; then
+            entrypoint_path=$(echo "${BASH_REMATCH[1]}" | jq -r '.[0]' 2>/dev/null || echo "${BASH_REMATCH[1]}" | cut -d'"' -f2)
+        # Parse entrypoint path from shell form: ENTRYPOINT /path arg1
+        elif [[ "${entrypoint}" =~ ENTRYPOINT\ (.+) ]]; then
+            entrypoint_path=$(echo "${BASH_REMATCH[1]}" | awk '{print $1}' | tr -d '"')
+        fi
+
+        if [[ -n "${entrypoint_path}" ]]; then
+            extract_entrypoint_contents "${dockerfile}" "${entrypoint_path}"
+        fi
     fi
 
     local cmd
@@ -403,6 +417,56 @@ analyze_package_installations() {
     if [[ -n "${npm_packages}" ]]; then
         echo "  Node (npm): ${npm_packages}"
     fi
+}
+
+extract_entrypoint_contents() {
+    local dockerfile="${1}"
+    local entrypoint_path="${2}"
+
+    log_section "Entrypoint File Contents: ${entrypoint_path}"
+
+    # Check if docker is available
+    if ! command -v docker &> /dev/null; then
+        log_warning "Docker is not available - cannot extract entrypoint contents"
+        return 1
+    fi
+
+    # Check if Docker daemon is running
+    if ! docker info &> /dev/null; then
+        log_warning "Docker daemon is not running - cannot extract entrypoint contents"
+        return 1
+    fi
+
+    # Build a temporary image from the Dockerfile
+    local temp_image
+    temp_image="temp-discovery-$(date +%s)"
+    local temp_dir
+    temp_dir=$(mktemp -d)
+
+    log_info "Building temporary image to extract entrypoint..."
+    local docker_output
+    if ! docker_output=$(docker build -t "${temp_image}" -f "${dockerfile}" "${temp_dir}" 2>&1); then
+        log_warning "Failed to build image - cannot extract entrypoint contents"
+        rm -rf "${temp_dir}"
+        return 1
+    fi
+
+    # Extract and display the entrypoint file contents
+    log_info "Extracting entrypoint file..."
+    local entrypoint_contents
+    if entrypoint_contents=$(docker run --rm --entrypoint /bin/sh "${temp_image}" -c "cat ${entrypoint_path}" 2>/dev/null); then
+        echo ""
+        echo -e "${BOLD}#!/bin/bash style entrypoint detected${NC}"
+        echo ""
+        echo "${entrypoint_contents}"
+        log_success "Entrypoint file extracted successfully"
+    else
+        log_warning "Failed to read entrypoint file (file may not exist or container failed to start)"
+    fi
+
+    # Cleanup
+    docker rmi "${temp_image}" &>/dev/null || true
+    rm -rf "${temp_dir}"
 }
 
 detect_architectures() {

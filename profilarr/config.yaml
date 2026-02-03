@@ -6,7 +6,7 @@ description: |
   Profile manager for Radarr and Sonarr instances.
   Centrally manage quality profiles, custom formats, and
   release profiles with Git-backed configuration storage.
-url: "https://github.com/Dictionarry-Hub/profilarr"
+url: https://github.com/rigerc/home-assistant-addons
 arch:
   - aarch64
   - amd64

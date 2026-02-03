@@ -10,7 +10,7 @@ description: |
 arch:
   - amd64
   - aarch64
-url: "https://github.com/Dictionarry-Hub/profilarr"
+url: https://github.com/rigerc/home-assistant-addons
 image: "ghcr.io/rigerc/ha-addons-profilarr-v2-{arch}"
 init: false
 startup: services
