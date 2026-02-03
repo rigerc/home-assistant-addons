@@ -5,30 +5,15 @@ ROM collection manager and emulator launcher.
 
 ## Network Configuration
 
-### Access Methods
+### Port
 
-The add-on supports two access methods:
+ROMM uses **port 5999** (fixed) for the web interface. This port is mapped by Home Assistant and cannot be changed through add-on configuration.
 
-1. **Ingress (Default)** - Access through Home Assistant UI:
-   - Navigate to **Settings > Add-ons > Romm** and click "Open Web UI"
-   - Or use the sidebar icon if added
-   - Seamlessly integrated with Home Assistant authentication
-
-2. **Direct Port Access** (Optional):
-   - Configure port 5999 in the add-on configuration
-   - Access via `http://YOUR_HA_IP:5999`
-   - Useful for external reverse proxies or direct access
-
-### Port Configuration
-
-To enable direct port access:
-1. Go to **Settings > Add-ons > Romm > Configuration**
-2. Under "Network", change port 5999 from "Disabled" to "5999"
-3. Restart the add-on
+If port 5999 conflicts with another service, you'll need to change the other service's port or use a reverse proxy to expose ROMM on a different port externally.
 
 ### Security Recommendations
 
-When using direct port access:
+ROMM does not include built-in authentication beyond the application's user management system. For production use:
 
 1. **Internal Network Only**: Only expose on trusted internal networks
 2. **Reverse Proxy**: Use Traefik, nginx Proxy Manager, or similar with authentication layer

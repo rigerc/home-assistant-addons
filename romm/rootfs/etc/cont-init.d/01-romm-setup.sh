@@ -141,14 +141,6 @@ export_env ENABLE_RESCAN_ON_FILESYSTEM_CHANGE "true"
 export_env ROMM_PORT "$(bashio::addon.port '5999/tcp')"
 export_env ROMM_BASE_PATH "/romm"
 
-# Export ingress configuration for nginx
-if bashio::addon.ingress; then
-    export_env ROMM_INGRESS_ENTRY "$(bashio::addon.ingress_entry)"
-    bashio::log.info "Ingress enabled with entry: $(bashio::addon.ingress_entry)"
-else
-    export_env ROMM_INGRESS_ENTRY ""
-fi
-
 # Optional: config.yml path
 if [ -f "/config/romm/config.yml" ]; then
     export_env ROMM_CONFIG_PATH "/config/romm/config.yml"

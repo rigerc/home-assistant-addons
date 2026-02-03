@@ -2,12 +2,6 @@ server {
     listen ${ROMM_PORT};
     server_name _;
 
-    # Ingress support - handle X-Ingress-Path header from Home Assistant
-    set $ingress_path "";
-    if ($http_x_ingress_path) {
-        set $ingress_path $http_x_ingress_path;
-    }
-
     root /var/www/html;
     index index.html;
 
@@ -27,9 +21,9 @@ server {
         }
     }
 
-    # API endpoints - proxy to gunicorn with ingress path support
+    # API endpoints - proxy to gunicorn
     location /api/ {
-        proxy_pass http://unix:/tmp/gunicorn.sock:$ingress_path/api/;
+        proxy_pass http://unix:/tmp/gunicorn.sock:/api/;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -41,9 +35,9 @@ server {
         proxy_connect_timeout 300s;
     }
 
-    # WebSocket support with ingress path
+    # WebSocket support
     location /ws {
-        proxy_pass http://unix:/tmp/gunicorn.sock:$ingress_path/ws;
+        proxy_pass http://unix:/tmp/gunicorn.sock:/ws;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -53,9 +47,9 @@ server {
         proxy_read_timeout 86400;
     }
 
-    # Netplay WebSocket with ingress path
+    # Netplay WebSocket
     location /netplay {
-        proxy_pass http://unix:/tmp/gunicorn.sock:$ingress_path/netplay;
+        proxy_pass http://unix:/tmp/gunicorn.sock:/netplay;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -78,9 +72,9 @@ server {
         alias ${ROMM_BASE_PATH}/library/;
     }
 
-    # Health check with ingress path
+    # Health check
     location /health {
-        proxy_pass http://unix:/tmp/gunicorn.sock:$ingress_path/health;
+        proxy_pass http://unix:/tmp/gunicorn.sock:/health;
         access_log off;
     }
 }
