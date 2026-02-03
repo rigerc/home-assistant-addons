@@ -4,7 +4,7 @@
 #
 # This script scans addon directories for config.yaml, build.yaml, and Dockerfile
 # files to generate a manifest.json file. It can also update .github/dependabot.yml
-# with the discovered addon directories.
+# with the discovered addon directories. Can also generate README.md files using gomplate.
 
 set -euo pipefail
 
@@ -16,7 +16,7 @@ readonly PROJECT_ROOT
 readonly MANIFEST_OUTPUT="${PROJECT_ROOT}/manifest.json"
 readonly DEPENDABOT_CONFIG="${PROJECT_ROOT}/.github/dependabot.yml"
 readonly DEPLOYER_WORKFLOW="${PROJECT_ROOT}/.github/workflows/deployer.yaml"
-readonly DEPLOYER_V3_WORKFLOW="${PROJECT_ROOT}/.github/workflows/deployer-v3.yaml"
+readonly DEPLOYER_V3_WORKFLOW="${PROJECT_ROOT}/.github/workflows/addon-build.yml"
 RELEASE_DRAFTER_TEMPLATE="${SCRIPT_DIR}/release-drafter-template.yml"
 readonly RELEASE_DRAFTER_TEMPLATE
 GITHUB_DIR="${PROJECT_ROOT}/.github"
@@ -26,10 +26,186 @@ readonly GITHUB_DIR
 UPDATE_DEPENDABOT=false
 UPDATE_WORKFLOW_DISPATCH=false
 CREATE_RELEASE_DRAFTER=false
+GENERATE_README=false
 
 # Error handling
 err() {
   echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $*" >&2
+}
+
+#######################################
+# Check if gomplate is installed
+# Globals:
+#   None
+# Arguments:
+#   None
+# Returns:
+#   0 if gomplate is available, 1 otherwise
+#######################################
+check_gomplate() {
+  if ! command -v gomplate &>/dev/null; then
+    err "Error: gomplate is required but not installed"
+    err "Install from: https://github.com/hairyhenderson/gomplate/releases"
+    err "Or run: curl -o /usr/local/bin/gomplate -sSL https://github.com/hairyhenderson/gomplate/releases/download/v4.3.0/gomplate_linux-amd64 && chmod +x /usr/local/bin/gomplate"
+    return 1
+  fi
+  return 0
+}
+
+#######################################
+# Get repository info from git remote
+# Globals:
+#   None
+# Arguments:
+#   None
+# Returns:
+#   Echoes "owner/repo" format, empty if not in git repo
+#######################################
+get_repo_info() {
+  local remote_url
+  remote_url="$(git remote get-url origin 2>/dev/null || echo "")"
+
+  # Parse different URL formats:
+  # SSH: git@github.com:owner/repo.git → owner/repo
+  # HTTPS: https://github.com/owner/repo → owner/repo
+  # HTTPS with .git: https://github.com/owner/repo.git → owner/repo
+
+  local repo_path="${remote_url}"
+  repo_path="${repo_path#git@github.com:}"      # Remove SSH prefix
+  repo_path="${repo_path#https://github.com/}" # Remove HTTPS prefix
+  repo_path="${repo_path%.git}"                # Remove .git suffix
+
+  echo "${repo_path}"
+}
+
+#######################################
+# Setup environment variables for gomplate
+# Globals:
+#   MANIFEST_OUTPUT
+# Arguments:
+#   None
+# Returns:
+#   0 on success, 1 if manifest.json missing
+#######################################
+setup_gomplate_env() {
+  local repo_slug
+  repo_slug="$(get_repo_info)"
+
+  # Fallback if git remote not available
+  if [[ -z "${repo_slug}" ]]; then
+    repo_slug="rigerc/home-assistant-addons"  # Default fallback
+  fi
+
+  # Check manifest exists
+  if [[ ! -f "${MANIFEST_OUTPUT}" ]]; then
+    err "Error: manifest.json not found. Generate it first."
+    return 1
+  fi
+
+  export REPOSITORY="${repo_slug}"
+  export REPOSITORY_URL="https://github.com/${repo_slug}"
+  export AUTHOR_NAME="${repo_slug%%/*}"  # Extract owner (before first /)
+  local addons_data
+  addons_data="$(jq -c '.' "${MANIFEST_OUTPUT}")"
+  export ADDONS_DATA="${addons_data}"
+
+  return 0
+}
+
+#######################################
+# Generate root README.md from template
+# Globals:
+#   PROJECT_ROOT
+# Arguments:
+#   None
+# Returns:
+#   0 on success, 1 on error
+#######################################
+generate_root_readme() {
+  local template_file="${PROJECT_ROOT}/.README.tmpl"
+  local output_file="${PROJECT_ROOT}/README.md"
+
+  # Check template exists
+  if [[ ! -f "${template_file}" ]]; then
+    err "Error: Template not found: ${template_file}"
+    return 1
+  fi
+
+  # Setup environment variables
+  if ! setup_gomplate_env; then
+    return 1
+  fi
+
+  # Generate README
+  echo "Generating root README.md..." >&2
+  if ! gomplate --file="${template_file}" --out="${output_file}"; then
+    err "Error: Failed to generate README.md"
+    return 1
+  fi
+
+  echo "Generated ${output_file}" >&2
+  return 0
+}
+
+#######################################
+# Generate individual addon READMEs from template
+# Globals:
+#   PROJECT_ROOT
+#   MANIFEST_OUTPUT
+# Arguments:
+#   slugs - Optional specific addon slugs (if empty, generates all)
+# Returns:
+#   0 on success, 1 on error
+#######################################
+# shellcheck disable=SC2120
+generate_addon_readmes() {
+  local -a specific_slugs=("$@")
+  local template_file="${PROJECT_ROOT}/.README_ADDON.tmpl"
+
+  # Check template exists
+  if [[ ! -f "${template_file}" ]]; then
+    err "Error: Template not found: ${template_file}"
+    return 1
+  fi
+
+  # Setup environment variables
+  if ! setup_gomplate_env; then
+    return 1
+  fi
+
+  # Get list of addons to process
+  local -a slugs=()
+  if [[ ${#specific_slugs[@]} -gt 0 ]]; then
+    slugs=("${specific_slugs[@]}")
+  else
+    # Read all slugs from manifest
+    while IFS= read -r slug; do
+      slugs+=("${slug}")
+    done < <(jq -r '.[].slug' "${MANIFEST_OUTPUT}")
+  fi
+
+  # Generate README for each addon
+  for slug in "${slugs[@]}"; do
+    local addon_dir="${PROJECT_ROOT}/${slug}"
+    local output_file="${addon_dir}/README.md"
+
+    # Skip if addon directory doesn't exist
+    if [[ ! -d "${addon_dir}" ]]; then
+      err "Warning: Addon directory not found: ${addon_dir}"
+      continue
+    fi
+
+    echo "Generating README for ${slug}..." >&2
+    export ADDON_SLUG="${slug}"
+
+    if ! gomplate --file="${template_file}" --out="${output_file}"; then
+      err "Error: Failed to generate README for ${slug}"
+      continue
+    fi
+  done
+
+  echo "Generated addon README files" >&2
+  return 0
 }
 
 #######################################
@@ -51,6 +227,7 @@ OPTIONS:
   -d, --update-dependabot   Update .github/dependabot.yml with addon directories
   -w, --update-workflow     Update deployer.yaml and deployer-v3.yaml workflow_dispatch inputs
   -r, --create-release-drafter Create release-drafter config files for addons (if missing)
+  -g, --generate-readme     Generate README.md files using gomplate templates
   -h, --help                Display this help message
 
 EXAMPLES:
@@ -58,7 +235,9 @@ EXAMPLES:
   $(basename "${BASH_SOURCE[0]}") -d                  # Generate manifest.json and update dependabot.yml
   $(basename "${BASH_SOURCE[0]}") -w                  # Generate manifest.json and update workflow inputs
   $(basename "${BASH_SOURCE[0]}") -r                  # Generate manifest.json and create release-drafter configs
+  $(basename "${BASH_SOURCE[0]}") -g                  # Generate manifest.json and README files
   $(basename "${BASH_SOURCE[0]}") -d -w -r            # Generate manifest.json and update all configs
+  $(basename "${BASH_SOURCE[0]}") -d -w -r -g            # Generate manifest.json and update all configs and READMEs
 
 EOF
 }
@@ -87,6 +266,10 @@ parse_args() {
         ;;
       -r|--create-release-drafter)
         CREATE_RELEASE_DRAFTER=true
+        shift
+        ;;
+      -g|--generate-readme)
+        GENERATE_README=true
         shift
         ;;
       -h|--help)
@@ -489,7 +672,7 @@ main() {
 
   # Update workflow_dispatch if requested (both deployer.yaml and deployer-v3.yaml)
   if [[ "${UPDATE_WORKFLOW_DISPATCH}" == "true" ]]; then
-    update_workflow_dispatch <<< "${slugs_output}"
+    #update_workflow_dispatch <<< "${slugs_output}"
 
     # Only update v3 workflow if it exists
     if [[ -f "${DEPLOYER_V3_WORKFLOW}" ]]; then
@@ -500,6 +683,25 @@ main() {
   # Create release-drafter configs if requested
   if [[ "${CREATE_RELEASE_DRAFTER}" == "true" ]]; then
     create_release_drafter_configs <<< "${slugs_output}"
+  fi
+
+  # Generate README files if requested
+  if [[ "${GENERATE_README}" == "true" ]]; then
+    # Check gomplate is available
+    if ! check_gomplate; then
+      exit 1
+    fi
+
+    # Generate root README
+    if ! generate_root_readme; then
+      exit 1
+    fi
+
+    # Generate addon READMEs (all addons by default)
+    # shellcheck disable=SC2119
+    if ! generate_addon_readmes; then
+      exit 1
+    fi
   fi
 }
 

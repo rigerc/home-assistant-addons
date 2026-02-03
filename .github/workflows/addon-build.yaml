@@ -51,8 +51,8 @@ jobs:
 
           echo "Updating OCI labels in build.yaml"
           yq -i '
-            .labels."org.opencontainers.image.created" = "'$date'" |
-            .labels."org.opencontainers.image.revision" = "'${{ github.sha }}'"
+            .labels."org.opencontainers.image.created" = "'"$date"'" |
+            .labels."org.opencontainers.image.revision" = "'"${{ github.sha }}"'"
           ' "${{ inputs.addon }}/build.yaml"
 
       - name: Update README

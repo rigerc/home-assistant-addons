@@ -3,3 +3,4 @@ docs/
 repository.yaml
 .opencode/
 node_modules/
+.sisyphus/
