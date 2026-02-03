@@ -3,7 +3,7 @@
   "packages": {
     "cleanuparr": {
       "release-type": "simple",
-      "package-name": "cleanuparr",
+      "package-name": "Cleanuparr",
       "include-component-in-tag": true,
       "tag-separator": "-",
       "changelog-path": "CHANGELOG.md",
@@ -32,7 +32,7 @@
     },
     "huntarr": {
       "release-type": "simple",
-      "package-name": "huntarr",
+      "package-name": "Huntarr",
       "include-component-in-tag": true,
       "tag-separator": "-",
       "changelog-path": "CHANGELOG.md",
@@ -61,7 +61,7 @@
     },
     "profilarr": {
       "release-type": "simple",
-      "package-name": "profilarr",
+      "package-name": "Profilarr",
       "include-component-in-tag": true,
       "tag-separator": "-",
       "changelog-path": "CHANGELOG.md",
@@ -90,7 +90,7 @@
     },
     "romm": {
       "release-type": "simple",
-      "package-name": "romm",
+      "package-name": "Romm",
       "include-component-in-tag": true,
       "tag-separator": "-",
       "changelog-path": "CHANGELOG.md",

@@ -15,17 +15,11 @@ PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 readonly PROJECT_ROOT
 readonly MANIFEST_OUTPUT="${PROJECT_ROOT}/manifest.json"
 readonly DEPENDABOT_CONFIG="${PROJECT_ROOT}/.github/dependabot.yml"
-readonly DEPLOYER_WORKFLOW="${PROJECT_ROOT}/.github/workflows/deployer.yaml"
-readonly DEPLOYER_V3_WORKFLOW="${PROJECT_ROOT}/.github/workflows/addon-build.yml"
-RELEASE_DRAFTER_TEMPLATE="${SCRIPT_DIR}/release-drafter-template.yml"
-readonly RELEASE_DRAFTER_TEMPLATE
-GITHUB_DIR="${PROJECT_ROOT}/.github"
-readonly GITHUB_DIR
+readonly DEPLOYER_V3_WORKFLOW="${PROJECT_ROOT}/.github/workflows/addon-build.yaml"
 
 # Options
 UPDATE_DEPENDABOT=false
 UPDATE_WORKFLOW_DISPATCH=false
-CREATE_RELEASE_DRAFTER=false
 GENERATE_README=false
 
 # Error handling
@@ -225,8 +219,7 @@ Generate manifest.json for Home Assistant addons.
 
 OPTIONS:
   -d, --update-dependabot   Update .github/dependabot.yml with addon directories
-  -w, --update-workflow     Update deployer.yaml and deployer-v3.yaml workflow_dispatch inputs
-  -r, --create-release-drafter Create release-drafter config files for addons (if missing)
+  -w, --update-workflow     Update addon-build.yaml workflow_dispatch inputs
   -g, --generate-readme     Generate README.md files using gomplate templates
   -h, --help                Display this help message
 
@@ -234,10 +227,8 @@ EXAMPLES:
   $(basename "${BASH_SOURCE[0]}")                      # Generate manifest.json only
   $(basename "${BASH_SOURCE[0]}") -d                  # Generate manifest.json and update dependabot.yml
   $(basename "${BASH_SOURCE[0]}") -w                  # Generate manifest.json and update workflow inputs
-  $(basename "${BASH_SOURCE[0]}") -r                  # Generate manifest.json and create release-drafter configs
   $(basename "${BASH_SOURCE[0]}") -g                  # Generate manifest.json and README files
-  $(basename "${BASH_SOURCE[0]}") -d -w -r            # Generate manifest.json and update all configs
-  $(basename "${BASH_SOURCE[0]}") -d -w -r -g            # Generate manifest.json and update all configs and READMEs
+  $(basename "${BASH_SOURCE[0]}") -d -w -g            # Generate manifest.json and update all configs and READMEs
 
 EOF
 }
@@ -247,7 +238,7 @@ EOF
 # Globals:
 #   UPDATE_DEPENDABOT
 #   UPDATE_WORKFLOW_DISPATCH
-#   CREATE_RELEASE_DRAFTER
+#   GENERATE_README
 # Arguments:
 #   All script arguments
 # Returns:
@@ -262,10 +253,6 @@ parse_args() {
         ;;
       -w|--update-workflow)
         UPDATE_WORKFLOW_DISPATCH=true
-        shift
-        ;;
-      -r|--create-release-drafter)
-        CREATE_RELEASE_DRAFTER=true
         shift
         ;;
       -g|--generate-readme)
@@ -466,69 +453,7 @@ update_dependabot() {
 }
 
 #######################################
-# Update workflow_dispatch options in deployer.yaml
-# Globals:
-#   DEPLOYER_WORKFLOW
-# Arguments:
-#   slugs - Array of addon slugs (one per line via stdin)
-# Returns:
-#   0 on success, 1 on error
-#######################################
-update_workflow_dispatch() {
-  local -a slugs
-  readarray -t slugs
-
-  [[ "${#slugs[@]}" -gt 0 ]] || {
-    err "No addon slugs found for workflow update"
-    return 1
-  }
-
-  [[ -f "${DEPLOYER_WORKFLOW}" ]] || {
-    err "Deployer workflow not found: ${DEPLOYER_WORKFLOW}"
-    return 1
-  }
-
-  # Check if yq is available
-  if ! command -v yq &>/dev/null; then
-    err "yq is required for workflow_dispatch updates"
-    return 1
-  fi
-
-  # Sort slugs alphabetically for consistent output
-  local sorted_slugs
-  sorted_slugs="$(printf '%s\n' "${slugs[@]}" | sort)"
-  mapfile -t slugs <<< "${sorted_slugs}"
-
-  # Build new options array using yq
-  # First, clear existing options
-  local updated_yaml
-  updated_yaml="$(mktemp)"
-
-  yq eval '.on.workflow_dispatch.inputs.addon.options = []' "${DEPLOYER_WORKFLOW}" > "${updated_yaml}"
-
-  # Add each slug as an option
-  for slug in "${slugs[@]}"; do
-    local next_temp
-    next_temp="$(mktemp)"
-    yq eval ".on.workflow_dispatch.inputs.addon.options += [\"${slug}\"]" "${updated_yaml}" > "${next_temp}"
-    rm -f "${updated_yaml}"
-    updated_yaml="${next_temp}"
-  done
-
-  # Verify the update is valid YAML
-  if ! yq eval . "${updated_yaml}" >/dev/null 2>&1; then
-    err "Generated invalid YAML for workflow file"
-    rm -f "${updated_yaml}"
-    return 1
-  fi
-
-  # Replace original file
-  mv "${updated_yaml}" "${DEPLOYER_WORKFLOW}"
-  echo "Updated ${DEPLOYER_WORKFLOW} with ${#slugs[@]} addon options" >&2
-}
-
-#######################################
-# Update workflow_dispatch boolean inputs in deployer-v3.yaml
+# Update workflow_dispatch boolean inputs in addon-build.yaml
 # Globals:
 #   DEPLOYER_V3_WORKFLOW
 # Arguments:
@@ -541,18 +466,18 @@ update_workflow_dispatch_v3() {
   readarray -t slugs
 
   [[ "${#slugs[@]}" -gt 0 ]] || {
-    err "No addon slugs found for workflow v3 update"
+    err "No addon slugs found for addon-build workflow update"
     return 1
   }
 
   [[ -f "${DEPLOYER_V3_WORKFLOW}" ]] || {
-    err "Deployer V3 workflow not found: ${DEPLOYER_V3_WORKFLOW}"
+    err "Addon build workflow not found: ${DEPLOYER_V3_WORKFLOW}"
     return 1
   }
 
   # Check if yq is available
   if ! command -v yq &>/dev/null; then
-    err "yq is required for workflow_dispatch v3 updates"
+    err "yq is required for addon-build workflow updates"
     return 1
   fi
 
@@ -583,7 +508,7 @@ update_workflow_dispatch_v3() {
 
   # Verify the update is valid YAML
   if ! yq eval . "${updated_yaml}" >/dev/null 2>&1; then
-    err "Generated invalid YAML for workflow v3 file"
+    err "Generated invalid YAML for addon-build workflow file"
     rm -f "${updated_yaml}"
     return 1
   fi
@@ -594,65 +519,11 @@ update_workflow_dispatch_v3() {
 }
 
 #######################################
-# Create release-drafter config files from template
-# Globals:
-#   RELEASE_DRAFTER_TEMPLATE
-#   GITHUB_DIR
-# Arguments:
-#   slugs - Array of addon slugs (one per line via stdin)
-# Returns:
-#   0 on success, 1 on error
-#######################################
-create_release_drafter_configs() {
-  local -a slugs
-  readarray -t slugs
-
-  [[ "${#slugs[@]}" -gt 0 ]] || {
-    err "No addon slugs found for release-drafter config creation"
-    return 1
-  }
-
-  [[ -f "${RELEASE_DRAFTER_TEMPLATE}" ]] || {
-    err "Release drafter template not found: ${RELEASE_DRAFTER_TEMPLATE}"
-    return 1
-  }
-
-  # Ensure .github directory exists
-  if [[ ! -d "${GITHUB_DIR}" ]]; then
-    mkdir -p "${GITHUB_DIR}" || {
-      err "Failed to create .github directory"
-      return 1
-    }
-  fi
-
-  local created_count=0
-  local skipped_count=0
-
-  for slug in "${slugs[@]}"; do
-    local output_file="${GITHUB_DIR}/release-drafter-${slug}.yml"
-
-    # Skip if file already exists
-    if [[ -f "${output_file}" ]]; then
-      (( skipped_count++ )) || true
-      continue
-    fi
-
-    # Create config from template, replacing {slug} with actual slug
-    sed "s/{slug}/${slug}/g" "${RELEASE_DRAFTER_TEMPLATE}" > "${output_file}"
-
-    (( created_count++ )) || true
-    echo "Created ${output_file}" >&2
-  done
-
-  echo "Created ${created_count} release-drafter config files, skipped ${skipped_count} existing files" >&2
-}
-
-#######################################
 # Main script logic
 # Globals:
 #   UPDATE_DEPENDABOT
 #   UPDATE_WORKFLOW_DISPATCH
-#   CREATE_RELEASE_DRAFTER
+#   GENERATE_README
 # Arguments:
 #   All script arguments
 # Returns:
@@ -670,19 +541,11 @@ main() {
     update_dependabot <<< "${slugs_output}"
   fi
 
-  # Update workflow_dispatch if requested (both deployer.yaml and deployer-v3.yaml)
+  # Update workflow_dispatch if requested (addon-build.yaml)
   if [[ "${UPDATE_WORKFLOW_DISPATCH}" == "true" ]]; then
-    #update_workflow_dispatch <<< "${slugs_output}"
-
-    # Only update v3 workflow if it exists
     if [[ -f "${DEPLOYER_V3_WORKFLOW}" ]]; then
       update_workflow_dispatch_v3 <<< "${slugs_output}"
     fi
-  fi
-
-  # Create release-drafter configs if requested
-  if [[ "${CREATE_RELEASE_DRAFTER}" == "true" ]]; then
-    create_release_drafter_configs <<< "${slugs_output}"
   fi
 
   # Generate README files if requested

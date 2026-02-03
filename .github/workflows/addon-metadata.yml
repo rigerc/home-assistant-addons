@@ -46,11 +46,10 @@ jobs:
           # Install mikefarah/yq v4 (not the python yq package) - pinned version
           wget https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64 -O /usr/local/bin/yq
           chmod +x /usr/local/bin/yq
-
-      - name: Install gomplate
-        uses: jason-dour/action-setup-gomplate@v1.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Install gomplate
+          curl -o /usr/local/bin/gomplate -sSL https://github.com/hairyhenderson/gomplate/releases/download/v4.3.0/gomplate_linux-amd64
+          chmod +x /usr/local/bin/gomplate
+          gomplate --version
 
       - name: Sync with remote main
         run: |
