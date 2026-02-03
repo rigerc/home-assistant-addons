@@ -1,7 +1,6 @@
----
-name: "Romm"
-version: "0.1.26"
-slug: "romm"
+name: Romm
+version: 0.2.0
+slug: romm
 description: |
   Self-hosted ROM collection manager and emulator launcher.
   Scan, organize, and manage game collections across 400+ platforms with
@@ -9,7 +8,7 @@ description: |
 arch:
   - aarch64
   - amd64
-image: "ghcr.io/rigerc/ha-addons-romm-{arch}"
+image: ghcr.io/rigerc/ha-addons-romm-{arch}
 startup: system
 boot: manual
 url: https://github.com/rigerc/home-assistant-addons
@@ -18,33 +17,32 @@ ports:
   5999/tcp: 5999
 ports_description:
   5999/tcp: ROMM web interface
-webui: "http://[HOST]:[PORT:5999]"
+webui: http://[HOST]:[PORT:5999]
 map:
   - share:rw
   - addon_config:rw
 options:
   log_level: info
   database:
-    host: "core-mariadb"
+    host: core-mariadb
     port: 3306
-    name: "romm"
-    user: "romm-user"
-    password: ""
-  auth_secret_key: ""
+    name: romm
+    user: romm-user
+    password: ''
+  auth_secret_key: ''
   metadata_providers:
-    screenscraper_user: ""
-    screenscraper_password: ""
-    retroachievements_api_key: ""
-    steamgriddb_api_key: ""
-    igdb_client_id: ""
-    igdb_client_secret: ""
-    mobygames_api_key: ""
+    screenscraper_user: ''
+    screenscraper_password: ''
+    retroachievements_api_key: ''
+    steamgriddb_api_key: ''
+    igdb_client_id: ''
+    igdb_client_secret: ''
+    mobygames_api_key: ''
     hasheous_enabled: true
     playmatch_enabled: true
     launchbox_enabled: true
-  library_path: "/share/roms"
+  library_path: /share/roms
   env_vars: []
-  # Scheduled tasks
   scheduled_tasks:
     enable_rescan: true
     enable_switch_titledb: true
@@ -55,7 +53,7 @@ schema:
   log_level: list(trace|debug|info|notice|warning|error|fatal)
   database:
     host: str
-    port: "int(1,65535)"
+    port: int(1,65535)
     name: str
     user: str
     password: password
