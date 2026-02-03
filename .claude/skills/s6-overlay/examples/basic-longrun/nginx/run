@@ -1,6 +1,0 @@
-#!/bin/sh
-# Redirect stderr to stdout for logging
-exec 2>&1
-
-# Ensure nginx runs in foreground mode
-exec nginx -g "daemon off;"

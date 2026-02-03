@@ -1,7 +1,0 @@
-#!/bin/sh
-# Redirect stderr to stdout so all output goes to logger
-exec 2>&1
-
-# Example: Python web application
-cd /app
-exec python3 app.py

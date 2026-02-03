@@ -1,3 +1,0 @@
-if { mkdir -p /var/log/app }
-if { chown nobody:nogroup /var/log/app }
-chmod 02755 /var/log/app

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "ref": {
+      "type": "remote",
+      "url": "https://api.ref.tools/mcp?apiKey=ref-b7545be87de702bb5e0e"
+    },
+    "augments": {
+      "type": "remote",
+      "url": "https://mcp.augments.dev/mcp"
+    },
+    "color-converter": {
+      "type": "local",
+      "command": [
+        "bunx",
+        "-y",
+        "mcp-color-convert@latest"
+      ]
+    },
+    "lucide-icons": {
+      "type": "local",
+      "command": [
+        "bunx",
+        "lucide-icons-mcp",
+        "--stdio"
+      ]
+    },
+    "github": {
+      "type": "local",
+      "command": [
+        "github-mcp-server",
+        "stdio"
+      ],
+      "environment": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_PAT}",
+        "GITHUB_TOOLSETS": "default,actions,dependabot"
+      }
+    },
+    "gemini": {
+      "type": "local",
+      "command": [
+        "bunx",
+        "-y",
+        "gemini-mcp-tool"
+      ]
+    }
+  }
+}

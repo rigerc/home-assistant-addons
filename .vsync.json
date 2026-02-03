@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "level": "project",
+  "source_tool": "claude-code",
+  "target_tools": [
+    "opencode"
+  ],
+  "sync_config": {
+    "skills": true,
+    "mcp": true,
+    "agents": true,
+    "commands": true
+  }
+}
