@@ -6,9 +6,6 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, labeled]
     branches: [main]
-  pull_request_target:
-    types: [opened, synchronize, reopened, labeled]
-    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref }}
@@ -34,66 +31,3 @@ jobs:
       validation_mode: true
       push_images: false
     secrets: inherit
-
-  release-draft:
-    name: 📝 Create release draft
-    if: contains(github.event.pull_request.labels.*.name, 'release-draft')
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: read
-    steps:
-      - name: ⤵️ Check out repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: 🔍 Extract domain from branch
-        id: domain
-        env:
-          BRANCH_NAME: ${{ github.head_ref }}
-        run: |
-          echo "Branch: $BRANCH_NAME"
-
-          # Check if branch follows app/* pattern
-          if [[ "$BRANCH_NAME" =~ ^app/(.+)$ ]]; then
-            DOMAIN="${BASH_REMATCH[1]}"
-            echo "domain=$DOMAIN" >> "$GITHUB_OUTPUT"
-            echo "is_domain_branch=true" >> "$GITHUB_OUTPUT"
-            echo "✅ Domain branch detected: $DOMAIN"
-          else
-            echo "is_domain_branch=false" >> "$GITHUB_OUTPUT"
-            echo "⏭️ Not a domain branch, skipping release draft"
-          fi
-
-      - name: 📋 Get addon version
-        id: version
-        if: steps.domain.outputs.is_domain_branch == 'true'
-        run: |
-          DOMAIN="${{ steps.domain.outputs.domain }}"
-
-          # Check if domain directory has config.yaml
-          if [[ -f "$DOMAIN/config.yaml" ]]; then
-            VERSION=$(yq eval '.version' "$DOMAIN/config.yaml")
-            echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-            echo "has_config=true" >> "$GITHUB_OUTPUT"
-            echo "✅ Found version: $VERSION"
-          else
-            echo "has_config=false" >> "$GITHUB_OUTPUT"
-            echo "⚠️ No config.yaml found in $DOMAIN"
-          fi
-
-      - name: 📝 Draft release with Release Drafter
-        if: steps.domain.outputs.is_domain_branch == 'true' && steps.version.outputs.has_config == 'true'
-        uses: release-drafter/release-drafter@v6
-        with:
-          config-name: release-drafter.yml
-          name: '${{ steps.domain.outputs.domain }} v${{ steps.version.outputs.version }}'
-          tag: '${{ steps.domain.outputs.domain }}-v${{ steps.version.outputs.version }}'
-          version: '${{ steps.version.outputs.version }}'
-          publish: false
-          prerelease: false
-          commitish: ${{ github.head_ref }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

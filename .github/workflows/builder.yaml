@@ -7,9 +7,6 @@ env:
 # yamllint disable-line rule:truthy
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: [addon-metadata]
-    types: [completed]
   workflow_call:
     inputs:
       validation_mode:
@@ -21,7 +18,7 @@ on:
         description: 'Push images to registry'
         required: false
         type: boolean
-        default: true
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -34,8 +31,7 @@ jobs:
     timeout-minutes: 10
     if: |
       github.event_name == 'workflow_call' ||
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+      github.event_name == 'workflow_dispatch'
     outputs:
       addons: ${{ steps.changed_addons.outputs.addons }}
       is_dev: ${{ steps.branch_check.outputs.is_dev }}
