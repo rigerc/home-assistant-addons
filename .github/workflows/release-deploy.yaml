@@ -1,0 +1,95 @@
+---
+name: Release Deploy
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+  actions: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  extract-addon:
+    runs-on: ubuntu-latest
+    name: Extract Addon Info
+    outputs:
+      addon: ${{ steps.addon.outputs.name }}
+      version: ${{ steps.addon.outputs.version }}
+    steps:
+      - name: Extract addon from tag
+        id: addon
+        run: |
+          tag="${{ github.ref_name }}"
+          # Extract addon name from tag (e.g., "romm-v1.0.0" -> "romm")
+          addon="${tag%%-*}"
+          # Extract version (e.g., "romm-v1.0.0" -> "1.0.0")
+          version="${tag#*-}"
+
+          # Validate addon
+          valid_addons=("romm" "profilarr" "cleanuparr" "huntarr")
+          if [[ ! " ${valid_addons[@]} " =~ " ${addon} " ]]; then
+            echo "Error: Unknown addon '${addon}'"
+            exit 1
+          fi
+
+          echo "addon=${addon}" >> "$GITHUB_OUTPUT"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "Detected addon: ${addon}, version: ${version}"
+
+  build:
+    needs: extract-addon
+    runs-on: ubuntu-latest
+    name: "Build ${{ needs.extract-addon.outputs.addon }} (${{ matrix.arch }})"
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [aarch64, amd64, armv7]
+    steps:
+      - name: ⤵️ Check out repository
+        uses: actions/checkout@v4
+      - name: ℹ️ Get addon info
+        id: info
+        uses: home-assistant/actions/helpers/info@master
+        with:
+          path: "./${{ needs.extract-addon.outputs.addon }}"
+      - name: 🐳 Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: 🏗️ Build ${{ needs.extract-addon.outputs.addon }} add-on
+        uses: home-assistant/builder@2025.11.0
+        with:
+          args: |
+            --${{ matrix.arch }} \
+            --target /data/${{ needs.extract-addon.outputs.addon }} \
+            --image "${{ steps.info.outputs.image }}" \
+            --docker-hub "ghcr.io/${{ github.repository_owner }}" \
+            --addon
+
+  trigger-metadata-update:
+    needs: [extract-addon, build]
+    runs-on: ubuntu-latest
+    name: Trigger Repository Metadata Update
+    timeout-minutes: 2
+    permissions:
+      actions: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Trigger addon-metadata workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "Triggering addon-metadata.yml workflow..."
+          gh workflow run addon-metadata.yml --ref main
+          echo "Metadata update workflow triggered."

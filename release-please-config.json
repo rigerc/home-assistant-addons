@@ -1,0 +1,71 @@
+{
+  "packages": {
+    "romm": {
+      "release-type": "simple",
+      "package-name": "romm",
+      "component": "romm",
+      "changelog-path": "CHANGELOG.md",
+      "extra-files": [
+        "romm/CHANGELOG.md",
+        {
+          "type": "yaml",
+          "path": "romm/config.yaml",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
+    "profilarr": {
+      "release-type": "simple",
+      "package-name": "profilarr",
+      "component": "profilarr",
+      "changelog-path": "CHANGELOG.md",
+      "extra-files": [
+        "profilarr/CHANGELOG.md",
+        {
+          "type": "yaml",
+          "path": "profilarr/config.yaml",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
+    "cleanuparr": {
+      "release-type": "simple",
+      "package-name": "cleanuparr",
+      "component": "cleanuparr",
+      "changelog-path": "CHANGELOG.md",
+      "extra-files": [
+        "cleanuparr/CHANGELOG.md",
+        {
+          "type": "yaml",
+          "path": "cleanuparr/config.yaml",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
+    "huntarr": {
+      "release-type": "simple",
+      "package-name": "huntarr",
+      "component": "huntarr",
+      "changelog-path": "CHANGELOG.md",
+      "extra-files": [
+        "huntarr/CHANGELOG.md",
+        {
+          "type": "yaml",
+          "path": "huntarr/config.yaml",
+          "jsonpath": "$.version"
+        }
+      ]
+    }
+  },
+  "changelog-sections": [
+    {"type": "feat", "section": "Features"},
+    {"type": "fix", "section": "Bug Fixes"},
+    {"type": "chore", "section": "Maintenance"},
+    {"type": "docs", "section": "Documentation"},
+    {"type": "refactor", "section": "Refactoring"},
+    {"type": "perf", "section": "Performance"},
+    {"type": "test", "section": "Tests"},
+    {"type": "build", "section": "Build System"},
+    {"type": "ci", "section": "Continuous Integration"}
+  ]
+}

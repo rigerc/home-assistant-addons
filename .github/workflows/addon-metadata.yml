@@ -1,19 +1,6 @@
 name: Addon Metadata
 
 on:
-  push:
-    paths:
-      - '**/config.yaml'
-      - '**/Dockerfile'
-      - '**/build.yaml'
-      - '.github/workflows/addon-metadata.yml'
-  pull_request:
-    types: [opened, synchronize, reopened, labeled, unlabeled]
-    paths:
-      - '**/config.yaml'
-      - '**/Dockerfile'
-      - '**/build.yaml'
-      - '.github/workflows/addon-metadata.yml'
   workflow_dispatch:
 
 permissions:
