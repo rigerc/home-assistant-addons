@@ -1,4 +1,5 @@
 #!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
 
 # Check if Valkey is already running from init script
 if python3 -c "import socket; s=socket.socket(); s.settimeout(1); s.connect(('127.0.0.1', 6379)); s.close()" 2>/dev/null; then
