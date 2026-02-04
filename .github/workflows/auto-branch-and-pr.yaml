@@ -130,7 +130,24 @@ jobs:
             git checkout -b "$BRANCH"
           fi
 
+      - name: 🔍 Check if branch differs from base
+        id: check_diff
+        run: |
+          BRANCH="app/${{ matrix.domain }}"
+          BASE="${{ steps.config.outputs.base_branch }}"
+
+          # Check if there's a diff between this branch and base
+          if git diff --quiet origin/$BASE...HEAD; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            echo "⚠️ No changes detected between $BRANCH and $BASE"
+            echo "Skipping push and PR creation"
+          else
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            echo "✅ Changes detected between $BRANCH and $BASE"
+          fi
+
       - name: 🚀 Push domain branch
+        if: steps.check_diff.outputs.has_changes == 'true'
         run: |
           BRANCH="app/${{ matrix.domain }}"
           git push origin "$BRANCH"
@@ -162,7 +179,20 @@ jobs:
         run: |
           git fetch origin ${{ steps.config.outputs.base_branch }}:refs/remotes/origin/${{ steps.config.outputs.base_branch }} --depth=20
 
+      - name: 🔍 Verify branch has changes
+        id: verify_diff
+        run: |
+          # Check if there's a diff between this branch and base
+          if git diff --quiet origin/${{ steps.config.outputs.base_branch }}...HEAD; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            echo "⚠️ No changes detected - skipping PR creation"
+          else
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            echo "✅ Changes detected - will create/update PR"
+          fi
+
       - name: 📝 Get changed files list and detect labels
+        if: steps.verify_diff.outputs.has_changes == 'true'
         id: changes
         run: |
           # Get list of changed files in this domain
@@ -207,6 +237,7 @@ jobs:
           done
 
       - name: 📬 Create or update pull request
+        if: steps.verify_diff.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
