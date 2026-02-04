@@ -1,6 +1,7 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 
+
 exec 2>&1
 
 bashio::log.info "Starting Cleanuparr..."
