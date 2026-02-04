@@ -155,6 +155,8 @@ Never manually edit the release PR. Let release-please manage it.
 
 ## Configuration Options
 
+**Configuration Schema Reference:** For complete configuration validation and all available options, consult **`references/config-schema.json`**. This JSON schema defines the full structure of `release-please-config.json`, including all supported properties, their types, and valid values. Use it to validate configurations programmatically or discover advanced options not covered here.
+
 ### Per-Package Options
 
 Override defaults for specific packages:
@@ -385,6 +387,7 @@ Customize with `"label"` and `"release-label"` configuration.
 ### Reference Files
 
 For detailed configuration options:
+- **`references/config-schema.json`** - Official JSON schema for validating release-please-config.json. Contains all configuration properties, types, and valid values. Use this schema to validate configurations programmatically or discover advanced options.
 - **`references/manifest-config.md`** - Complete manifest configuration reference
 - **`references/cli-commands.md`** - All CLI commands and options
 - **`references/release-types.md`** - Supported languages and package managers

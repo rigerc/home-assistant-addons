@@ -9,10 +9,10 @@
       "component": "romm",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
-        "romm/CHANGELOG.md",
+        "CHANGELOG.md",
         {
           "type": "yaml",
-          "path": "romm/config.yaml",
+          "path": "config.yaml",
           "jsonpath": "$.version"
         }
       ]
@@ -23,10 +23,10 @@
       "component": "profilarr",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
-        "profilarr/CHANGELOG.md",
+        "CHANGELOG.md",
         {
           "type": "yaml",
-          "path": "profilarr/config.yaml",
+          "path": "config.yaml",
           "jsonpath": "$.version"
         }
       ]
@@ -37,10 +37,10 @@
       "component": "cleanuparr",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
-        "cleanuparr/CHANGELOG.md",
+        "CHANGELOG.md",
         {
           "type": "yaml",
-          "path": "cleanuparr/config.yaml",
+          "path": "config.yaml",
           "jsonpath": "$.version"
         }
       ]
@@ -51,10 +51,10 @@
       "component": "huntarr",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
-        "huntarr/CHANGELOG.md",
+        "CHANGELOG.md",
         {
           "type": "yaml",
-          "path": "huntarr/config.yaml",
+          "path": "config.yaml",
           "jsonpath": "$.version"
         }
       ]
