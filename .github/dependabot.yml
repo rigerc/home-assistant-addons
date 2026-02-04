@@ -26,8 +26,6 @@ updates:
         update-types:
           - "minor"
           - "patch"
-        exclude-patterns:
-          - "alpine"
   - package-ecosystem: "github-actions"
     # GitHub Actions workflows
     directory: "/"
@@ -40,7 +38,6 @@ updates:
     labels:
       - "dependencies"
       - "ci"
-      - "github-actions"
     commit-message:
       prefix: "ci"
       include: "scope"
