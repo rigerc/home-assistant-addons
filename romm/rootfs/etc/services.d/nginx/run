@@ -1,5 +1,5 @@
 #!/usr/bin/with-contenv bashio
-
+# shellcheck shell=bash
 bashio::log.info "Starting nginx on port ${ROMM_PORT}..."
 
 # Run envsubst on nginx templates to substitute only ROMM_* variables
