@@ -1,4 +1,5 @@
 #!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
 # ==============================================================================
 # Initialize and setup Profilarr environment
 # Runs during container initialization, before services start

@@ -12,6 +12,7 @@ on:
         description: 'Specific add-on to validate (empty for all changed)'
         required: false
         type: string
+        default: ''
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref }}
