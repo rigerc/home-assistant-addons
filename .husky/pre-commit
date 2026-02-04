@@ -1,49 +1,59 @@
-#!/usr/bin/env sh
-# Prevent commits to domain-specific paths when on main branch
-# Portable version that works on Windows, macOS, and Linux
+#!/bin/sh
+
+# Pre-commit hook to prevent direct commits to domain paths on main branch
+# Reads domain path ownership from .github/domain-paths.yaml
+
+set -e
+
+DOMAIN_PATHS_FILE=".github/domain-paths.yaml"
 
 # Get current branch name
-CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-DOMAIN_PATHS_FILE=".github/domain-paths.yaml"
-SCRIPT_DIR="$(dirname "$0")"
-PYTHON_SCRIPT="$SCRIPT_DIR/check-domain-paths.py"
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-# Only check if we're on main branch
-if [ "$CURRENT_BRANCH" = "main" ]; then
-    # Check if Python script exists
-    if [ ! -f "$PYTHON_SCRIPT" ]; then
+# Only check on main branch
+if [ "$BRANCH" = "main" ]; then
+    # Check if yq is available
+    if ! command -v yq >/dev/null 2>&1; then
+        echo "⚠️  Warning: 'yq' is not installed. Skipping domain path check."
+        echo "   Install yq to enable this pre-commit hook: https://github.com/mikefarah/yq"
         exit 0
     fi
 
-    # Check if domain paths file exists
+    # Check if domain-paths.yaml exists
     if [ ! -f "$DOMAIN_PATHS_FILE" ]; then
+        echo "⚠️  Warning: '$DOMAIN_PATHS_FILE' not found. Skipping domain path check."
         exit 0
     fi
 
-    # Get all staged files
+    # Extract paths from YAML using yq
+    PROTECTED_PATHS=$(yq eval '.domains.*.paths[]' "$DOMAIN_PATHS_FILE" 2>/dev/null)
+
+    if [ -z "$PROTECTED_PATHS" ]; then
+        exit 0
+    fi
+
+    # Get list of staged files
     STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
 
-    if [ -z "$STAGED_FILES" ]; then
-        exit 0
+    if [ -n "$STAGED_FILES" ]; then
+        for file in $STAGED_FILES; do
+            # Check if file matches any protected path pattern
+            for pattern in $PROTECTED_PATHS; do
+                # Convert glob pattern to regex (huntarr/** -> ^huntarr/)
+                prefix=$(echo "$pattern" | sed 's/\/\*\*$//')
+                case "$file" in
+                    ${prefix}*)
+                        echo ""
+                        echo "❌ Commit blocked: Direct commits to '$prefix' are not allowed on 'main' branch."
+                        echo ""
+                        echo "Please create a feature branch for changes to this domain."
+                        echo ""
+                        exit 1
+                        ;;
+                esac
+            done
+        done
     fi
-
-    # Use Python for cross-platform YAML parsing and pattern matching
-    # Try python3 first, then fall back to python (Windows)
-    if command -v python3 >/dev/null 2>&1; then
-        PYTHON_CMD=python3
-    elif command -v python >/dev/null 2>&1; then
-        PYTHON_CMD=python
-    elif command -v py >/dev/null 2>&1; then
-        # Windows Python launcher
-        PYTHON_CMD=py
-    else
-        # No Python available, skip the check
-        exit 0
-    fi
-
-    # Run the Python script with the domain file and staged files
-    $PYTHON_CMD "$PYTHON_SCRIPT" "$DOMAIN_PATHS_FILE" $STAGED_FILES
-    exit $?
 fi
 
 exit 0
