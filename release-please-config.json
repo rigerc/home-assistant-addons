@@ -1,8 +1,11 @@
 {
+  "separate-pull-requests": true,
+  "always-update": true,
+  "labels": ["release-draft"],
   "packages": {
     "romm": {
       "release-type": "simple",
-      "package-name": "romm",
+      "package-name": "Romm",
       "component": "romm",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
@@ -16,7 +19,7 @@
     },
     "profilarr": {
       "release-type": "simple",
-      "package-name": "profilarr",
+      "package-name": "Profilarr",
       "component": "profilarr",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
@@ -30,7 +33,7 @@
     },
     "cleanuparr": {
       "release-type": "simple",
-      "package-name": "cleanuparr",
+      "package-name": "Cleanuparr",
       "component": "cleanuparr",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
@@ -44,7 +47,7 @@
     },
     "huntarr": {
       "release-type": "simple",
-      "package-name": "huntarr",
+      "package-name": "Huntarr",
       "component": "huntarr",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [

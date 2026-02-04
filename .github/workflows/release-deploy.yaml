@@ -90,6 +90,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          echo "Triggering addon-metadata.yml workflow..."
-          gh workflow run addon-metadata.yml --ref main
+          echo "Triggering addon-metadata.yaml workflow..."
+          gh workflow run addon-metadata.yaml --ref main
           echo "Metadata update workflow triggered."

@@ -4,7 +4,10 @@ name: PR CI Validation
 # yamllint disable-line rule:truthy
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, labeled]
+    branches: [main]
+  pull_request_target:
+    types: [opened, synchronize, reopened, labeled]
     branches: [main]
 
 concurrency:
@@ -19,10 +22,12 @@ permissions:
 jobs:
   lint:
     name: 🔍 Lint
+    if: contains(github.event.pull_request.labels.*.name, 'release-draft')
     uses: ./.github/workflows/lint.yaml
 
   build:
     name: 🏗️ Build (validation mode)
+    if: contains(github.event.pull_request.labels.*.name, 'release-draft')
     needs: lint
     uses: ./.github/workflows/builder.yaml
     with:
@@ -32,6 +37,7 @@ jobs:
 
   release-draft:
     name: 📝 Create release draft
+    if: contains(github.event.pull_request.labels.*.name, 'release-draft')
     needs: build
     runs-on: ubuntu-latest
     permissions:

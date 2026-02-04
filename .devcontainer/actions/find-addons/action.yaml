@@ -1,0 +1,68 @@
+---
+name: 'Home Assistant helper: find-addons'
+description: 'Find all add-ons directories in the repository, with optional ignore patterns'
+
+inputs:
+  ignore:
+    description: Comma-separated list of folders to ignore (e.g., '.gemini,.github')
+    required: false
+    default: ""
+
+outputs:
+  addons:
+    description: Returns a list of all add-ons in the repository
+    value: ${{ steps.addons.outputs.addons }}
+  addons_list:
+    description: Returns a JSON list of all add-ons in the repository
+    value: ${{ steps.addons.outputs.addons_list }}
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      id: addons
+      run: |
+        declare -a addons
+        declare -a addons_list
+
+        # Build find command with ignore patterns
+        ignore_patterns=""
+        if [[ -n "${{ inputs.ignore }}" ]]; then
+          IFS=',' read -ra IGNORED_FOLDERS <<< "${{ inputs.ignore }}"
+          for folder in "${IGNORED_FOLDERS[@]}"; do
+            # Trim whitespace
+            folder="${folder// /}"
+            ignore_patterns+=" -not -path './${folder}/*'"
+          done
+        fi
+
+        # Find add-ons (config.json, config.yaml, or config.yml)
+        while IFS= read -r file; do
+          addon=$(echo "$file" | cut -d "/" -f2)
+          # Skip if empty or already added
+          if [[ -n "$addon" ]] && [[ ! " ${addons[@]} " =~ " ${addon} " ]]; then
+            addons+=("${addon}")
+            addons_list+=("\"${addon}\",")
+          fi
+        done < <(eval "find ./ -maxdepth 2 \( -name config.json -o -name config.yaml -o -name config.yml \) $ignore_patterns")
+
+        # Sort addons
+        IFS=$'\n' sorted_addons=($(sort <<<"${addons[*]}"))
+        unset IFS
+
+        # Rebuild addons_list from sorted
+        addons_list=()
+        for addon in "${sorted_addons[@]}"; do
+          addons_list+=("\"${addon}\",")
+        done
+
+        # Build JSON array string
+        json_list=$(echo ${addons_list[@]} | rev | cut -c 2- | rev)
+
+        # Build space-separated list
+        addons_space="${sorted_addons[*]}"
+
+        echo "Found addons: ${sorted_addons[@]}"
+        echo "Found addons (JSON): [${json_list}]"
+        echo "addons=$addons_space" >> "$GITHUB_OUTPUT"
+        echo "addons_list=[${json_list}]" >> "$GITHUB_OUTPUT"
