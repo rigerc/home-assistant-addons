@@ -1,29 +1,22 @@
 ---
-name: PR CI Validation
+name: PR CI
 
 # yamllint disable-line rule:truthy
 on:
   pull_request:
-    types: [opened, synchronize, reopened, labeled, edited]
     branches: [main]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
-permissions:
-  contents: read
-  pull-requests: read
 
 jobs:
   lint:
     name: 🔍 Lint
     uses: ./.github/workflows/lint.yaml
 
-  build:
-    name: 🏗️ Build (validation mode)
-    needs: lint
+  builder:
+    name: 👷‍♂️ Builder Validation
     uses: ./.github/workflows/builder.yaml
     with:
       validation_mode: true
-    secrets: inherit
