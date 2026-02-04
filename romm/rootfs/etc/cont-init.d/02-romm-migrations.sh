@@ -1,7 +1,6 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 
-# This script handles database migrations for the ROmm addon.
 # Start Valkey in background for migrations
 bashio::log.info "Starting Valkey for database migrations..."
 
