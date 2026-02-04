@@ -22,8 +22,6 @@ jobs:
     if: |
       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'release-draft')) ||
       (github.event_name == 'pull_request' && github.actor == 'dependabot[bot]')
-    with:
-      addon: ''
 
   build:
     name: 🏗️ Build (validation mode)
@@ -33,6 +31,5 @@ jobs:
       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'release-draft')) ||
       (github.event_name == 'pull_request' && github.actor == 'dependabot[bot]')
     with:
-      addon: ''
       validation_mode: true
     secrets: inherit

@@ -7,19 +7,7 @@ env:
 # yamllint disable-line rule:truthy
 on:
   workflow_call:
-    inputs:
-      addon:
-        description: 'Specific add-on to lint (empty for all changed)'
-        required: false
-        type: string
-        default: ''
   workflow_dispatch:
-    inputs:
-      addon:
-        description: 'Specific add-on to lint (empty for all changed)'
-        required: false
-        type: string
-        default: ''
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -43,59 +31,38 @@ jobs:
       - name: 🗝️ Get changed files
         id: changed_files
         uses: jitterbit/get-changed-files@v1
-        if: github.event_name != 'workflow_dispatch' && (inputs.addon == '' || inputs.addon == null)
+        if: github.event_name != 'workflow_dispatch'
       - name: 🦺 Get changed add-ons
         id: changed_addons
         run: |
-          # If specific addon provided, use it; otherwise find changed addons
-          if [[ -n "${{ inputs.addon }}" ]]; then
-            # Validate the addon exists
-            valid_addons=(${{ steps.addons.outputs.addons }})
-            addon_valid=0
-            for valid in "${valid_addons[@]}"; do
-              if [[ "$valid" == "${{ inputs.addon }}" ]]; then
-                addon_valid=1
+          # Find changed addons
+          changed_addons=()
+
+          for addon in ${{ steps.addons.outputs.addons }}; do
+            # Check if any monitored file in this addon directory changed
+            for file in ${{ env.MONITORED_FILES }}; do
+              # Use word boundaries to avoid partial matches (e.g., addonbackup/Dockerfile)
+              if [[ "${{ steps.changed_files.outputs.all }}" =~ (^| )${addon}/${file}($| ) ]]; then
+                # Check if addon already in array
+                already_added=0
+                for existing in "${changed_addons[@]}"; do
+                  if [[ "$existing" == "\"${addon}\"," ]]; then
+                    already_added=1
+                    break
+                  fi
+                done
+                if [[ $already_added -eq 0 ]]; then
+                  changed_addons+=("\"${addon}\",");
+                fi
                 break
               fi
             done
+          done
 
-            if [[ $addon_valid -eq 1 ]]; then
-              echo "addons=[\"${{ inputs.addon }}\"]" >> "$GITHUB_OUTPUT"
-              echo "Linting specific add-on: ${{ inputs.addon }}"
-            else
-              echo "Error: Add-on '${{ inputs.addon }}' not found. Valid add-ons: ${valid_addons[*]}"
-              exit 1
-            fi
-          else
-            # Find changed addons
-            changed_addons=()
-
-            for addon in ${{ steps.addons.outputs.addons }}; do
-              # Check if any monitored file in this addon directory changed
-              for file in ${{ env.MONITORED_FILES }}; do
-                # Use word boundaries to avoid partial matches (e.g., addonbackup/Dockerfile)
-                if [[ "${{ steps.changed_files.outputs.all }}" =~ (^| )${addon}/${file}($| ) ]]; then
-                  # Check if addon already in array
-                  already_added=0
-                  for existing in "${changed_addons[@]}"; do
-                    if [[ "$existing" == "\"${addon}\"," ]]; then
-                      already_added=1
-                      break
-                    fi
-                  done
-                  if [[ $already_added -eq 0 ]]; then
-                    changed_addons+=("\"${addon}\",");
-                  fi
-                  break
-                fi
-              done
-            done
-
-            # Build JSON array
-            changed=$(echo "${changed_addons[@]}" | rev | cut -c 2- | rev)
-            echo "addons=[$changed]" >> "$GITHUB_OUTPUT"
-            echo "Changed add-ons: [$changed]"
-          fi
+          # Build JSON array
+          changed=$(echo "${changed_addons[@]}" | rev | cut -c 2- | rev)
+          echo "addons=[$changed]" >> "$GITHUB_OUTPUT"
+          echo "Changed add-ons: [$changed]"
 
   # Global lints - single job
   lint:

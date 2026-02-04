@@ -8,10 +8,6 @@ env:
 on:
   workflow_dispatch:
     inputs:
-      addon:
-        description: 'Specific add-on to build (empty for all changed)'
-        required: false
-        type: string
       validation_mode:
         description: 'Run in validation mode (no push)'
         required: false
@@ -19,11 +15,6 @@ on:
         default: false
   workflow_call:
     inputs:
-      addon:
-        description: 'Specific add-on to build (empty for all changed)'
-        required: false
-        type: string
-        default: ''
       validation_mode:
         description: 'Run in validation mode (no push)'
         required: false
@@ -51,7 +42,7 @@ jobs:
       - name: 🗝️ Get changed files
         id: changed_files
         uses: jitterbit/get-changed-files@v1
-        if: github.event_name != 'workflow_dispatch' && (inputs.addon == '' || inputs.addon == null)
+        if: github.event_name != 'workflow_dispatch'
       - name: 🚀 Find add-on directories
         id: addons
         uses: ./.github/actions/find-addons
@@ -60,51 +51,31 @@ jobs:
       - name: 🔍 Filter add-ons to build
         id: addon_filter
         run: |
-          # If specific addon provided, use it; otherwise find changed addons
-          if [[ -n "${{ inputs.addon }}" ]]; then
-            # Validate the addon exists
-            valid_addons=(${{ steps.addons.outputs.addons }})
-            addon_valid=0
-            for valid in "${valid_addons[@]}"; do
-              if [[ "$valid" == "${{ inputs.addon }}" ]]; then
-                addon_valid=1
+          # Find changed addons
+          changed_addons=()
+          for addon in ${{ steps.addons.outputs.addons }}; do
+            for file in ${{ env.MONITORED_FILES }}; do
+              # Use word boundaries to avoid partial matches (e.g., addonbackup/Dockerfile)
+              if [[ "${{ steps.changed_files.outputs.all }}" =~ (^| )${addon}/${file}($| ) ]]; then
+                # Check if addon already in array
+                already_added=0
+                for existing in "${changed_addons[@]}"; do
+                  if [[ "$existing" == "\"${addon}\"," ]]; then
+                    already_added=1
+                    break
+                  fi
+                done
+                if [[ $already_added -eq 0 ]]; then
+                  changed_addons+=("\"${addon}\",");
+                fi
                 break
               fi
             done
+          done
 
-            if [[ $addon_valid -eq 1 ]]; then
-              echo "addons=[\"${{ inputs.addon }}\"]" >> "$GITHUB_OUTPUT"
-              echo "Building specific add-on: ${{ inputs.addon }}"
-            else
-              echo "Error: Add-on '${{ inputs.addon }}' not found. Valid add-ons: ${valid_addons[*]}"
-              exit 1
-            fi
-          else
-            # Find changed addons
-            changed_addons=()
-            for addon in ${{ steps.addons.outputs.addons }}; do
-              for file in ${{ env.MONITORED_FILES }}; do
-                # Use word boundaries to avoid partial matches (e.g., addonbackup/Dockerfile)
-                if [[ "${{ steps.changed_files.outputs.all }}" =~ (^| )${addon}/${file}($| ) ]]; then
-                  # Check if addon already in array
-                  already_added=0
-                  for existing in "${changed_addons[@]}"; do
-                    if [[ "$existing" == "\"${addon}\"," ]]; then
-                      already_added=1
-                      break
-                    fi
-                  done
-                  if [[ $already_added -eq 0 ]]; then
-                    changed_addons+=("\"${addon}\",");
-                  fi
-                fi
-              done
-            done
-
-            changed=$(echo "${changed_addons[@]}" | rev | cut -c 2- | rev)
-            echo "addons=[$changed]" >> "$GITHUB_OUTPUT"
-            echo "Changed add-ons: [$changed]"
-          fi
+          changed=$(echo "${changed_addons[@]}" | rev | cut -c 2- | rev)
+          echo "addons=[$changed]" >> "$GITHUB_OUTPUT"
+          echo "Changed add-ons: [$changed]"
       - name: 🔧 Set validation mode
         id: validation_check
         run: |
