@@ -80,6 +80,14 @@ All notable changes to this add-on will be documented in this file.
 
 - No changes
 
+## [1.2.2](https://github.com/rigerc/home-assistant-addons/compare/profilarr-v1.2.1...profilarr-v1.2.2) (2026-02-04)
+
+
+### 🐛 Bug Fixes
+
+* add missing document start markers to YAML files ([e6c631e](https://github.com/rigerc/home-assistant-addons/commit/e6c631ea3fcd7cc720164b34ebe75f036eee9df2))
+* ci ([0f0b13c](https://github.com/rigerc/home-assistant-addons/commit/0f0b13cf683197a2e07838fb9649599db1399bad))
+
 ## [1.2.1](https://github.com/rigerc/home-assistant-addons/compare/profilarr-v1.2.0...profilarr-v1.2.1) (2026-02-04)
 
 
