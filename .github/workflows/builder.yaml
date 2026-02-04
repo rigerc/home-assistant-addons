@@ -30,9 +30,6 @@ jobs:
     runs-on: ubuntu-latest
     name: ⏳ Initialize builds
     timeout-minutes: 10
-    if: |
-      github.event_name == 'workflow_call' ||
-      github.event_name == 'workflow_dispatch'
     outputs:
       addons: ${{ steps.addon_filter.outputs.addons }}
       validation_mode: ${{ steps.validation_check.outputs.validation_mode }}
