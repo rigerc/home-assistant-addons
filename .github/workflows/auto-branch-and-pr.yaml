@@ -25,12 +25,12 @@ jobs:
       - name: ⤵️ Check out repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 20
 
       - name: 📦 Install yq
         run: |
-          wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-          chmod +x /usr/local/bin/yq
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
 
       - name: 🔧 Generate filters from domain-paths.yaml
         run: |
@@ -103,8 +103,8 @@ jobs:
 
       - name: 📦 Install yq
         run: |
-          wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-          chmod +x /usr/local/bin/yq
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
 
       - name: 🔍 Get domain config
         id: config
@@ -160,12 +160,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: app/${{ matrix.domain }}
-          fetch-depth: 0
+          fetch-depth: 20
 
       - name: 📦 Install yq
         run: |
-          wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-          chmod +x /usr/local/bin/yq
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
 
       - name: 🔍 Get domain config
         id: config
