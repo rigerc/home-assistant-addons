@@ -1,0 +1,49 @@
+# Grouped updates configuration
+# Groups related dependencies into single pull requests
+
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+    # Group related packages together
+    groups:
+      # React ecosystem updates
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "react-router*"
+          - "@types/react*"
+
+      # Testing libraries
+      testing:
+        patterns:
+          - "jest"
+          - "@testing-library/*"
+          - "vitest"
+        update-types:
+          - "minor"
+          - "patch"
+
+      # Development tools (minor and patch only)
+      dev-tools:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+        exclude-patterns:
+          - "typescript"  # Handle TypeScript separately
+
+      # All minor and patch updates together
+      non-major-updates:
+        update-types:
+          - "minor"
+          - "patch"
+
+    # Handle major updates individually
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
