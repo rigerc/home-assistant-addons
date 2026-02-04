@@ -51,11 +51,6 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 📦 Install yq
-        run: |
-          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64
-          sudo chmod +x /usr/local/bin/yq
-
       - name: 🔍 Get current version
         id: current
         run: |
@@ -137,11 +132,6 @@ jobs:
         with:
           ref: app/${{ inputs.domain }}
           fetch-depth: 0
-
-      - name: 📦 Install yq
-        run: |
-          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64
-          sudo chmod +x /usr/local/bin/yq
 
       - name: 🚀 Publish release
         if: inputs.dry_run == false
