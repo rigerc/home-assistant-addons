@@ -6,6 +6,12 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, labeled]
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      addon:
+        description: 'Specific add-on to validate (empty for all changed)'
+        required: false
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref }}
@@ -19,15 +25,20 @@ permissions:
 jobs:
   lint:
     name: 🔍 Lint
-    if: contains(github.event.pull_request.labels.*.name, 'release-draft')
+    if: |
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'release-draft')) ||
+      github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/lint.yaml
 
   build:
     name: 🏗️ Build (validation mode)
-    if: contains(github.event.pull_request.labels.*.name, 'release-draft')
+    if: |
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'release-draft')) ||
+      github.event_name == 'workflow_dispatch'
     needs: lint
     uses: ./.github/workflows/builder.yaml
     with:
+      addon: ${{ inputs.addon }}
       validation_mode: true
       push_images: false
     secrets: inherit
