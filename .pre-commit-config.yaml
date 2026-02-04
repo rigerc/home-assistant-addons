@@ -25,3 +25,14 @@ repos:
     hooks:
       - id: check-json
         exclude: '^(\.claude/|docs/|scripts/).*\.json$'
+
+  # Domain Branch Enforcement - Local hook
+  - repo: local
+    hooks:
+      - id: check-domain-branch
+        name: Check domain branch
+        entry: python .github/hooks/check-domain-branch.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        stages: [commit]
