@@ -56,6 +56,3 @@ template: |
   ## Build Information
   - **Branch**: `$BRANCH`
   - **Built**: $DATE
-
-  ---
-  🤖 **This is a draft release** - will be published upon manual deployment

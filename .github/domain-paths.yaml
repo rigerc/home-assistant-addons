@@ -17,13 +17,3 @@ domains:
     paths:
       - romm/**
     base_branch: main
-
-  docs:
-    paths:
-      - docs/**
-    base_branch: main
-
-  workflows:
-    paths:
-      - .github/workflows/**
-    base_branch: main

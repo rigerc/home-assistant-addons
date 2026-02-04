@@ -47,7 +47,7 @@ jobs:
       - name: ⤵️ Check out repository
         uses: actions/checkout@v4
         with:
-          ref: domain/${{ inputs.domain }}
+          ref: app/${{ inputs.domain }}
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -108,7 +108,7 @@ jobs:
           git add ${{ inputs.domain }}/config.yaml
           git commit -m "chore(${{ inputs.domain }}): bump version to v${{ steps.bump.outputs.version }}"
 
-          git push origin domain/${{ inputs.domain }}
+          git push origin app/${{ inputs.domain }}
 
           echo "✅ Version bump committed and pushed"
 
@@ -135,7 +135,7 @@ jobs:
       - name: ⤵️ Check out repository
         uses: actions/checkout@v4
         with:
-          ref: domain/${{ inputs.domain }}
+          ref: app/${{ inputs.domain }}
           fetch-depth: 0
 
       - name: 📦 Install yq
@@ -167,7 +167,7 @@ jobs:
             echo "Creating new release..."
 
             # Get recent commits
-            COMMITS=$(git log -10 --pretty=format:"- %s (%h)" -- "$DOMAIN/")
+            COMMITS=$(git log -10 --pretty=format:"- %s (%h)" -- "$DOMAIN")
 
             # Create release notes
             {
@@ -190,7 +190,7 @@ jobs:
             gh release create "$TAG" \
               --title "$DOMAIN v$VERSION" \
               --notes-file /tmp/release-notes.md \
-              --target "domain/$DOMAIN"
+              --target "app/$DOMAIN"
 
             echo "✅ Created and published release: $TAG"
           fi
@@ -222,10 +222,10 @@ jobs:
           VERSION="${{ needs.version-bump.outputs.new_version }}"
 
           # Find PR for this domain branch
-          PR_NUMBER=$(gh pr list --head "domain/$DOMAIN" --json number --jq '.[0].number')
+          PR_NUMBER=$(gh pr list --head "app/$DOMAIN" --json number --jq '.[0].number')
 
           if [[ -n "$PR_NUMBER" ]]; then
-            echo "Found PR #$PR_NUMBER for domain/$DOMAIN"
+            echo "Found PR #$PR_NUMBER for app/$DOMAIN"
 
             # Add comment to PR
             gh pr comment "$PR_NUMBER" --body "🚀 **Deployed v$VERSION**
@@ -240,7 +240,7 @@ jobs:
 
             echo "✅ Added deployment comment to PR #$PR_NUMBER"
           else
-            echo "⚠️ No open PR found for domain/$DOMAIN"
+            echo "⚠️ No open PR found for app/$DOMAIN"
           fi
 
       - name: 🏷️ Dry run summary

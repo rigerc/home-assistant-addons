@@ -120,7 +120,7 @@ jobs:
 
       - name: 🌿 Setup domain branch
         run: |
-          BRANCH="domain/${{ matrix.domain }}"
+          BRANCH="app/${{ matrix.domain }}"
           echo "Domain branch: $BRANCH"
 
           # Fetch all branches
@@ -142,7 +142,7 @@ jobs:
 
       - name: 🚀 Push domain branch
         run: |
-          BRANCH="domain/${{ matrix.domain }}"
+          BRANCH="app/${{ matrix.domain }}"
           git push origin "$BRANCH"
           echo "✅ Pushed $BRANCH to remote"
 
@@ -159,7 +159,7 @@ jobs:
       - name: ⤵️ Check out repository
         uses: actions/checkout@v4
         with:
-          ref: domain/${{ matrix.domain }}
+          ref: app/${{ matrix.domain }}
           fetch-depth: 0
 
       - name: 📦 Install yq
@@ -221,7 +221,7 @@ jobs:
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          branch: domain/${{ matrix.domain }}
+          branch: app/${{ matrix.domain }}
           base: ${{ steps.config.outputs.base_branch }}
           title: "[${{ matrix.domain }}] Automated domain updates"
           body: |

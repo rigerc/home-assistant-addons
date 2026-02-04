@@ -55,8 +55,8 @@ jobs:
         run: |
           echo "Branch: $BRANCH_NAME"
 
-          # Check if branch follows domain/* pattern
-          if [[ "$BRANCH_NAME" =~ ^domain/(.+)$ ]]; then
+          # Check if branch follows app/* pattern
+          if [[ "$BRANCH_NAME" =~ ^app/(.+)$ ]]; then
             DOMAIN="${BASH_REMATCH[1]}"
             echo "domain=$DOMAIN" >> "$GITHUB_OUTPUT"
             echo "is_domain_branch=true" >> "$GITHUB_OUTPUT"
