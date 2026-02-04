@@ -1,4 +1,6 @@
 #!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+
 declare APP_EXIT_CODE=${1}
 
 bashio::log.warning "Cleanuparr exited with code ${APP_EXIT_CODE}"
