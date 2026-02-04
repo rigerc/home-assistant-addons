@@ -158,6 +158,10 @@ jobs:
           BASE=$(yq eval ".domains.${{ matrix.domain }}.base_branch" .github/domain-paths.yaml)
           echo "base_branch=$BASE" >> "$GITHUB_OUTPUT"
 
+      - name: 🔄 Fetch base branch for comparison
+        run: |
+          git fetch origin ${{ steps.config.outputs.base_branch }}:refs/remotes/origin/${{ steps.config.outputs.base_branch }} --depth=20
+
       - name: 📝 Get changed files list and detect labels
         id: changes
         run: |
