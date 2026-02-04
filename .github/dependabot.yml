@@ -12,7 +12,7 @@ updates:
       day: "monday"
       time: "05:00"
       timezone: "UTC"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 15
     labels:
       - "dependencies"
       - "docker"
@@ -21,14 +21,15 @@ updates:
       prefix: "docker"
       include: "scope"
     groups:
-      # Group all minor and patch updates together
-      docker-minor-patch:
+      # Group minor and patch updates together to reduce PR noise
+      docker-non-major:
         update-types:
           - "minor"
           - "patch"
+        exclude-patterns:
+          - "alpine"
   - package-ecosystem: "github-actions"
     # GitHub Actions workflows
-
     directory: "/"
     schedule:
       interval: "weekly"
@@ -44,8 +45,8 @@ updates:
       prefix: "ci"
       include: "scope"
     groups:
-      # Group all minor and patch updates together
-      actions-minor-patch:
+      # Group minor and patch updates together to reduce PR noise
+      actions-non-major:
         update-types:
           - "minor"
           - "patch"

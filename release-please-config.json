@@ -61,14 +61,14 @@
     }
   },
   "changelog-sections": [
-    {"type": "feat", "section": "Features"},
-    {"type": "fix", "section": "Bug Fixes"},
-    {"type": "chore", "section": "Maintenance"},
-    {"type": "docs", "section": "Documentation"},
-    {"type": "refactor", "section": "Refactoring"},
-    {"type": "perf", "section": "Performance"},
-    {"type": "test", "section": "Tests"},
-    {"type": "build", "section": "Build System"},
-    {"type": "ci", "section": "Continuous Integration"}
+    {"type": "feat", "section": "✨ Features"},
+    {"type": "fix", "section": "🐛 Bug Fixes"},
+    {"type": "chore", "section": "🧰 Maintenance"},
+    {"type": "docs", "section": "📚 Documentation"},
+    {"type": "refactor", "section": "♻️ Refactoring"},
+    {"type": "perf", "section": "⚡ Performance"},
+    {"type": "test", "section": "✅ Tests"},
+    {"type": "build", "section": "🏗️ Build System"},
+    {"type": "ci", "section": "👷 Continuous Integration"}
   ]
 }
