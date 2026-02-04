@@ -232,6 +232,13 @@ This is a **major breaking change**. Please read carefully before upgrading.
 
 - Test @rigerc (#1)
 
+## [0.5.0](https://github.com/rigerc/home-assistant-addons/compare/romm-v0.4.0...romm-v0.5.0) (2026-02-04)
+
+
+### Features
+
+* **migrations:** add initial database migration script ([d515e8f](https://github.com/rigerc/home-assistant-addons/commit/d515e8f10c83ce8001d55a7cdf4f1bc65e923b79))
+
 ## [0.4.0](https://github.com/rigerc/home-assistant-addons/compare/romm-v0.3.0...romm-v0.4.0) (2026-02-04)
 
 
