@@ -17,3 +17,8 @@ domains:
     paths:
       - romm/**
     base_branch: main
+
+  cleanuparr:
+    paths:
+      - cleanuparr/**
+    base_branch: main
