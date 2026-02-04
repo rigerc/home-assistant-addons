@@ -19,17 +19,11 @@ jobs:
   lint:
     name: 🔍 Lint
     uses: ./.github/workflows/lint.yaml
-    if: |
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'release-draft')) ||
-      (github.event_name == 'pull_request' && github.actor == 'dependabot[bot]')
 
   build:
     name: 🏗️ Build (validation mode)
     needs: lint
     uses: ./.github/workflows/builder.yaml
-    if: |
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'release-draft')) ||
-      (github.event_name == 'pull_request' && github.actor == 'dependabot[bot]')
     with:
       validation_mode: true
     secrets: inherit
