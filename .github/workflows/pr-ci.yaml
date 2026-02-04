@@ -19,13 +19,13 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: write
+  contents: read
   pull-requests: read
-  packages: write
 
 jobs:
   lint:
     name: 🔍 Lint
+    timeout-minutes: 30
     if: |
       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'release-draft')) ||
       (github.event_name == 'pull_request' && github.actor == 'dependabot[bot]') ||
@@ -36,6 +36,7 @@ jobs:
 
   build:
     name: 🏗️ Build (validation mode)
+    timeout-minutes: 120
     if: |
       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'release-draft')) ||
       (github.event_name == 'pull_request' && github.actor == 'dependabot[bot]') ||
@@ -45,5 +46,4 @@ jobs:
     with:
       addon: ${{ inputs.addon }}
       validation_mode: true
-      push_images: false
     secrets: inherit
