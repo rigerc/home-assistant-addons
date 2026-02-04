@@ -16,11 +16,13 @@ readonly PROJECT_ROOT
 readonly MANIFEST_OUTPUT="${PROJECT_ROOT}/manifest.json"
 readonly DEPENDABOT_CONFIG="${PROJECT_ROOT}/.github/dependabot.yml"
 readonly DEPLOYER_V3_WORKFLOW="${PROJECT_ROOT}/.github/workflows/addon-build.yaml"
+readonly RELEASE_PLEASE_MANIFEST="${PROJECT_ROOT}/.release-please-manifest.json"
 
 # Options
 UPDATE_DEPENDABOT=false
 UPDATE_WORKFLOW_DISPATCH=false
 GENERATE_README=false
+UPDATE_RELEASE_PLEASE=false
 
 # Error handling
 err() {
@@ -218,17 +220,19 @@ Usage: $(basename "${BASH_SOURCE[0]}") [OPTIONS]
 Generate manifest.json for Home Assistant addons.
 
 OPTIONS:
-  -d, --update-dependabot   Update .github/dependabot.yml with addon directories
-  -w, --update-workflow     Update addon-build.yaml workflow_dispatch inputs
-  -g, --generate-readme     Generate README.md files using gomplate templates
-  -h, --help                Display this help message
+  -d, --update-dependabot     Update .github/dependabot.yml with addon directories
+  -w, --update-workflow       Update addon-build.yaml workflow_dispatch inputs
+  -r, --update-release-please Update .release-please-manifest.json with addon packages
+  -g, --generate-readme       Generate README.md files using gomplate templates
+  -h, --help                  Display this help message
 
 EXAMPLES:
   $(basename "${BASH_SOURCE[0]}")                      # Generate manifest.json only
   $(basename "${BASH_SOURCE[0]}") -d                  # Generate manifest.json and update dependabot.yml
   $(basename "${BASH_SOURCE[0]}") -w                  # Generate manifest.json and update workflow inputs
+  $(basename "${BASH_SOURCE[0]}") -r                  # Generate manifest.json and update release-please manifest
   $(basename "${BASH_SOURCE[0]}") -g                  # Generate manifest.json and README files
-  $(basename "${BASH_SOURCE[0]}") -d -w -g            # Generate manifest.json and update all configs and READMEs
+  $(basename "${BASH_SOURCE[0]}") -d -w -r -g         # Generate manifest.json and update all configs and READMEs
 
 EOF
 }
@@ -238,6 +242,7 @@ EOF
 # Globals:
 #   UPDATE_DEPENDABOT
 #   UPDATE_WORKFLOW_DISPATCH
+#   UPDATE_RELEASE_PLEASE
 #   GENERATE_README
 # Arguments:
 #   All script arguments
@@ -253,6 +258,10 @@ parse_args() {
         ;;
       -w|--update-workflow)
         UPDATE_WORKFLOW_DISPATCH=true
+        shift
+        ;;
+      -r|--update-release-please)
+        UPDATE_RELEASE_PLEASE=true
         shift
         ;;
       -g|--generate-readme)
@@ -519,10 +528,67 @@ update_workflow_dispatch_v3() {
 }
 
 #######################################
+# Update .release-please-manifest.json with addon packages
+# Preserves existing version numbers, adds new packages
+# Globals:
+#   RELEASE_PLEASE_MANIFEST
+# Arguments:
+#   slugs - Array of addon slugs (one per line via stdin)
+# Returns:
+#   0 on success, 1 on error
+#######################################
+update_release_please_manifest() {
+  local -a slugs
+  readarray -t slugs
+
+  [[ "${#slugs[@]}" -gt 0 ]] || {
+    err "No addon slugs found for release-please manifest update"
+    return 1
+  }
+
+  local temp_file
+  temp_file="$(mktemp)"
+
+  # Create new manifest or update existing one
+  if [[ -f "${RELEASE_PLEASE_MANIFEST}" ]]; then
+    # Read existing manifest to preserve versions
+    cp "${RELEASE_PLEASE_MANIFEST}" "${temp_file}"
+  else
+    # Create new empty manifest
+    echo "{}" > "${temp_file}"
+  fi
+
+  # Add each slug as a package (preserve existing version, default to 0.1.0 for new)
+  for slug in "${slugs[@]}"; do
+    local current_version
+    current_version="$(jq -r ".[\"${slug}\"] // \"0.1.0\"" "${temp_file}")"
+
+    # Update the manifest entry
+    local next_temp
+    next_temp="$(mktemp)"
+    jq ".[\"${slug}\"] = \"${current_version}\"" "${temp_file}" > "${next_temp}"
+    rm -f "${temp_file}"
+    temp_file="${next_temp}"
+  done
+
+  # Verify the output is valid JSON
+  if ! jq . "${temp_file}" >/dev/null 2>&1; then
+    err "Generated invalid JSON for release-please manifest"
+    rm -f "${temp_file}"
+    return 1
+  fi
+
+  # Replace original file
+  mv "${temp_file}" "${RELEASE_PLEASE_MANIFEST}"
+  echo "Updated ${RELEASE_PLEASE_MANIFEST} with ${#slugs[@]} packages" >&2
+}
+
+#######################################
 # Main script logic
 # Globals:
 #   UPDATE_DEPENDABOT
 #   UPDATE_WORKFLOW_DISPATCH
+#   UPDATE_RELEASE_PLEASE
 #   GENERATE_README
 # Arguments:
 #   All script arguments
@@ -546,6 +612,11 @@ main() {
     if [[ -f "${DEPLOYER_V3_WORKFLOW}" ]]; then
       update_workflow_dispatch_v3 <<< "${slugs_output}"
     fi
+  fi
+
+  # Update release-please manifest if requested
+  if [[ "${UPDATE_RELEASE_PLEASE}" == "true" ]]; then
+    update_release_please_manifest <<< "${slugs_output}"
   fi
 
   # Generate README files if requested

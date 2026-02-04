@@ -32,10 +32,10 @@ jobs:
           # Extract version (e.g., "romm-v1.0.0" -> "1.0.0")
           version="${tag#*-}"
 
-          # Validate addon
-          valid_addons=("romm" "profilarr" "cleanuparr" "huntarr")
-          if [[ ! " ${valid_addons[@]} " =~ " ${addon} " ]]; then
-            echo "Error: Unknown addon '${addon}'"
+          # Validate addon against release-please manifest
+          valid_addons=$(jq -r 'keys[]' .release-please-manifest.json | tr '\n' ' ')
+          if ! echo " $valid_addons " | grep -qF " ${addon} "; then
+            echo "Error: Unknown addon '${addon}'. Valid addons: $valid_addons"
             exit 1
           fi
 

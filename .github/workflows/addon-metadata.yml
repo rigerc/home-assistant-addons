@@ -53,9 +53,9 @@ jobs:
           ./scripts/manifest.sh -d
         continue-on-error: true
 
-      - name: Update workflow dispatch
+      - name: Update release-please manifest
         run: |
-          ./scripts/manifest.sh -w
+          ./scripts/manifest.sh -r
         continue-on-error: true
 
       - name: Generate READMEs
@@ -66,5 +66,5 @@ jobs:
       - name: Commit manifest and config changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: update addon manifest and configs [skip ci]"
+          commit_message: "chore: update manifest and configs [skip ci]"
           skip_checkout: true
