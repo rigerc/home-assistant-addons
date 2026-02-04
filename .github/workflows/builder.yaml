@@ -124,7 +124,6 @@ jobs:
     timeout-minutes: 120
     permissions:
       contents: read
-      packages: write
     strategy:
       fail-fast: false
       matrix:

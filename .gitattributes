@@ -4,3 +4,4 @@ README.md           linguist-generated merge=ours
 */README.md         linguist-generated merge=ours
 manifest.json       linguist-generated merge=ours
 */CHANGELOG.md      linguist-generated merge=ours
+*.sh text eol=lf
