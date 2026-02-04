@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
-# Romm add-on initialization script #
+# Romm add-on initialization script #s
 
 bashio::log.info "Setting up Romm configuration..."
 
