@@ -170,21 +170,21 @@ jobs:
             COMMITS=$(git log -10 --pretty=format:"- %s (%h)" -- "$DOMAIN/")
 
             # Create release notes
-            cat > /tmp/release-notes.md <<EOF
-            ## Release for \`$DOMAIN\` v$VERSION
-
-            ### Changes
-            $COMMITS
-
-            ### Deployment Information
-            - **Version Bump**: ${{ inputs.version_bump }}
-            - **Previous Version**: ${{ needs.version-bump.outputs.old_version }}
-            - **Deployed**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
-            - **Deployed By**: @${{ github.actor }}
-
-            ---
-            🚀 Deployed via manual workflow
-            EOF
+            {
+              echo "## Release for \`$DOMAIN\` v$VERSION"
+              echo ""
+              echo "### Changes"
+              echo "$COMMITS"
+              echo ""
+              echo "### Deployment Information"
+              echo "- **Version Bump**: ${{ inputs.version_bump }}"
+              echo "- **Previous Version**: ${{ needs.version-bump.outputs.old_version }}"
+              echo "- **Deployed**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+              echo "- **Deployed By**: @${{ github.actor }}"
+              echo ""
+              echo "---"
+              echo "🚀 Deployed via manual workflow"
+            } > /tmp/release-notes.md
 
             # Create and publish release
             gh release create "$TAG" \

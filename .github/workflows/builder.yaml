@@ -6,15 +6,6 @@ env:
 
 # yamllint disable-line rule:truthy
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, labeled, unlabeled]
-    branches: [main]
-    paths:
-      - '*/build.yaml'
-      - '*/config.yaml'
-      - '*/Dockerfile'
-      - '*/rootfs/**'
-      - '*/apparmor.txt'
   workflow_dispatch:
   workflow_run:
     workflows: [addon-metadata]
@@ -42,10 +33,7 @@ jobs:
     name: ⏳ Initialize builds
     timeout-minutes: 10
     if: |
-      github.event_name == 'push' ||
-      (github.event_name == 'pull_request' &&
-       !contains(github.event.pull_request.labels.*.name, 'ci') &&
-       !contains(github.event.pull_request.labels.*.name, 'autorelease: pending')) ||
+      github.event_name == 'workflow_call' ||
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     outputs:
@@ -88,7 +76,7 @@ jobs:
           changed=$(echo "${changed_addons[@]}" | rev | cut -c 2- | rev)
           echo "addons=[$changed]" >> "$GITHUB_OUTPUT";
           echo "Changed add-ons: [$changed]";
-      - name: 🏷️ Check branch type
+      - name: 🏷️ Check validation mode
         id: branch_check
         run: |
           # Check if validation mode is explicitly set via workflow_call
@@ -98,12 +86,9 @@ jobs:
           elif [[ "${{ inputs.push_images }}" == "false" ]]; then
             echo "is_dev=true" >> "$GITHUB_OUTPUT"
             echo "🔧 Push disabled - running validation only (no push)"
-          elif [[ "${{ github.ref }}" =~ ^refs/heads/dev- ]] || [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "is_dev=true" >> "$GITHUB_OUTPUT"
-            echo "🔧 Dev branch or PR detected - running validation only (no push)"
           else
             echo "is_dev=false" >> "$GITHUB_OUTPUT"
-            echo "🚀 Main branch detected - building and pushing images"
+            echo "🚀 Building and pushing images"
           fi
 
   build:

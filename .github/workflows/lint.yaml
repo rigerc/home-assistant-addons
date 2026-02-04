@@ -3,15 +3,6 @@ name: Lint
 
 # yamllint disable-line rule:truthy
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, labeled, unlabeled]
-    branches: [main]
-    paths:
-      - '*/build.yaml'
-      - '*/config.yaml'
-      - '*/Dockerfile'
-      - '*/rootfs/**'
-      - '*/apparmor.txt'
   workflow_run:
     workflows: [addon-metadata]
     types: [completed]
@@ -26,8 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     name: 📢 Find changed addons
     if: |
-      github.event_name == 'push' ||
-      (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'ci')) ||
+      github.event_name == 'workflow_call' ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     outputs:
       addons: ${{ steps.changed_addons.outputs.addons }}

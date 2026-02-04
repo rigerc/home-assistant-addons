@@ -50,12 +50,13 @@ jobs:
 
       - name: 🔍 Extract domain from branch
         id: domain
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
         run: |
-          BRANCH="${{ github.head_ref }}"
-          echo "Branch: $BRANCH"
+          echo "Branch: $BRANCH_NAME"
 
           # Check if branch follows domain/* pattern
-          if [[ "$BRANCH" =~ ^domain/(.+)$ ]]; then
+          if [[ "$BRANCH_NAME" =~ ^domain/(.+)$ ]]; then
             DOMAIN="${BASH_REMATCH[1]}"
             echo "domain=$DOMAIN" >> "$GITHUB_OUTPUT"
             echo "is_domain_branch=true" >> "$GITHUB_OUTPUT"

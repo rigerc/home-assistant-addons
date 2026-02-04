@@ -35,7 +35,7 @@ jobs:
       - name: 🔧 Generate filters from domain-paths.yaml
         run: |
           # Transform domain-paths.yaml into filters format for dorny/paths-filter
-          yq eval '.domains | to_entries | map({(.key): .value.paths}) | add' \
+          yq eval '.domains | with_entries(.value = .value.paths)' \
             .github/domain-paths.yaml > filters.yaml
 
           echo "Generated filters:"
@@ -209,9 +209,11 @@ jobs:
             # Remove /** suffix for git diff
             clean_path="${path%/**}"
             if git diff --name-only origin/${{ steps.config.outputs.base_branch }}...HEAD | grep -q "^${clean_path}/"; then
-              echo "### \`$clean_path\`" >> /tmp/changes.md
-              git diff --name-only origin/${{ steps.config.outputs.base_branch }}...HEAD | grep "^${clean_path}/" | sed 's/^/- /' >> /tmp/changes.md
-              echo "" >> /tmp/changes.md
+              {
+                echo "### \`$clean_path\`"
+                git diff --name-only origin/${{ steps.config.outputs.base_branch }}...HEAD | grep "^${clean_path}/" | sed 's/^/- /'
+                echo ""
+              } >> /tmp/changes.md
             fi
           done
 
