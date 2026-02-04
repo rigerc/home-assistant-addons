@@ -2,7 +2,7 @@ ARG BUILD_FROM
 ARG BUILD_VERSION
 
 # Stage 1: Copy application from upstream image
-FROM santiagosayshey/profilarr:v1.1.3 AS app-source
+FROM santiagosayshey/profilarr:v1.1.4 AS app-source
 
 # Stage 2: Build on Home Assistant base
 FROM ${BUILD_FROM}

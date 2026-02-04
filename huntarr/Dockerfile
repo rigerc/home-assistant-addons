@@ -1,5 +1,5 @@
 ARG BUILD_FROM
-FROM ghcr.io/plexguide/huntarr:9.1.1 as huntarr-source
+FROM ghcr.io/plexguide/huntarr:9.1.12 as huntarr-source
 
 FROM ${BUILD_FROM}
 
