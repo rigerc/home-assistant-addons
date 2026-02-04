@@ -6,14 +6,6 @@ env:
 
 # yamllint disable-line rule:truthy
 on:
-  push:
-    branches: [main]
-    paths:
-      - '*/build.yaml'
-      - '*/config.yaml'
-      - '*/Dockerfile'
-      - '*/rootfs/**'
-      - '*/apparmor.txt'
   pull_request:
     types: [opened, synchronize, reopened, labeled, unlabeled]
     branches: [main]
@@ -27,6 +19,18 @@ on:
   workflow_run:
     workflows: [addon-metadata]
     types: [completed]
+  workflow_call:
+    inputs:
+      validation_mode:
+        description: 'Run in validation mode (no push)'
+        required: false
+        type: boolean
+        default: false
+      push_images:
+        description: 'Push images to registry'
+        required: false
+        type: boolean
+        default: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -87,7 +91,14 @@ jobs:
       - name: 🏷️ Check branch type
         id: branch_check
         run: |
-          if [[ "${{ github.ref }}" =~ ^refs/heads/dev- ]] || [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          # Check if validation mode is explicitly set via workflow_call
+          if [[ "${{ inputs.validation_mode }}" == "true" ]]; then
+            echo "is_dev=true" >> "$GITHUB_OUTPUT"
+            echo "🔧 Validation mode enabled - running validation only (no push)"
+          elif [[ "${{ inputs.push_images }}" == "false" ]]; then
+            echo "is_dev=true" >> "$GITHUB_OUTPUT"
+            echo "🔧 Push disabled - running validation only (no push)"
+          elif [[ "${{ github.ref }}" =~ ^refs/heads/dev- ]] || [[ "${{ github.event_name }}" == "pull_request" ]]; then
             echo "is_dev=true" >> "$GITHUB_OUTPUT"
             echo "🔧 Dev branch or PR detected - running validation only (no push)"
           else

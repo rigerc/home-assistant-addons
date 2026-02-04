@@ -3,14 +3,6 @@ name: Lint
 
 # yamllint disable-line rule:truthy
 on:
-  push:
-    branches: [main]
-    paths:
-      - '*/build.yaml'
-      - '*/config.yaml'
-      - '*/Dockerfile'
-      - '*/rootfs/**'
-      - '*/apparmor.txt'
   pull_request:
     types: [opened, synchronize, reopened, labeled, unlabeled]
     branches: [main]
@@ -23,6 +15,7 @@ on:
   workflow_run:
     workflows: [addon-metadata]
     types: [completed]
+  workflow_call:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
