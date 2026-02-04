@@ -6,13 +6,6 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, labeled]
     branches: [main]
-  workflow_dispatch:
-    inputs:
-      addon:
-        description: 'Specific add-on to validate (empty for all changed)'
-        required: false
-        type: string
-        default: ''
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref }}
@@ -25,27 +18,21 @@ permissions:
 jobs:
   lint:
     name: 🔍 Lint
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
+    uses: ./.github/workflows/lint.yaml
     if: |
       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'release-draft')) ||
-      (github.event_name == 'pull_request' && github.actor == 'dependabot[bot]') ||
-      github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/lint.yaml
+      (github.event_name == 'pull_request' && github.actor == 'dependabot[bot]')
     with:
-      addon: ${{ inputs.addon }}
+      addon: ''
 
   build:
     name: 🏗️ Build (validation mode)
-    runs-on: ubuntu-latest
-    timeout-minutes: 120
-    if: |
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'release-draft')) ||
-      (github.event_name == 'pull_request' && github.actor == 'dependabot[bot]') ||
-      github.event_name == 'workflow_dispatch'
     needs: lint
     uses: ./.github/workflows/builder.yaml
+    if: |
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'release-draft')) ||
+      (github.event_name == 'pull_request' && github.actor == 'dependabot[bot]')
     with:
-      addon: ${{ inputs.addon }}
+      addon: ''
       validation_mode: true
     secrets: inherit

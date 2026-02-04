@@ -13,6 +13,13 @@ on:
         required: false
         type: string
         default: ''
+  workflow_dispatch:
+    inputs:
+      addon:
+        description: 'Specific add-on to lint (empty for all changed)'
+        required: false
+        type: string
+        default: ''
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
