@@ -80,6 +80,18 @@ All notable changes to this add-on will be documented in this file.
 
 - No changes
 
+## [1.2.1](https://github.com/rigerc/home-assistant-addons/compare/profilarr-v1.2.0...profilarr-v1.2.1) (2026-02-04)
+
+
+### 🐛 Bug Fixes
+
+* **ci:** add required runs-on to reusable workflow jobs ([086a43b](https://github.com/rigerc/home-assistant-addons/commit/086a43b7d36158de7fc2eb5510a5cc398920b0cc))
+
+
+### 🧰 Maintenance
+
+* **ci:** add default to add-on validation parameter ([dd408e8](https://github.com/rigerc/home-assistant-addons/commit/dd408e86c5ab59a01763c86973241eda57b035b5))
+
 ## [1.2.0](https://github.com/rigerc/home-assistant-addons/compare/profilarr-v1.1.0...profilarr-v1.2.0) (2026-02-04)
 
 
