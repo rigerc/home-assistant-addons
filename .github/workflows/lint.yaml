@@ -1,12 +1,21 @@
 ---
 name: Lint
 
+env:
+  MONITORED_FILES: "build.yaml config.yaml Dockerfile rootfs apparmor.txt"
+
 # yamllint disable-line rule:truthy
 on:
   workflow_run:
     workflows: [addon-metadata]
     types: [completed]
   workflow_call:
+    inputs:
+      addon:
+        description: 'Specific add-on to lint (empty for all changed)'
+        required: false
+        type: string
+        default: ''
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -15,7 +24,7 @@ concurrency:
 jobs:
   find:
     runs-on: ubuntu-latest
-    name: 📢 Find changed addons
+    name: ⏳ Find changed addons
     if: |
       github.event_name == 'workflow_call' ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
@@ -32,126 +41,81 @@ jobs:
       - name: 🗝️ Get changed files
         id: changed_files
         uses: jitterbit/get-changed-files@v1
-        if: github.event_name != 'workflow_dispatch'
+        if: github.event_name != 'workflow_dispatch' && (inputs.addon == '' || inputs.addon == null)
       - name: 🦺 Get changed add-ons
         id: changed_addons
         run: |
-          changed_addons=()
+          # If specific addon provided, use it; otherwise find changed addons
+          if [[ -n "${{ inputs.addon }}" ]]; then
+            # Validate the addon exists
+            valid_addons=(${{ steps.addons.outputs.addons }})
+            addon_valid=0
+            for valid in "${valid_addons[@]}"; do
+              if [[ "$valid" == "${{ inputs.addon }}" ]]; then
+                addon_valid=1
+                break
+              fi
+            done
 
-          for addon in ${{ steps.addons.outputs.addons }}; do
-            # Check if any file in this addon directory changed
-            if [[ "${{ steps.changed_files.outputs.all }}" =~ ${addon}/ ]]; then
-              # Check if addon already in array
-              already_added=0
-              for existing in "${changed_addons[@]}"; do
-                if [[ "$existing" == "\"${addon}\"," ]]; then
-                  already_added=1
+            if [[ $addon_valid -eq 1 ]]; then
+              echo "addons=[\"${{ inputs.addon }}\"]" >> "$GITHUB_OUTPUT"
+              echo "Linting specific add-on: ${{ inputs.addon }}"
+            else
+              echo "Error: Add-on '${{ inputs.addon }}' not found. Valid add-ons: ${valid_addons[*]}"
+              exit 1
+            fi
+          else
+            # Find changed addons
+            changed_addons=()
+
+            for addon in ${{ steps.addons.outputs.addons }}; do
+              # Check if any monitored file in this addon directory changed
+              for file in ${{ env.MONITORED_FILES }}; do
+                if [[ "${{ steps.changed_files.outputs.all }}" =~ ${addon}/${file} ]]; then
+                  # Check if addon already in array
+                  already_added=0
+                  for existing in "${changed_addons[@]}"; do
+                    if [[ "$existing" == "\"${addon}\"," ]]; then
+                      already_added=1
+                      break
+                    fi
+                  done
+                  if [[ $already_added -eq 0 ]]; then
+                    changed_addons+=("\"${addon}\",");
+                  fi
                   break
                 fi
               done
-              if [[ $already_added -eq 0 ]]; then
-                changed_addons+=("\"${addon}\",");
-              fi
-            fi
-          done
+            done
 
-          # Build JSON array
-          changed=$(echo "${changed_addons[@]}" | rev | cut -c 2- | rev)
-          echo "addons=[$changed]" >> "$GITHUB_OUTPUT"
-          echo "Changed add-ons: [$changed]"
+            # Build JSON array
+            changed=$(echo "${changed_addons[@]}" | rev | cut -c 2- | rev)
+            echo "addons=[$changed]" >> "$GITHUB_OUTPUT"
+            echo "Changed add-ons: [$changed]"
+          fi
 
-  lint-addon:
-    name: 🔍 Lint add-on ${{ matrix.path }}
+  # Global lints - single job
+  lint:
+    name: 🔍 Lint
     runs-on: ubuntu-latest
     needs: find
-    if: needs.find.outputs.addons != '[]'
-    strategy:
-      fail-fast: false
-      matrix:
-        path: ${{ fromJson(needs.find.outputs.addons) }}
     steps:
-      - name: ⤵️ Check out code from GitHub
+      - name: ⤵️ Check out the repository
         uses: actions/checkout@v4
-      - name: 📋 Verify build.yaml has project key
-        run: |
-          BUILD_FILE="${{ matrix.path }}/build.yaml"
-          if [[ ! -f "$BUILD_FILE" ]]; then
-            echo "❌ Error: build.yaml not found in ${{ matrix.path }}"
-            exit 1
-          fi
 
-          # Install yq if not available
-          if ! command -v yq &> /dev/null; then
-            wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
-            chmod +x /usr/local/bin/yq
-          fi
-
-          # Check if project key exists and has a non-empty value
-          PROJECT_VALUE=$(yq -r '.labels.project // ""' "$BUILD_FILE")
-
-          if [[ -z "$PROJECT_VALUE" || "$PROJECT_VALUE" == "null" ]]; then
-            echo "❌ Error: build.yaml in ${{ matrix.path }} is missing 'labels.project' key or has empty value"
-            echo "Expected format:"
-            echo "---"
-            echo "labels:"
-            echo "  project: https://github.com/upstream/project"
-            exit 1
-          fi
-
-          echo "✅ build.yaml has project key with value: $PROJECT_VALUE"
-      - name: 🚀 Run Home Assistant Add-on Lint
-        uses: frenck/action-addon-linter@v2
-        with:
-          path: "./${{ matrix.path }}"
-
-  lint-dockerfile:
-    name: 🐳 Lint Dockerfile ${{ matrix.path }}
-    runs-on: ubuntu-latest
-    needs: find
-    if: needs.find.outputs.addons != '[]'
-    strategy:
-      fail-fast: false
-      matrix:
-        path: ${{ fromJson(needs.find.outputs.addons) }}
-    steps:
-      - name: ⤵️ Check out code from GitHub
-        uses: actions/checkout@v4
-      - name: 🚀 Run hadolint
-        uses: hadolint/hadolint-action@v3.1.0
-        with:
-          dockerfile: "./${{ matrix.path }}/Dockerfile"
-
-  lint-shellcheck:
-    name: 🔍 Shellcheck
-    runs-on: ubuntu-latest
-    steps:
-      - name: ⤵️ Check out code from GitHub
-        uses: actions/checkout@v4
-      - name: 🚀 Run Shellcheck
+      - name: 🔍 Shellcheck
         uses: ludeeus/action-shellcheck@2.0.0
         env:
           SHELLCHECK_OPTS: -s bash
         with:
           ignore_paths: .claude docs scripts
 
-  lint-markdown:
-    name: 🔍 Markdown Lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: ⤵️ Check out code from GitHub
-        uses: actions/checkout@v4
-      - name: 🚀 Run mdl
+      - name: 🔍 Markdown Lint
         uses: actionshub/markdownlint@v3.1.4
         with:
           filesToIgnoreRegex: "(.*(README|CHANGELOG|DOCS).md|^\\.claude/.*|^docs/.*|^scripts/.*)"
 
-  lint-json:
-    name: 🔍 JSON Lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: ⤵️ Check out code from GitHub
-        uses: actions/checkout@v4
-      - name: 🚀 Run JQ
+      - name: 🔍 JSON Lint
         run: |
           find . -name "*.json" \
             -not -path "./.claude/*" \
@@ -159,11 +123,51 @@ jobs:
             -not -path "./scripts/*" \
             -exec cat {} \; | jq '.'
 
-  lint-yamllint:
-    name: 🔍 YAML Lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: ⤵️ Check out code from GitHub
-        uses: actions/checkout@v4
-      - name: 🚀 Run YAMLLint
+      - name: 🔍 YAML Lint
         uses: frenck/action-yamllint@v1
+
+  # Per-addon lints - single matrix job
+  lint-addons:
+    name: 🔍 Add-on Lint (${{ matrix.addon }})
+    runs-on: ubuntu-latest
+    needs: find
+    if: needs.find.outputs.addons != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        addon: ${{ fromJson(needs.find.outputs.addons) }}
+    steps:
+      - name: ⤵️ Check out the repository
+        uses: actions/checkout@v4
+
+      - name: 🚀 Add-on Linter
+        uses: frenck/action-addon-linter@v2
+        with:
+          path: "./${{ matrix.addon }}"
+
+      - name: 🐳 Dockerfile Lint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: "./${{ matrix.addon }}/Dockerfile"
+
+      - name: 📋 Verify build.yaml project key
+        run: |
+          BUILD_FILE="${{ matrix.addon }}/build.yaml"
+          if [[ ! -f "$BUILD_FILE" ]]; then
+            echo "❌ Error: build.yaml not found in ${{ matrix.addon }}"
+            exit 1
+          fi
+
+          if ! command -v yq &> /dev/null; then
+            wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+            chmod +x /usr/local/bin/yq
+          fi
+
+          PROJECT_VALUE=$(yq -r '.labels.project // ""' "$BUILD_FILE")
+
+          if [[ -z "$PROJECT_VALUE" || "$PROJECT_VALUE" == "null" ]]; then
+            echo "❌ Error: build.yaml in ${{ matrix.addon }} is missing 'labels.project' key"
+            exit 1
+          fi
+
+          echo "✅ build.yaml has project key with value: $PROJECT_VALUE"

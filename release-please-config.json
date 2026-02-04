@@ -14,6 +14,11 @@
           "type": "yaml",
           "path": "config.yaml",
           "jsonpath": "$.version"
+        },
+        {
+          "type": "yaml",
+          "path": "build.yaml",
+          "jsonpath": "$.labels['org.opencontainers.image.version']"
         }
       ]
     },
@@ -28,6 +33,11 @@
           "type": "yaml",
           "path": "config.yaml",
           "jsonpath": "$.version"
+        },
+        {
+          "type": "yaml",
+          "path": "build.yaml",
+          "jsonpath": "$.labels['org.opencontainers.image.version']"
         }
       ]
     },
@@ -42,6 +52,11 @@
           "type": "yaml",
           "path": "config.yaml",
           "jsonpath": "$.version"
+        },
+        {
+          "type": "yaml",
+          "path": "build.yaml",
+          "jsonpath": "$.labels['org.opencontainers.image.version']"
         }
       ]
     },
@@ -56,6 +71,11 @@
           "type": "yaml",
           "path": "config.yaml",
           "jsonpath": "$.version"
+        },
+        {
+          "type": "yaml",
+          "path": "build.yaml",
+          "jsonpath": "$.labels['org.opencontainers.image.version']"
         }
       ]
     }
