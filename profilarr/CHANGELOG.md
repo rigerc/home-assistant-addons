@@ -80,6 +80,49 @@ All notable changes to this add-on will be documented in this file.
 
 - No changes
 
+## [1.7.0](https://github.com/rigerc/home-assistant-addons/compare/profilarr-1.6.0...profilarr-1.7.0) (2026-02-05)
+
+
+### ✨ Features
+
+* Add icons ([51c93d3](https://github.com/rigerc/home-assistant-addons/commit/51c93d35df8454c0db3e2a0ef6f314cdde17836b))
+* Add subdirectories to Profilarr config ([4364a12](https://github.com/rigerc/home-assistant-addons/commit/4364a12a73b3176da870994a2f00b7be465d9997))
+* **ci:** enhance addon manifest generation and README updates ([8d5c91b](https://github.com/rigerc/home-assistant-addons/commit/8d5c91b48392a4b82387b32f3b3834906b5237f7))
+* Enhance addon discovery with entrypoint analysis ([1bfe059](https://github.com/rigerc/home-assistant-addons/commit/1bfe0595e8ad4ac046db0aad5bbd7b2fef20da5d))
+* Implement Nginx ingress for Profilarr add-on ([52cb44b](https://github.com/rigerc/home-assistant-addons/commit/52cb44bb2e3ed77ee112713a2a528511907a9d88))
+* **profilarr:** Add optional Git user configuration and update ingress port ([a7883b5](https://github.com/rigerc/home-assistant-addons/commit/a7883b5906421f147fffa33bb3d34f69593270d3))
+
+
+### 🐛 Bug Fixes
+
+* add missing document start markers to YAML files ([e6c631e](https://github.com/rigerc/home-assistant-addons/commit/e6c631ea3fcd7cc720164b34ebe75f036eee9df2))
+* ci ([0f0b13c](https://github.com/rigerc/home-assistant-addons/commit/0f0b13cf683197a2e07838fb9649599db1399bad))
+* **ci:** add required runs-on to reusable workflow jobs ([086a43b](https://github.com/rigerc/home-assistant-addons/commit/086a43b7d36158de7fc2eb5510a5cc398920b0cc))
+* **config:** simplify addon_config mapping ([4181718](https://github.com/rigerc/home-assistant-addons/commit/418171854e15edad54daad8b480cd7b564a28d25))
+* Correct IPv4 address in logs and bind ([a100970](https://github.com/rigerc/home-assistant-addons/commit/a100970b4a47a7fe7e51df6aba6f2dfb0e93fbe3))
+* Correct Nginx proxy address ([587dd51](https://github.com/rigerc/home-assistant-addons/commit/587dd512ab8ef879180a63efc193e4fb8b4686fe))
+* **profilarr:** disable external port mapping for Profilarr ([6914937](https://github.com/rigerc/home-assistant-addons/commit/69149379844d15b0762bc53015c887f501afaae0))
+* typo ([44e96da](https://github.com/rigerc/home-assistant-addons/commit/44e96da4bad65e7c5d17b0b7fb517aaba662d248))
+* Update Dockerfile healthcheck to use root path ([5382370](https://github.com/rigerc/home-assistant-addons/commit/538237009b09db8ec8ef87dd0596a250fd586a28))
+
+
+### 🧰 Maintenance
+
+* **ci:** add default to add-on validation parameter ([dd408e8](https://github.com/rigerc/home-assistant-addons/commit/dd408e86c5ab59a01763c86973241eda57b035b5))
+* **main:** release profilarr 1.2.1 ([#36](https://github.com/rigerc/home-assistant-addons/issues/36)) ([bddce08](https://github.com/rigerc/home-assistant-addons/commit/bddce086a01ca2d7a634800f9a85943c6385d733))
+* **main:** release profilarr 1.2.2 ([#38](https://github.com/rigerc/home-assistant-addons/issues/38)) ([40b2475](https://github.com/rigerc/home-assistant-addons/commit/40b2475ac3551e89fe37b02e8cea09ef1969c2e5))
+* **main:** release profilarr 1.2.3 ([#40](https://github.com/rigerc/home-assistant-addons/issues/40)) ([ca91339](https://github.com/rigerc/home-assistant-addons/commit/ca91339eb1ac6b0f9c1e53b33cffa2f9fe59610e))
+* **main:** release profilarr 1.2.4 ([#42](https://github.com/rigerc/home-assistant-addons/issues/42)) ([7bb52a3](https://github.com/rigerc/home-assistant-addons/commit/7bb52a3f09e6fc341dfd26a60195775cbdbfcae5))
+* **main:** release profilarr 1.2.5 ([#43](https://github.com/rigerc/home-assistant-addons/issues/43)) ([f612bc6](https://github.com/rigerc/home-assistant-addons/commit/f612bc6e644b90eee3995eea702c976bbf9b4f9f))
+* release main ([#30](https://github.com/rigerc/home-assistant-addons/issues/30)) ([e18b112](https://github.com/rigerc/home-assistant-addons/commit/e18b11293ab11e642234877e0365e01ca97e40ea))
+* release main ([#31](https://github.com/rigerc/home-assistant-addons/issues/31)) ([83ca58c](https://github.com/rigerc/home-assistant-addons/commit/83ca58c8d69398ce49843c707c5a11734575dd44))
+* update addon manifest and configs [skip ci] ([b90cb44](https://github.com/rigerc/home-assistant-addons/commit/b90cb44dc225abab258d7418dc2ce72b09d44880))
+* update addon manifest and configs [skip ci] ([2b97d4c](https://github.com/rigerc/home-assistant-addons/commit/2b97d4cfba072d9c75c266090fe33223f2f672c6))
+* update manifest and configs [skip ci] ([b221478](https://github.com/rigerc/home-assistant-addons/commit/b22147889cde3199311ed4f932556c6758197a93))
+* update manifest and configs [skip ci] ([4d9be84](https://github.com/rigerc/home-assistant-addons/commit/4d9be84e783ee0b388ad44c25e23c1ac19c3b553))
+* update manifest and configs [skip ci] ([6222ec6](https://github.com/rigerc/home-assistant-addons/commit/6222ec648665d247984bb91232b72cc552716b80))
+* update manifest and configs [skip ci] ([9f17237](https://github.com/rigerc/home-assistant-addons/commit/9f17237c85bd72617df8f5fbac3b30205d4fbb8d))
+
 ## [1.6.0](https://github.com/rigerc/home-assistant-addons/compare/profilarr-1.5.0...profilarr-1.6.0) (2026-02-05)
 
 
