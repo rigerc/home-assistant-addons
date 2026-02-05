@@ -84,6 +84,41 @@
 
 - No changes
 
+## [0.5.0](https://github.com/rigerc/home-assistant-addons/compare/Cleanuparr-0.4.1...Cleanuparr-0.5.0) (2026-02-05)
+
+
+### ✨ Features
+
+* Add icons ([51c93d3](https://github.com/rigerc/home-assistant-addons/commit/51c93d35df8454c0db3e2a0ef6f314cdde17836b))
+* **ci:** enhance addon manifest generation and README updates ([8d5c91b](https://github.com/rigerc/home-assistant-addons/commit/8d5c91b48392a4b82387b32f3b3834906b5237f7))
+
+
+### 🐛 Bug Fixes
+
+* add missing document start markers to YAML files ([e6c631e](https://github.com/rigerc/home-assistant-addons/commit/e6c631ea3fcd7cc720164b34ebe75f036eee9df2))
+* **finish:** add blank line and shellcheck directive for improved readability ([74cd882](https://github.com/rigerc/home-assistant-addons/commit/74cd882baf855e78fdd7440740b0b10f57052a21))
+* **finish:** add test comment for clarity in finish script ([9c3b4a3](https://github.com/rigerc/home-assistant-addons/commit/9c3b4a3b550eed5e536681337aaa18cec7d7d81c))
+* **finish:** update test comment for clarity in finish script ([87caaa4](https://github.com/rigerc/home-assistant-addons/commit/87caaa482c93188c2e30682f9712a384ad251cd7))
+* **run:** add blank line for improved readability in run script ([794c19c](https://github.com/rigerc/home-assistant-addons/commit/794c19c14970318d09b8124ada07ab5f6e85067b))
+* **run:** add shellcheck directive for bash in run script ([efcb477](https://github.com/rigerc/home-assistant-addons/commit/efcb47753c27d233d0ec5045f68a7460af1382da))
+* typo ([37d13d8](https://github.com/rigerc/home-assistant-addons/commit/37d13d8935ea388f1286a88c6ead163bde4837f2))
+* typo ([3689f3c](https://github.com/rigerc/home-assistant-addons/commit/3689f3ccccfd248d754d6018c182f7a59ad0d3df))
+
+
+### 🧰 Maintenance
+
+* **main:** release cleanuparr 0.4.1 ([#39](https://github.com/rigerc/home-assistant-addons/issues/39)) ([5d9f53c](https://github.com/rigerc/home-assistant-addons/commit/5d9f53ce03dafe0fec040cde07b4cbad8ee146ee))
+* release main ([#30](https://github.com/rigerc/home-assistant-addons/issues/30)) ([e18b112](https://github.com/rigerc/home-assistant-addons/commit/e18b11293ab11e642234877e0365e01ca97e40ea))
+* release main ([#31](https://github.com/rigerc/home-assistant-addons/issues/31)) ([83ca58c](https://github.com/rigerc/home-assistant-addons/commit/83ca58c8d69398ce49843c707c5a11734575dd44))
+* update addon manifest and configs [skip ci] ([b90cb44](https://github.com/rigerc/home-assistant-addons/commit/b90cb44dc225abab258d7418dc2ce72b09d44880))
+* update addon manifest and configs [skip ci] ([2b97d4c](https://github.com/rigerc/home-assistant-addons/commit/2b97d4cfba072d9c75c266090fe33223f2f672c6))
+* update manifest and configs [skip ci] ([9f17237](https://github.com/rigerc/home-assistant-addons/commit/9f17237c85bd72617df8f5fbac3b30205d4fbb8d))
+
+
+### ♻️ Refactoring
+
+* **ci:** clean up comments in setup scripts ([042daac](https://github.com/rigerc/home-assistant-addons/commit/042daacf0c3f4d2f8bac30406da95a4265fec2d4))
+
 ## [0.4.1](https://github.com/rigerc/home-assistant-addons/compare/cleanuparr-v0.4.0...cleanuparr-v0.4.1) (2026-02-05)
 
 
