@@ -17,9 +17,7 @@ ingress_port: 8019
 panel_icon: mdi:cog-transfer
 map:
   - share:rw
-  - type: addon_config
-    path: /config
-    read_only: false
+  - addon_config:rw
 options:
   auth_mode: 'on'
   log_level: info
