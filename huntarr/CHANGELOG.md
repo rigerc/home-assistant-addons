@@ -58,6 +58,31 @@ All notable changes to this add-on will be documented in this file.
 
 - Dev next @rigerc (#28)
 
+## [0.4.0](https://github.com/rigerc/home-assistant-addons/compare/Huntarr-0.3.0...Huntarr-0.4.0) (2026-02-05)
+
+
+### ✨ Features
+
+* Add icons ([51c93d3](https://github.com/rigerc/home-assistant-addons/commit/51c93d35df8454c0db3e2a0ef6f314cdde17836b))
+* **ci:** enhance addon manifest generation and README updates ([8d5c91b](https://github.com/rigerc/home-assistant-addons/commit/8d5c91b48392a4b82387b32f3b3834906b5237f7))
+* Enhance addon discovery with entrypoint analysis ([1bfe059](https://github.com/rigerc/home-assistant-addons/commit/1bfe0595e8ad4ac046db0aad5bbd7b2fef20da5d))
+* **scripts:** add ha-addons and ha-apps discovery scripts ([3a9bfb0](https://github.com/rigerc/home-assistant-addons/commit/3a9bfb0b0cd8eaf1ea0c6547df47a7b2e02efa40))
+
+
+### 🐛 Bug Fixes
+
+* add missing document start markers to YAML files ([e6c631e](https://github.com/rigerc/home-assistant-addons/commit/e6c631ea3fcd7cc720164b34ebe75f036eee9df2))
+* **ci:** add required runs-on to reusable workflow jobs ([086a43b](https://github.com/rigerc/home-assistant-addons/commit/086a43b7d36158de7fc2eb5510a5cc398920b0cc))
+
+
+### 🧰 Maintenance
+
+* release main ([#30](https://github.com/rigerc/home-assistant-addons/issues/30)) ([e18b112](https://github.com/rigerc/home-assistant-addons/commit/e18b11293ab11e642234877e0365e01ca97e40ea))
+* release main ([#31](https://github.com/rigerc/home-assistant-addons/issues/31)) ([83ca58c](https://github.com/rigerc/home-assistant-addons/commit/83ca58c8d69398ce49843c707c5a11734575dd44))
+* **scripts:** standardize shell script line endings and formatting ([8d95ba4](https://github.com/rigerc/home-assistant-addons/commit/8d95ba4dd68953f971ff271467f79fb21053389d))
+* update addon manifest and configs [skip ci] ([b90cb44](https://github.com/rigerc/home-assistant-addons/commit/b90cb44dc225abab258d7418dc2ce72b09d44880))
+* update addon manifest and configs [skip ci] ([2b97d4c](https://github.com/rigerc/home-assistant-addons/commit/2b97d4cfba072d9c75c266090fe33223f2f672c6))
+
 ## [0.3.0](https://github.com/rigerc/home-assistant-addons/compare/huntarr-v0.2.0...huntarr-v0.3.0) (2026-02-04)
 
 
