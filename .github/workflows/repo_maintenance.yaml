@@ -1,8 +1,14 @@
+name: Repository Maintenance
+
 on:
   schedule:
     - cron: "0 0 * * *" # Everday at midnight
   workflow_dispatch:
 
+permissions:
+    contents: write
+    packages: write
+    
 jobs:
   remove-stale-branches:
     name: Remove Stale Branches
