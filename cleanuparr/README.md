@@ -8,7 +8,7 @@
 Automated cleanup tool for Sonarr, Radarr, and download clients.
 Removes unwanted or blocked files, manages stalled downloads, and
 enforces blacklists/whitelists. Includes malware detection and
-automatic search triggers for removed content.
+automatic search triggers for removed content...
 
 ## Documentation
 
