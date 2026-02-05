@@ -24,3 +24,5 @@ jobs:
             delete-ghost-images: true
             delete-partial-images: true
             delete-orphaned-images: true
+            expand-packages: true
+            packages: ha-addons-*
