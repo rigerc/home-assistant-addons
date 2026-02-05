@@ -2,6 +2,8 @@
   "separate-pull-requests": true,
   "always-update": true,
   "label": "release-draft",
+  "draft": true,
+  "prerelease": false,
   "packages": {
     "romm": {
       "release-type": "simple",

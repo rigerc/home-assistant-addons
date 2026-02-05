@@ -3,7 +3,21 @@ name: Release Deploy
 
 on:
   release:
-    types: [published]
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      addon:
+        description: 'Add-on name (e.g., profilarr, romm)'
+        required: true
+        type: string
+      version:
+        description: 'Version (e.g., v1.2.3)'
+        required: true
+        type: string
+      tag:
+        description: 'Release tag (e.g., profilarr-v1.2.3)'
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -22,6 +36,7 @@ jobs:
     outputs:
       addon: ${{ steps.addon.outputs.name }}
       version: ${{ steps.addon.outputs.version }}
+      tag: ${{ steps.addon.outputs.tag }}
     steps:
       - name: ⤵️ Check out repository
         uses: actions/checkout@v4
@@ -29,11 +44,20 @@ jobs:
       - name: Extract addon from tag
         id: addon
         run: |
-          tag="${{ github.ref_name }}"
-          # Extract addon name from tag (e.g., "romm-v1.0.0" -> "romm")
-          addon="${tag%%-*}"
-          # Extract version (e.g., "romm-v1.0.0" -> "1.0.0")
-          version="${tag#*-}"
+          # Handle both release events and manual dispatch
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            addon="${{ inputs.addon }}"
+            version="${{ inputs.version }}"
+            tag="${{ inputs.tag }}"
+            echo "📝 Manual dispatch: addon=${addon}, version=${version}, tag=${tag}"
+          else
+            tag="${{ github.ref_name }}"
+            # Extract addon name from tag (e.g., "romm-v1.0.0" -> "romm")
+            addon="${tag%%-*}"
+            # Extract version (e.g., "romm-v1.0.0" -> "1.0.0")
+            version="${tag#*-}"
+            echo "🏷️ Release event: tag=${tag}"
+          fi
 
           # Validate addon against release-please manifest
           valid_addons=$(jq -r 'keys[]' .release-please-manifest.json | tr '\n' ' ')
@@ -44,6 +68,7 @@ jobs:
 
           echo "addon=${addon}" >> "$GITHUB_OUTPUT"
           echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
           echo "Detected addon: ${addon}, version: ${version}"
 
   build:
@@ -63,24 +88,194 @@ jobs:
         uses: home-assistant/actions/helpers/info@master
         with:
           path: "./${{ needs.extract-addon.outputs.addon }}"
+      - name: 🦺 Check if add-on should be built
+        id: check
+        run: |
+          if [[ "${{ steps.info.outputs.architectures }}" =~ ${{ matrix.arch }} ]]; then
+             echo "${{ matrix.arch }} is a supported arch for ${{ needs.extract-addon.outputs.addon }}, starting build"
+             echo "build_arch=true" >> "$GITHUB_OUTPUT"
+             echo "image=${{ steps.info.outputs.image }}" >> "$GITHUB_OUTPUT"
+           else
+             echo "${{ matrix.arch }} is not a valid arch for ${{ needs.extract-addon.outputs.addon }}, skipping build"
+             echo "build_arch=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: 🐳 Login to GitHub Container Registry
+        if: steps.check.outputs.build_arch == 'true'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: 🏗️ Build ${{ needs.extract-addon.outputs.addon }} add-on
+        if: steps.check.outputs.build_arch == 'true'
         uses: home-assistant/builder@2025.11.0
         with:
           args: |
             --${{ matrix.arch }} \
             --target /data/${{ needs.extract-addon.outputs.addon }} \
-            --image "${{ steps.info.outputs.image }}" \
+            --image "${{ steps.check.outputs.image }}" \
             --docker-hub "ghcr.io/${{ github.repository_owner }}" \
             --addon
 
-  trigger-metadata-update:
+  publish-release:
     needs: [extract-addon, build]
+    runs-on: ubuntu-latest
+    name: Publish Release
+    timeout-minutes: 2
+    permissions:
+      contents: write
+    steps:
+      - name: Add build success status to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          release_tag="${{ needs.extract-addon.outputs.tag }}"
+
+          # Get current release body
+          current_body=$(gh release view "${release_tag}" \
+            --repo "${{ github.repository }}" \
+            --json body --jq '.body')
+
+          # Add build status
+          cat > release_notes.md << EOF
+          ${current_body}
+
+          ---
+
+          ## 🏗️ Build Information
+
+          ✅ **Build Status**: Success
+          📦 **Architectures**: aarch64, amd64
+          🔗 **Workflow Run**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ⏱️ **Built**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+
+          Packages are available at: \`ghcr.io/${{ github.repository_owner }}/${{ needs.extract-addon.outputs.addon }}\`
+          EOF
+
+          # Update release with build info
+          gh release edit "${release_tag}" \
+            --repo "${{ github.repository }}" \
+            --notes-file release_notes.md
+
+          echo "✅ Added build status to release notes"
+
+      - name: Publish draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          release_tag="${{ needs.extract-addon.outputs.tag }}"
+          echo "Publishing draft release ${release_tag}..."
+          gh release edit "${release_tag}" \
+            --repo "${{ github.repository }}" \
+            --draft=false
+          echo "✅ Release ${release_tag} published successfully"
+
+  cleanup-on-failure:
+    needs: [extract-addon, build]
+    if: failure()
+    runs-on: ubuntu-latest
+    name: Cleanup Failed Release
+    timeout-minutes: 2
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - name: Add failure status to release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          release_tag="${{ needs.extract-addon.outputs.tag }}"
+
+          # Get current release body
+          current_body=$(gh release view "${release_tag}" \
+            --repo "${{ github.repository }}" \
+            --json body --jq '.body' || echo "")
+
+          # Add failure status
+          cat > release_notes.md << EOF
+          ${current_body}
+
+          ---
+
+          ## 🏗️ Build Information
+
+          ❌ **Build Status**: Failed
+          🔗 **Workflow Run**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ⏱️ **Failed**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+
+          This release was not published due to build failures. Check the workflow run for details.
+          The draft release and tag will be deleted to maintain a clean release history.
+          EOF
+
+          # Update release with failure info (for logging before deletion)
+          gh release edit "${release_tag}" \
+            --repo "${{ github.repository }}" \
+            --notes-file release_notes.md || true
+
+          echo "ℹ️ Added failure status to release notes"
+
+      - name: Create issue for failed build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          addon="${{ needs.extract-addon.outputs.addon }}"
+          version="${{ needs.extract-addon.outputs.version }}"
+          tag="${{ needs.extract-addon.outputs.tag }}"
+          workflow_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          # Create issue to track the failure
+          gh issue create \
+            --repo "${{ github.repository }}" \
+            --title "🚨 Release build failed: ${addon} ${version}" \
+            --label "build-failure,automation" \
+            --body "## Build Failure Report
+
+          **Add-on**: \`${addon}\`
+          **Version**: \`${version}\`
+          **Tag**: \`${tag}\`
+          **Workflow Run**: ${workflow_url}
+          **Failed**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+
+          ### What happened?
+
+          The automated build for ${addon} ${version} failed during the release process. The draft release and tag have been deleted to maintain a clean release history.
+
+          ### Next steps
+
+          1. Review the [workflow run logs](${workflow_url}) to identify the root cause
+          2. Fix the issue in a new PR
+          3. Manually retry the build using the workflow_dispatch trigger:
+             - Go to [Release Deploy workflow](${{ github.server_url }}/${{ github.repository }}/actions/workflows/release-deploy.yaml)
+             - Click 'Run workflow'
+             - Enter: addon=\`${addon}\`, version=\`${version}\`, tag=\`${tag}\`
+
+          ### Manual Retry
+
+          If the issue is transient (e.g., network failure, rate limiting), you can retry without code changes:
+
+          \`\`\`bash
+          gh workflow run release-deploy.yaml \\
+            --ref main \\
+            -f addon='${addon}' \\
+            -f version='${version}' \\
+            -f tag='${tag}'
+          \`\`\`
+          " || echo "⚠️ Failed to create issue, continuing with cleanup"
+
+      - name: Delete failed draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          release_tag="${{ needs.extract-addon.outputs.tag }}"
+          echo "❌ Build failed - deleting draft release ${release_tag}"
+          gh release delete "${release_tag}" \
+            --repo "${{ github.repository }}" \
+            --yes \
+            --cleanup-tag
+          echo "✅ Draft release and tag deleted"
+
+  trigger-metadata-update:
+    needs: [extract-addon, build, publish-release]
     runs-on: ubuntu-latest
     name: Trigger Repository Metadata Update
     timeout-minutes: 2
