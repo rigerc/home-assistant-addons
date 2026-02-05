@@ -14,4 +14,4 @@ labels:
   org.opencontainers.image.documentation: https://github.com/rigerc/home-assistant-addons/profilarr/README.md
   org.opencontainers.image.created: '2026-02-03T17:03:10Z'
   org.opencontainers.image.revision: c70a4d4bddc87751431ecdade48e4aa178d8dc12
-  org.opencontainers.image.version: 1.5.0
+  org.opencontainers.image.version: 1.6.0
