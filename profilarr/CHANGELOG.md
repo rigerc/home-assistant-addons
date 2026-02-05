@@ -80,6 +80,13 @@ All notable changes to this add-on will be documented in this file.
 
 - No changes
 
+## [1.2.5](https://github.com/rigerc/home-assistant-addons/compare/profilarr-v1.2.4...profilarr-v1.2.5) (2026-02-05)
+
+
+### 🧰 Maintenance
+
+* update manifest and configs [skip ci] ([6222ec6](https://github.com/rigerc/home-assistant-addons/commit/6222ec648665d247984bb91232b72cc552716b80))
+
 ## [1.2.4](https://github.com/rigerc/home-assistant-addons/compare/profilarr-v1.2.3...profilarr-v1.2.4) (2026-02-05)
 
 
