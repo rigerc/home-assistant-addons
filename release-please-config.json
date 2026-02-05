@@ -16,8 +16,10 @@
     ".github/dependabot.yml"
   ],
   "packages": {
-    "Romm": {
+    "romm": {
       "release-type": "simple",
+      "package-name": "romm",
+      "component": "Romm",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
         {
@@ -32,8 +34,10 @@
         }
       ]
     },
-    "Profilarr": {
+    "profilarr": {
       "release-type": "simple",
+      "package-name": "profilarr",
+      "component": "Profilarr",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
         {
@@ -48,8 +52,10 @@
         }
       ]
     },
-    "Cleanuparr": {
+    "cleanuparr": {
       "release-type": "simple",
+      "package-name": "cleanuparr",
+      "component": "Cleanuparr",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
         {
@@ -64,8 +70,10 @@
         }
       ]
     },
-    "Huntarr": {
+    "huntarr": {
       "release-type": "simple",
+      "package-name": "huntarr",
+      "component": "Huntarr",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
         {
