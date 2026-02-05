@@ -11,4 +11,4 @@ labels:
   org.opencontainers.image.documentation: https://github.com/rigerc/home-assistant-addons/cleanuparr/README.md
   org.opencontainers.image.created: '2026-02-03T01:33:36Z'
   org.opencontainers.image.revision: 1769a97c4fa09c57c97d4ddcd2d5de0a096db030
-  org.opencontainers.image.version: 0.4.1
+  org.opencontainers.image.version: 0.5.0
