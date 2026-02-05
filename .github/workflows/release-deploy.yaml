@@ -1,9 +1,14 @@
 ---
 name: Release Deploy
 
+# Triggered by:
+# 1. Workflow dispatch from release-please workflow (automatic)
+# 2. Manual workflow_dispatch for retries
+#
+# Note: Does NOT use release events to avoid double-triggering when
+# the draft is published after successful build
+
 on:
-  release:
-    types: [created]
   workflow_dispatch:
     inputs:
       addon:
@@ -44,20 +49,12 @@ jobs:
       - name: Extract addon from tag
         id: addon
         run: |
-          # Handle both release events and manual dispatch
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            addon="${{ inputs.addon }}"
-            version="${{ inputs.version }}"
-            tag="${{ inputs.tag }}"
-            echo "📝 Manual dispatch: addon=${addon}, version=${version}, tag=${tag}"
-          else
-            tag="${{ github.ref_name }}"
-            # Extract addon name from tag (e.g., "romm-v1.0.0" -> "romm")
-            addon="${tag%%-*}"
-            # Extract version (e.g., "romm-v1.0.0" -> "1.0.0")
-            version="${tag#*-}"
-            echo "🏷️ Release event: tag=${tag}"
-          fi
+          # Get inputs from workflow_dispatch
+          addon="${{ inputs.addon }}"
+          version="${{ inputs.version }}"
+          tag="${{ inputs.tag }}"
+
+          echo "📝 Workflow dispatch: addon=${addon}, version=${version}, tag=${tag}"
 
           # Validate addon against release-please manifest
           valid_addons=$(jq -r 'keys[]' .release-please-manifest.json | tr '\n' ' ')
@@ -69,7 +66,7 @@ jobs:
           echo "addon=${addon}" >> "$GITHUB_OUTPUT"
           echo "version=${version}" >> "$GITHUB_OUTPUT"
           echo "tag=${tag}" >> "$GITHUB_OUTPUT"
-          echo "Detected addon: ${addon}, version: ${version}"
+          echo "✅ Validated addon: ${addon}, version: ${version}"
 
   build:
     needs: extract-addon
@@ -118,6 +115,8 @@ jobs:
             --addon
 
   publish-release:
+    # Only runs if BOTH extract-addon AND build jobs succeed
+    # This ensures releases are only published when packages are built successfully
     needs: [extract-addon, build]
     runs-on: ubuntu-latest
     name: Publish Release

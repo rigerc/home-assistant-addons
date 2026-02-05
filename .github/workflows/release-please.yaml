@@ -10,13 +10,58 @@ permissions:
   contents: write
   issues: write
   pull-requests: write
+  actions: write
 
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
+      paths_released: ${{ steps.release.outputs.paths_released }}
     steps:
       - uses: googleapis/release-please-action@v4
+        id: release
         with:
           token: ${{ secrets.PAT }}
           manifest-file: .release-please-manifest.json
           config-file: release-please-config.json
+
+  trigger-build:
+    needs: release-please
+    if: needs.release-please.outputs.releases_created == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        path: ${{ fromJSON(needs.release-please.outputs.paths_released) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract release info
+        id: info
+        run: |
+          # Get addon name from path
+          addon="${{ matrix.path }}"
+
+          # Get version from manifest
+          version=$(jq -r '.["${{ matrix.path }}"]' .release-please-manifest.json)
+
+          # Construct tag
+          tag="${addon}-v${version}"
+
+          echo "addon=${addon}" >> "$GITHUB_OUTPUT"
+          echo "version=v${version}" >> "$GITHUB_OUTPUT"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "Extracted: addon=${addon}, version=v${version}, tag=${tag}"
+
+      - name: Trigger release-deploy workflow
+        env:
+          GH_TOKEN: ${{ secrets.PAT }}
+        run: |
+          echo "Triggering release-deploy for ${{ steps.info.outputs.addon }} ${{ steps.info.outputs.version }}..."
+          gh workflow run release-deploy.yaml \
+            --ref main \
+            -f addon='${{ steps.info.outputs.addon }}' \
+            -f version='${{ steps.info.outputs.version }}' \
+            -f tag='${{ steps.info.outputs.tag }}'
+          echo "✅ Release deploy triggered successfully"
