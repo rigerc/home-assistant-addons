@@ -29,31 +29,6 @@ jobs:
           manifest-file: .release-please-manifest.json
           config-file: release-please-config.json
 
-      - name: Update release titles to use capitalized names
-        if: steps.release.outputs.releases_created == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.PAT }}
-        run: |
-          # Read the release-please config to get package names
-          for path in $(echo '${{ steps.release.outputs.paths_released }}' | jq -r '.[]'); do
-            # Get the capitalized package name from config
-            package_name=$(jq -r --arg path "$path" '.packages[$path]."package-name"' release-please-config.json)
-
-            # Get the version from manifest
-            version=$(jq -r --arg path "$path" '.[$path]' .release-please-manifest.json)
-
-            # Construct the tag (lowercase)
-            tag="${path}-${version}"
-
-            # Update the release title to use capitalized name
-            new_title="${package_name} ${version}"
-
-            echo "Updating release title for ${tag} to: ${new_title}"
-            gh release edit "${tag}" \
-              --repo "${{ github.repository }}" \
-              --title "${new_title}"
-          done
-
   trigger-build:
     needs: release-please
     if: needs.release-please.outputs.releases_created == 'true'
