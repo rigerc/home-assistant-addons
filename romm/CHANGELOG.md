@@ -232,6 +232,42 @@ This is a **major breaking change**. Please read carefully before upgrading.
 
 - Test @rigerc (#1)
 
+## [0.5.0](https://github.com/rigerc/home-assistant-addons/compare/Romm-0.4.0...Romm-0.5.0) (2026-02-05)
+
+
+### ✨ Features
+
+* **ci:** enhance addon manifest generation and README updates ([8d5c91b](https://github.com/rigerc/home-assistant-addons/commit/8d5c91b48392a4b82387b32f3b3834906b5237f7))
+* Enhance addon discovery with entrypoint analysis ([1bfe059](https://github.com/rigerc/home-assistant-addons/commit/1bfe0595e8ad4ac046db0aad5bbd7b2fef20da5d))
+* Improve ROMM access and configuration ([0c81a20](https://github.com/rigerc/home-assistant-addons/commit/0c81a206bc0e958983864da7e493b855abed5109))
+* **migrations:** add initial database migration script ([d515e8f](https://github.com/rigerc/home-assistant-addons/commit/d515e8f10c83ce8001d55a7cdf4f1bc65e923b79))
+* **migrations:** add shellcheck directive to migration script ([a7bc4d8](https://github.com/rigerc/home-assistant-addons/commit/a7bc4d82a4d0ec649332cf89fab4dc5f0aba20dd))
+
+
+### 🐛 Bug Fixes
+
+* add missing document start markers to YAML files ([e6c631e](https://github.com/rigerc/home-assistant-addons/commit/e6c631ea3fcd7cc720164b34ebe75f036eee9df2))
+* **ci:** add required runs-on to reusable workflow jobs ([086a43b](https://github.com/rigerc/home-assistant-addons/commit/086a43b7d36158de7fc2eb5510a5cc398920b0cc))
+* **nginx:** add shellcheck directive to run script ([594c2f5](https://github.com/rigerc/home-assistant-addons/commit/594c2f5b3bfd7fb43cc7296704bac42e895e898e))
+* **setup:** add shellcheck directive for improved script compatibility ([a13c497](https://github.com/rigerc/home-assistant-addons/commit/a13c497176f762ea562741b6b8253f349e4db1dd))
+* **setup:** update entry for domain branch check to use python3 ([990f02f](https://github.com/rigerc/home-assistant-addons/commit/990f02f6de0dc812d069796b28fbdae70565abfa))
+
+
+### 🧰 Maintenance
+
+* release main ([#29](https://github.com/rigerc/home-assistant-addons/issues/29)) ([2801983](https://github.com/rigerc/home-assistant-addons/commit/2801983d3d73c91d5c0117d69a45cc4a48ead734))
+* release main ([#30](https://github.com/rigerc/home-assistant-addons/issues/30)) ([e18b112](https://github.com/rigerc/home-assistant-addons/commit/e18b11293ab11e642234877e0365e01ca97e40ea))
+* release main ([#31](https://github.com/rigerc/home-assistant-addons/issues/31)) ([83ca58c](https://github.com/rigerc/home-assistant-addons/commit/83ca58c8d69398ce49843c707c5a11734575dd44))
+* **rootfs:** add shellcheck directives to service scripts ([320397e](https://github.com/rigerc/home-assistant-addons/commit/320397e58111c1e2101f7dbb59e1a002da58c05d))
+* update addon manifest and configs [skip ci] ([b90cb44](https://github.com/rigerc/home-assistant-addons/commit/b90cb44dc225abab258d7418dc2ce72b09d44880))
+* update addon manifest and configs [skip ci] ([2b97d4c](https://github.com/rigerc/home-assistant-addons/commit/2b97d4cfba072d9c75c266090fe33223f2f672c6))
+
+
+### ♻️ Refactoring
+
+* **ci:** clean up comments in setup scripts ([042daac](https://github.com/rigerc/home-assistant-addons/commit/042daacf0c3f4d2f8bac30406da95a4265fec2d4))
+* **migrations:** remove unused comment from migration script ([13c359f](https://github.com/rigerc/home-assistant-addons/commit/13c359f9489b9677407b9fff024e5add3591fea5))
+
 ## [0.4.0](https://github.com/rigerc/home-assistant-addons/compare/romm-v0.3.0...romm-v0.4.0) (2026-02-04)
 
 
