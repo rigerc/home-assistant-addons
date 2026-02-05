@@ -58,6 +58,24 @@ All notable changes to this add-on will be documented in this file.
 
 - Dev next @rigerc (#28)
 
+## [0.4.0](https://github.com/rigerc/home-assistant-addons/compare/huntarr-v0.3.0...huntarr-0.4.0) (2026-02-05)
+
+
+### ✨ Features
+
+* **scripts:** add ha-addons and ha-apps discovery scripts ([3a9bfb0](https://github.com/rigerc/home-assistant-addons/commit/3a9bfb0b0cd8eaf1ea0c6547df47a7b2e02efa40))
+
+
+### 🐛 Bug Fixes
+
+* add missing document start markers to YAML files ([e6c631e](https://github.com/rigerc/home-assistant-addons/commit/e6c631ea3fcd7cc720164b34ebe75f036eee9df2))
+* **ci:** add required runs-on to reusable workflow jobs ([086a43b](https://github.com/rigerc/home-assistant-addons/commit/086a43b7d36158de7fc2eb5510a5cc398920b0cc))
+
+
+### 🧰 Maintenance
+
+* **scripts:** standardize shell script line endings and formatting ([8d95ba4](https://github.com/rigerc/home-assistant-addons/commit/8d95ba4dd68953f971ff271467f79fb21053389d))
+
 ## [0.3.0](https://github.com/rigerc/home-assistant-addons/compare/huntarr-v0.2.0...huntarr-v0.3.0) (2026-02-04)
 
 
