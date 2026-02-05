@@ -36,6 +36,8 @@ Gather concrete information about the agent's purpose:
 - What tools should the agent have access to? (Use principle of least privilege)
 - What domain expertise should the system prompt include?
 - Should this agent be in a plugin or personal configuration?
+- Should this agent run in foreground or background?
+- Which skills should the agent pre-load, if any?
 
 **Example dialogue:**
 ```
@@ -80,7 +82,8 @@ Based on requirements, identify the agent configuration:
 - Read-only analysis: `["Read", "Grep", "Glob"]`
 - Code generation: `["Read", "Write", "Grep", "Edit"]`
 - Testing/validation: `["Read", "Bash", "Grep"]`
-- Full access: Omit `tools` field or use `["*"]`
+- Full access: Omit `tools` field or use `["*"]
+
 
 ### Step 4: Create Directory Structure
 
@@ -125,7 +128,7 @@ The markdown body becomes the agent's system prompt. Write in second person.
 
 **Standard template:**
 ```markdown
-You are [role] specializing in [domain].
+You are [role] specializing in [domain]. Run in the [background or foreground].
 
 **Your Core Responsibilities:**
 1. [Primary responsibility with clear success criteria]

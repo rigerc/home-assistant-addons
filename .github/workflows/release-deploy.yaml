@@ -88,14 +88,43 @@ jobs:
       - name: 🦺 Check if add-on should be built
         id: check
         run: |
-          if [[ "${{ steps.info.outputs.architectures }}" =~ ${{ matrix.arch }} ]]; then
-             echo "${{ matrix.arch }} is a supported arch for ${{ needs.extract-addon.outputs.addon }}, starting build"
-             echo "build_arch=true" >> "$GITHUB_OUTPUT"
-             echo "image=${{ steps.info.outputs.image }}" >> "$GITHUB_OUTPUT"
-           else
-             echo "${{ matrix.arch }} is not a valid arch for ${{ needs.extract-addon.outputs.addon }}, skipping build"
-             echo "build_arch=false" >> "$GITHUB_OUTPUT"
+          architectures='${{ steps.info.outputs.architectures }}'
+          matrix_arch='${{ matrix.arch }}'
+          addon='${{ needs.extract-addon.outputs.addon }}'
+
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Architecture Validation for ${addon}"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Matrix architecture: ${matrix_arch}"
+          echo "Available architectures: ${architectures}"
+
+          # Validate architecture list is a valid JSON array
+          # The home-assistant/actions/helpers/info action returns architectures
+          # as a JSON array from the addon's config.yaml (e.g., ["aarch64","amd64"])
+          # or "null" if the arch field is missing/invalid
+          if ! echo "${architectures}" | jq -e 'type == "array"' > /dev/null 2>&1; then
+            echo ""
+            echo "❌ ERROR: Architectures is not a valid JSON array"
+            echo "   This usually means the addon's config.yaml is missing the 'arch' field"
+            echo "   or the config.yaml file could not be read."
+            echo ""
+            echo "build_arch=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
+
+          # Check if the matrix architecture is in the supported architectures array
+          if echo "${architectures}" | jq -e --arg arch "${matrix_arch}" 'index($arch) != null' > /dev/null 2>&1; then
+            echo ""
+            echo "✅ ${matrix_arch} is supported - proceeding with build"
+            echo "build_arch=true" >> "$GITHUB_OUTPUT"
+            echo "image=${{ steps.info.outputs.image }}" >> "$GITHUB_OUTPUT"
+          else
+            echo ""
+            echo "⏭️  ${matrix_arch} is not supported - skipping build"
+            echo "   This is expected behavior when an addon doesn't support all architectures."
+            echo "build_arch=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
       - name: 🐳 Login to GitHub Container Registry
         if: steps.check.outputs.build_arch == 'true'
         uses: docker/login-action@v3
