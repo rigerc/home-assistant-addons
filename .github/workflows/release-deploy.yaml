@@ -2,13 +2,28 @@
 name: Release Deploy
 
 # Triggered by:
-# 1. Workflow dispatch from release-please workflow (automatic)
+# 1. workflow_call from release-please workflow (automatic)
 # 2. Manual workflow_dispatch for retries
 #
 # Note: Does NOT use release events to avoid double-triggering when
 # the draft is published after successful build
 
 on:
+  workflow_call:
+    inputs:
+      addon:
+        description: 'Add-on name (e.g., profilarr, romm)'
+        required: true
+        type: string
+      version:
+        description: 'Version (e.g., v1.2.3)'
+        required: true
+        type: string
+      tag:
+        description: 'Release tag (e.g., profilarr-v1.2.3)'
+        required: true
+        type: string
+
   workflow_dispatch:
     inputs:
       addon:
@@ -31,7 +46,7 @@ permissions:
   actions: write
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ inputs.addon }}-${{ inputs.tag }}
   cancel-in-progress: true
 
 jobs:
@@ -49,12 +64,14 @@ jobs:
       - name: Extract addon from tag
         id: addon
         run: |
-          # Get inputs from workflow_dispatch
+          # Get inputs from workflow_dispatch or workflow_call
           addon="${{ inputs.addon }}"
           version="${{ inputs.version }}"
           tag="${{ inputs.tag }}"
 
-          echo "📝 Workflow dispatch: addon=${addon}, version=${version}, tag=${tag}"
+          trigger_type="${{ github.event_name }}"
+          echo "📝 Triggered by: ${trigger_type}"
+          echo "📝 Inputs: addon=${addon}, version=${version}, tag=${tag}"
 
           # Validate addon against release-please manifest
           valid_addons=$(jq -r 'keys[]' .release-please-manifest.json | tr '\n' ' ')

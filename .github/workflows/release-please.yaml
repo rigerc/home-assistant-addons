@@ -46,25 +46,17 @@ jobs:
           addon="${{ matrix.path }}"
 
           # Use release-please path-prefixed outputs directly
-          version="${{ needs.release-please.outputs[format('{0}--version', matrix.path)] }}"
-          tag="${{ needs.release-please.outputs[format('{0}--tag_name', matrix.path)] }}"
+          version="${{ fromJSON(needs.release-please.outputs.full)[format('{0}--version', matrix.path)] }}"
+          tag="${{ fromJSON(needs.release-please.outputs.full)[format('{0}--tag_name', matrix.path)] }}"
 
           echo "addon=${addon}" >> "$GITHUB_OUTPUT"
           echo "version=${version}" >> "$GITHUB_OUTPUT"
           echo "tag=${tag}" >> "$GITHUB_OUTPUT"
           echo "Extracted: addon=${addon}, version=${version}, tag=${tag}"
 
-      - name: Trigger release-deploy workflow
-        env:
-          GH_TOKEN: ${{ secrets.PAT }}
-        run: |
-          echo "Triggering release-deploy for ${{ steps.info.outputs.addon }} ${{ steps.info.outputs.version }}..."
-          if ! gh workflow run release-deploy.yaml \
-              --ref main \
-              -f addon='${{ steps.info.outputs.addon }}' \
-              -f version='${{ steps.info.outputs.version }}' \
-              -f tag='${{ steps.info.outputs.tag }}'; then
-            echo "::error::Failed to trigger release-deploy workflow"
-            exit 1
-          fi
-          echo "✅ Release deploy triggered successfully"
+      - name: Call release-deploy workflow
+        uses: ./.github/workflows/release-deploy.yaml
+        with:
+          addon: ${{ steps.info.outputs.addon }}
+          version: ${{ steps.info.outputs.version }}
+          tag: ${{ steps.info.outputs.tag }}
