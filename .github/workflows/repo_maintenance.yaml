@@ -26,3 +26,4 @@ jobs:
             delete-orphaned-images: true
             expand-packages: true
             packages: ha-addons-*
+            token: ${{ secrets.PAT }}
