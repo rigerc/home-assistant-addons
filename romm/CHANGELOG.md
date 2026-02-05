@@ -232,6 +232,30 @@ This is a **major breaking change**. Please read carefully before upgrading.
 
 - Test @rigerc (#1)
 
+## [0.5.0](https://github.com/rigerc/home-assistant-addons/compare/romm-v0.4.0...romm-0.5.0) (2026-02-05)
+
+
+### ✨ Features
+
+* **migrations:** add initial database migration script ([d515e8f](https://github.com/rigerc/home-assistant-addons/commit/d515e8f10c83ce8001d55a7cdf4f1bc65e923b79))
+
+
+### 🐛 Bug Fixes
+
+* add missing document start markers to YAML files ([e6c631e](https://github.com/rigerc/home-assistant-addons/commit/e6c631ea3fcd7cc720164b34ebe75f036eee9df2))
+* **ci:** add required runs-on to reusable workflow jobs ([086a43b](https://github.com/rigerc/home-assistant-addons/commit/086a43b7d36158de7fc2eb5510a5cc398920b0cc))
+* **nginx:** add shellcheck directive to run script ([594c2f5](https://github.com/rigerc/home-assistant-addons/commit/594c2f5b3bfd7fb43cc7296704bac42e895e898e))
+
+
+### 🧰 Maintenance
+
+* **rootfs:** add shellcheck directives to service scripts ([320397e](https://github.com/rigerc/home-assistant-addons/commit/320397e58111c1e2101f7dbb59e1a002da58c05d))
+
+
+### ♻️ Refactoring
+
+* **migrations:** remove unused comment from migration script ([13c359f](https://github.com/rigerc/home-assistant-addons/commit/13c359f9489b9677407b9fff024e5add3591fea5))
+
 ## [0.4.0](https://github.com/rigerc/home-assistant-addons/compare/romm-v0.3.0...romm-v0.4.0) (2026-02-04)
 
 
