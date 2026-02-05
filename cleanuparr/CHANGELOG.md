@@ -84,6 +84,15 @@
 
 - No changes
 
+## [0.4.1](https://github.com/rigerc/home-assistant-addons/compare/cleanuparr-v0.4.0...cleanuparr-v0.4.1) (2026-02-05)
+
+
+### 🐛 Bug Fixes
+
+* add missing document start markers to YAML files ([e6c631e](https://github.com/rigerc/home-assistant-addons/commit/e6c631ea3fcd7cc720164b34ebe75f036eee9df2))
+* typo ([37d13d8](https://github.com/rigerc/home-assistant-addons/commit/37d13d8935ea388f1286a88c6ead163bde4837f2))
+* typo ([3689f3c](https://github.com/rigerc/home-assistant-addons/commit/3689f3ccccfd248d754d6018c182f7a59ad0d3df))
+
 ## [0.4.0](https://github.com/rigerc/home-assistant-addons/compare/cleanuparr-v0.3.0...cleanuparr-v0.4.0) (2026-02-04)
 
 
