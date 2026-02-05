@@ -1,5 +1,6 @@
 {
   "separate-pull-requests": true,
+  "pull-request-title-pattern": "🚀 Release:${component} ${version}",
   "always-update": true,
   "label": "release-draft",
   "draft": true,

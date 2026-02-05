@@ -19,12 +19,40 @@ jobs:
       releases_created: ${{ steps.release.outputs.releases_created }}
       paths_released: ${{ steps.release.outputs.paths_released }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - uses: googleapis/release-please-action@v4
         id: release
         with:
           token: ${{ secrets.PAT }}
           manifest-file: .release-please-manifest.json
           config-file: release-please-config.json
+
+      - name: Update release titles to use capitalized names
+        if: steps.release.outputs.releases_created == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.PAT }}
+        run: |
+          # Read the release-please config to get package names
+          for path in $(echo '${{ steps.release.outputs.paths_released }}' | jq -r '.[]'); do
+            # Get the capitalized package name from config
+            package_name=$(jq -r --arg path "$path" '.packages[$path]."package-name"' release-please-config.json)
+
+            # Get the version from manifest
+            version=$(jq -r --arg path "$path" '.[$path]' .release-please-manifest.json)
+
+            # Construct the tag (lowercase)
+            tag="${path}-${version}"
+
+            # Update the release title to use capitalized name
+            new_title="${package_name} ${version}"
+
+            echo "Updating release title for ${tag} to: ${new_title}"
+            gh release edit "${tag}" \
+              --repo "${{ github.repository }}" \
+              --title "${new_title}"
+          done
 
   trigger-build:
     needs: release-please
@@ -47,12 +75,12 @@ jobs:
           version=$(jq -r '.["${{ matrix.path }}"]' .release-please-manifest.json)
 
           # Construct tag
-          tag="${addon}-v${version}"
+          tag="${addon}-${version}"
 
           echo "addon=${addon}" >> "$GITHUB_OUTPUT"
-          echo "version=v${version}" >> "$GITHUB_OUTPUT"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
           echo "tag=${tag}" >> "$GITHUB_OUTPUT"
-          echo "Extracted: addon=${addon}, version=v${version}, tag=${tag}"
+          echo "Extracted: addon=${addon}, version=${version}, tag=${tag}"
 
       - name: Trigger release-deploy workflow
         env:

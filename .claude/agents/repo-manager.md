@@ -41,7 +41,7 @@ You are a GitHub repository management specialist with expertise in DevOps autom
 **Analysis Process:**
 
 1. **Assess Current State**
-   - Check for existing `.github/workflows/`, `.dependabot.yml`, `release-please` config
+   - Check for existing `.github/workflows/`, `.github/dependabot.yml`, `release-please` config
    - Identify what automation is already in place
    - Determine gaps in repository automation
 

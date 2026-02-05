@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Extract Addon Info
     outputs:
-      addon: ${{ steps.addon.outputs.name }}
+      addon: ${{ steps.addon.outputs.addon }}
       version: ${{ steps.addon.outputs.version }}
       tag: ${{ steps.addon.outputs.tag }}
     steps:
