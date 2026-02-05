@@ -23,6 +23,7 @@ jobs:
     outputs:
       releases_created: ${{ steps.release.outputs.releases_created }}
       paths_released: ${{ steps.release.outputs.paths_released }}
+      all_outputs: ${{ toJSON(steps.release.outputs) }}
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
@@ -32,31 +33,14 @@ jobs:
           config-file: release-please-config.json
 
   trigger-build:
-    needs: [release-please]
+    needs: release-please
     if: needs.release-please.outputs.releases_created == 'true'
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         path: ${{ fromJSON(needs.release-please.outputs.paths_released) }}
-    steps:
-      - name: Extract release info
-        id: info
-        run: |
-          # Get addon name from path
-          addon="${{ matrix.path }}"
-
-          # Use release-please path-prefixed outputs directly
-          version="${{ fromJSON(needs.release-please.outputs.full)[format('{0}--version', matrix.path)] }}"
-          tag="${{ fromJSON(needs.release-please.outputs.full)[format('{0}--tag_name', matrix.path)] }}"
-
-          echo "addon=${addon}" >> "$GITHUB_OUTPUT"
-          echo "version=${version}" >> "$GITHUB_OUTPUT"
-          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
-          echo "Extracted: addon=${addon}, version=${version}, tag=${tag}"
-
-      - name: Call release-deploy workflow
-        uses: ./.github/workflows/release-deploy.yaml
-        with:
-          addon: ${{ steps.info.outputs.addon }}
-          version: ${{ steps.info.outputs.version }}
-          tag: ${{ steps.info.outputs.tag }}
+    uses: ./.github/workflows/release-deploy.yaml
+    with:
+      addon: ${{ matrix.path }}
+      version: ${{ fromJSON(needs.release-please.outputs.all_outputs)[format('{0}--version', matrix.path)] }}
+      tag: ${{ fromJSON(needs.release-please.outputs.all_outputs)[format('{0}--tag_name', matrix.path)] }}
+    secrets: inherit
