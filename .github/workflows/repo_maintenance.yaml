@@ -8,7 +8,7 @@ on:
 permissions:
     contents: write
     packages: write
-    
+
 jobs:
   remove-stale-branches:
     name: Remove Stale Branches
@@ -20,7 +20,7 @@ jobs:
           ignore-branches-with-open-prs: true
           days-before-branch-stale: 30
   clean-packages:
-      name: ghcr.io cleanup action
+      name: Clean packages
       runs-on: ubuntu-latest
       steps:
         - uses: dataaxiom/ghcr-cleanup-action@v1

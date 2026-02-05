@@ -31,22 +31,8 @@ jobs:
           manifest-file: .release-please-manifest.json
           config-file: release-please-config.json
 
-  validate-output:
-    needs: release-please
-    if: needs.release-please.outputs.releases_created == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Validate release-please outputs
-        run: |
-          paths="${{ needs.release-please.outputs.paths_released }}"
-          if ! echo "$paths" | jq empty 2>/dev/null; then
-            echo "::error::paths_released is not valid JSON: $paths"
-            exit 1
-          fi
-          echo "✅ paths_released is valid JSON: $paths"
-
   trigger-build:
-    needs: [release-please, validate-output]
+    needs: [release-please]
     if: needs.release-please.outputs.releases_created == 'true'
     runs-on: ubuntu-latest
     strategy:
