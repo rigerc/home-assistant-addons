@@ -20,8 +20,8 @@
   "packages": {
     "romm": {
       "release-type": "simple",
-      "package-name": "romm",
-      "component": "Romm",
+      "package-name": "Romm",
+      "component": "romm",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
         {
@@ -38,8 +38,8 @@
     },
     "profilarr": {
       "release-type": "simple",
-      "package-name": "profilarr",
-      "component": "Profilarr",
+      "package-name": "Profilarr",
+      "component": "profilarr",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
         {
@@ -56,8 +56,8 @@
     },
     "cleanuparr": {
       "release-type": "simple",
-      "package-name": "cleanuparr",
-      "component": "Cleanuparr",
+      "package-name": "Cleanuparr",
+      "component": "cleanuparr",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
         {
@@ -74,8 +74,8 @@
     },
     "huntarr": {
       "release-type": "simple",
-      "package-name": "huntarr",
-      "component": "Huntarr",
+      "package-name": "Huntarr",
+      "component": "huntarr",
       "changelog-path": "CHANGELOG.md",
       "extra-files": [
         {

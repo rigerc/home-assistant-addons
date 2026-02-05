@@ -19,9 +19,6 @@ jobs:
       releases_created: ${{ steps.release.outputs.releases_created }}
       paths_released: ${{ steps.release.outputs.paths_released }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - uses: googleapis/release-please-action@v4
         id: release
         with:
@@ -29,28 +26,37 @@ jobs:
           manifest-file: .release-please-manifest.json
           config-file: release-please-config.json
 
-  trigger-build:
+  validate-output:
     needs: release-please
+    if: needs.release-please.outputs.releases_created == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate release-please outputs
+        run: |
+          paths="${{ needs.release-please.outputs.paths_released }}"
+          if ! echo "$paths" | jq empty 2>/dev/null; then
+            echo "::error::paths_released is not valid JSON: $paths"
+            exit 1
+          fi
+          echo "✅ paths_released is valid JSON: $paths"
+
+  trigger-build:
+    needs: [release-please, validate-output]
     if: needs.release-please.outputs.releases_created == 'true'
     runs-on: ubuntu-latest
     strategy:
       matrix:
         path: ${{ fromJSON(needs.release-please.outputs.paths_released) }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Extract release info
         id: info
         run: |
           # Get addon name from path
           addon="${{ matrix.path }}"
 
-          # Get version from manifest
-          version=$(jq -r '.["${{ matrix.path }}"]' .release-please-manifest.json)
-
-          # Construct tag
-          tag="${addon}-${version}"
+          # Use release-please path-prefixed outputs directly
+          version="${{ needs.release-please.outputs[format('{0}--version', matrix.path)] }}"
+          tag="${{ needs.release-please.outputs[format('{0}--tag_name', matrix.path)] }}"
 
           echo "addon=${addon}" >> "$GITHUB_OUTPUT"
           echo "version=${version}" >> "$GITHUB_OUTPUT"
@@ -62,9 +68,12 @@ jobs:
           GH_TOKEN: ${{ secrets.PAT }}
         run: |
           echo "Triggering release-deploy for ${{ steps.info.outputs.addon }} ${{ steps.info.outputs.version }}..."
-          gh workflow run release-deploy.yaml \
-            --ref main \
-            -f addon='${{ steps.info.outputs.addon }}' \
-            -f version='${{ steps.info.outputs.version }}' \
-            -f tag='${{ steps.info.outputs.tag }}'
+          if ! gh workflow run release-deploy.yaml \
+              --ref main \
+              -f addon='${{ steps.info.outputs.addon }}' \
+              -f version='${{ steps.info.outputs.version }}' \
+              -f tag='${{ steps.info.outputs.tag }}'; then
+            echo "::error::Failed to trigger release-deploy workflow"
+            exit 1
+          fi
           echo "✅ Release deploy triggered successfully"

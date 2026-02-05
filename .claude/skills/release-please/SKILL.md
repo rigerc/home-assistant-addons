@@ -106,6 +106,8 @@ This shows what release-please would do without making changes.
 
 ### Step 6: Set Up GitHub Actions
 
+Read this for documentation on release-please-action: `https://raw.githubusercontent.com/googleapis/release-please-action/refs/heads/main/README.md`
+
 Create `.github/workflows/release-please.yml` to automate:
 
 ```yaml
