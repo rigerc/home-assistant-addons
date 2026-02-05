@@ -39,13 +39,13 @@ automatic metadata fetching and in-browser gameplay.
 ### [Profilarr](./profilarr/)
 App for [Profilarr project](https://github.com/Dictionarry-Hub/profilarr).
 
-[![Version](https://img.shields.io/badge/app%20version-1.1.0-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/profilarr)
+[![Version](https://img.shields.io/badge/app%20version-1.2.3-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/profilarr)
 &nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
 &nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
 
 Profile manager for Radarr and Sonarr instances.
 Centrally manage quality profiles, custom formats, and
-release profiles with Git-backed configuration storage.
+release profiles with Git-backed configuration storage!
 ### [Huntarr](./huntarr/)
 App for [Huntarr project](https://github.com/plexguide/Huntarr.io).
 
@@ -57,7 +57,7 @@ Automation utility that continuously searches media libraries for missing conten
 ### [Cleanuparr](./cleanuparr/)
 App for [Cleanuparr project](https://github.com/Cleanuparr/Cleanuparr).
 
-[![Version](https://img.shields.io/badge/app%20version-0.3.0-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/cleanuparr)
+[![Version](https://img.shields.io/badge/app%20version-0.4.1-blue)](https://github.com/rigerc/home-assistant-addons/tree/main/cleanuparr)
 &nbsp; [![aarch64](https://img.shields.io/badge/platform-aarch64-informational)]()
 &nbsp; [![amd64](https://img.shields.io/badge/platform-amd64-informational)]()
 

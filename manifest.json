@@ -14,9 +14,9 @@
   },
   {
     "slug": "profilarr",
-    "version": "1.1.0",
+    "version": "1.2.3",
     "name": "Profilarr",
-    "description": "Profile manager for Radarr and Sonarr instances.\nCentrally manage quality profiles, custom formats, and\nrelease profiles with Git-backed configuration storage.",
+    "description": "Profile manager for Radarr and Sonarr instances.\nCentrally manage quality profiles, custom formats, and\nrelease profiles with Git-backed configuration storage!",
     "arch": [
       "aarch64",
       "amd64"
@@ -40,7 +40,7 @@
   },
   {
     "slug": "cleanuparr",
-    "version": "0.3.0",
+    "version": "0.4.1",
     "name": "Cleanuparr",
     "description": "Automated cleanup tool for Sonarr, Radarr, and download clients.\nRemoves unwanted or blocked files, manages stalled downloads, and\nenforces blacklists/whitelists. Includes malware detection and\nautomatic search triggers for removed content.",
     "arch": [
