@@ -1,5 +1,5 @@
 ---
-name: github-actions-2
+name: github-actions
 description: This skill should be used when the user asks to "create a GitHub Actions workflow", "write a workflow file", "debug a workflow", "create a custom action", "build a JavaScript action", "build a Docker action", "build a composite action", "set up CI/CD", "configure GitHub Actions", "troubleshoot workflow failures", "use workflow events", "create reusable workflows", "optimize workflows", "use matrix builds", "cache dependencies in workflows", or mentions GitHub Actions, CI/CD pipelines, workflow syntax, action development, or workflow automation.
 version: 1.0.0
 ---

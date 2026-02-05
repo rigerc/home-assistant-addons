@@ -4,6 +4,13 @@
   "label": "release-draft",
   "draft": true,
   "prerelease": false,
+  "exclude-paths": [
+    "*/README.md",
+    "README.md",
+    ".github/README.md",
+    "manifest.json",
+    ".github/dependabot.yml"
+  ],
   "packages": {
     "romm": {
       "release-type": "simple",

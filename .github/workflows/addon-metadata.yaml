@@ -63,5 +63,8 @@ jobs:
       - name: Commit manifest and config changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
+          # Note: Modified files (READMEs, manifest.json, dependabot.yml) are excluded
+          # in release-please-config.json to prevent triggering new release PRs.
+          # [skip ci] prevents other CI workflows from running unnecessarily.
           commit_message: "chore: update manifest and configs [skip ci]"
           skip_checkout: true

@@ -206,12 +206,45 @@ Or via GitHub UI: Actions → Release Deploy → Run workflow
 
 Manual publishing means packages won't be built automatically.
 
+## Preventing Circular Triggers
+
+### Problem
+The addon-metadata workflow runs after successful deploys and updates:
+- Addon READMEs
+- manifest.json
+- dependabot.yml
+
+These changes would normally trigger release-please to create a new release PR, causing an infinite loop.
+
+### Solution
+The `release-please-config.json` includes `exclude-paths`:
+
+```json
+{
+  "exclude-paths": [
+    "*/README.md",
+    "README.md",
+    ".github/README.md",
+    "manifest.json",
+    ".github/dependabot.yml"
+  ]
+}
+```
+
+**Result:** Changes to these files are ignored by release-please, preventing circular triggers.
+
+### Important Notes
+- `.release-please-manifest.json` is **NOT** excluded (it tracks actual versions)
+- Source code changes still trigger releases normally
+- The `[skip ci]` flag in addon-metadata commits prevents other CI workflows
+
 ## Related Files
 
 - `.github/workflows/release-please.yaml` - Creates drafts and triggers builds
 - `.github/workflows/release-deploy.yaml` - Builds and publishes
+- `.github/workflows/addon-metadata.yaml` - Updates READMEs and manifests
 - `.github/RELEASE_DEPLOY_MANUAL_RETRY.md` - Manual retry guide
-- `release-please-config.json` - Release-please configuration
+- `release-please-config.json` - Release-please configuration (includes exclude-paths)
 
 ## Monitoring
 
