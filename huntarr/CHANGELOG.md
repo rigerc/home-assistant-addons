@@ -58,6 +58,13 @@ All notable changes to this add-on will be documented in this file.
 
 - Dev next @rigerc (#28)
 
+## [0.4.1](https://github.com/rigerc/home-assistant-addons/compare/huntarr-0.4.0...huntarr-0.4.1) (2026-02-05)
+
+
+### 🧰 Maintenance
+
+* update manifest and configs [skip ci] ([c7d156d](https://github.com/rigerc/home-assistant-addons/commit/c7d156da295625ed4ff12aaae441a775aef14aba))
+
 ## [0.4.0](https://github.com/rigerc/home-assistant-addons/compare/huntarr-v0.3.0...huntarr-0.4.0) (2026-02-05)
 
 
