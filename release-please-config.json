@@ -1,6 +1,6 @@
 {
   "separate-pull-requests": true,
-  "pull-request-title-pattern": "chore(repo): 🚀 Release:${component} ${version}",
+  "pull-request-title-pattern": "chore(repo): 🚀 release${component} ${version}",
   "always-update": true,
   "force-tag-creation": true,
   "include-v-in-tag": false,
