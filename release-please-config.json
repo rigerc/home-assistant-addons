@@ -7,7 +7,6 @@
   "include-v-in-release-name": false,
   "extra-label": "release-draft",
   "draft": true,
-  "initial-version": "11.1.0",
   "prerelease": false,
   "release-search-depth": 100,
   "commit-search-depth": 200,
